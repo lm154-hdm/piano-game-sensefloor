@@ -1,5 +1,7 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import socket from "$lib/backend/socket";
+  import { onMount, onDestroy } from 'svelte';
 
   let name = $state("");
   let greetMsg = $state("");
@@ -9,6 +11,17 @@
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     greetMsg = await invoke("greet", { name });
   }
+
+  onMount(() => {
+    // Listen for messages
+    socket.on('connect', () => {
+      console.log('connected');
+    })
+    socket.on('raw', (rawData: any) => {
+      console.log(rawData);
+    });
+  });
+
 </script>
 
 <main class="container">
