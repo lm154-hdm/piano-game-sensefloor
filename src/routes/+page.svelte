@@ -1,11 +1,8 @@
 <script lang="ts">
-  import socket from "$lib/backend/socket"
-  import { onMount } from "svelte"
+    import { connect } from "$lib/backend/socket";
+    import { onMount } from "svelte";
 
-  onMount(() => {
-    socket.on("connect", () => {
-      console.log("connected")
-    })
-  })
-
+    onMount(() => {
+        connect("192.168.178.22", 8000);
+    });
 </script>
