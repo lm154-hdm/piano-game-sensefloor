@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script lang="ts">
     import { PadPart } from "$lib/backend/sens-floor/pad-part";
     import {
@@ -24,3 +25,5 @@
         disconnect();
     });
 </script>
+=======
+>>>>>>> origin/develop
