@@ -1,10 +1,10 @@
-export const enum PadPart {
-    WNW,
-    NNW,
+export enum PadPart {
     NNO,
     ONO,
     OSO,
     SSO,
     SSW,
     WSW,
+    WNW,
+    NNW,
 }

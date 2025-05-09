@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PadPart } from "$lib/backend/sens-floor/pad-part";
+    import { PadPart } from "$lib/backend/sens-floor/pad-part";
     import {
         initialise,
         connect,
@@ -10,12 +10,12 @@
     import { onMount, onDestroy } from "svelte";
 
     onMount(() => {
-        initialise(6, 8);
+        initialise(8, 6);
         addStepOnListener((x: number, y: number, part: PadPart) => {
-            console.log(`Stepped on pad (${x}|${y}), part ${part}`);
+            console.log(`Stepped on pad (${x}|${y}), part ${PadPart[part]}`);
         });
         addStepOffListener((x: number, y: number, part: PadPart) => {
-            console.log(`Stepped off pad (${x}|${y}), part ${part}`);
+            console.log(`Stepped off pad (${x}|${y}), part ${PadPart[part]}`);
         });
         connect("192.168.178.22", 8000);
     });

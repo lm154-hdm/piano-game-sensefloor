@@ -1,15 +1,17 @@
 import { PadPart } from "./pad-part";
 import type { StepCallback } from "./sens-floor";
 
+const THRESHOLD: number = 5;
+
 export default class PadState {
-    #wnw: number = 0;
-    #nnw: number = 0;
     #nno: number = 0;
     #ono: number = 0;
     #oso: number = 0;
     #sso: number = 0;
     #ssw: number = 0;
     #wsw: number = 0;
+    #wnw: number = 0;
+    #nnw: number = 0;
 
     readonly #x: number;
     readonly #y: number;
@@ -23,69 +25,77 @@ export default class PadState {
         this.#stepOff = stepOff;
     }
 
-    update(wnw: number, nnw: number, nno: number, ono: number, oso: number, sso: number, ssw: number, wsw: number) {
-        // wnw
-        if (this.#wnw === 0 && wnw > 0) {
-            this.#stepOn(this.#x, this.#y, PadPart.WNW);
-        } else if (this.#wnw > 0 && wnw === 0) {
-            this.#stepOff(this.#x, this.#y, PadPart.WNW);
-        }
-        this.#wnw = wnw;
-
-        // nnw
-        if (this.#nnw === 0 && nnw > 0) {
-            this.#stepOn(this.#x, this.#y, PadPart.NNW);
-        } else if (this.#nnw > 0 && nnw === 0) {
-            this.#stepOff(this.#x, this.#y, PadPart.NNW);
-        }
-        this.#nnw = nnw;
-
+    update(nno: number, ono: number, oso: number, sso: number, ssw: number, wsw: number, wnw: number, nnw: number) {
         // nno
-        if (this.#nno === 0 && nno > 0) {
+        if (this.#nno === 0 && nno > THRESHOLD) {
             this.#stepOn(this.#x, this.#y, PadPart.NNO);
-        } else if (this.#nno > 0 && nno === 0) {
+            this.#nno = nno;
+        } else if (this.#nno > THRESHOLD && nno === 0) {
             this.#stepOff(this.#x, this.#y, PadPart.NNO);
+            this.#nno = nno;
         }
-        this.#nno = nno;
 
         // ono
-        if (this.#ono === 0 && ono > 0) {
+        if (this.#ono === 0 && ono > THRESHOLD) {
             this.#stepOn(this.#x, this.#y, PadPart.ONO);
-        } else if (this.#ono > 0 && ono === 0) {
+            this.#ono = ono;
+        } else if (this.#ono > THRESHOLD && ono === 0) {
             this.#stepOff(this.#x, this.#y, PadPart.ONO);
+            this.#ono = ono;
         }
-        this.#ono = ono;
 
         // oso
-        if (this.#oso === 0 && oso > 0) {
+        if (this.#oso === 0 && oso > THRESHOLD) {
             this.#stepOn(this.#x, this.#y, PadPart.OSO);
-        } else if (this.#oso > 0 && oso === 0) {
+            this.#oso = oso;
+        } else if (this.#oso > THRESHOLD && oso === 0) {
             this.#stepOff(this.#x, this.#y, PadPart.OSO);
+            this.#oso = oso;
         }
-        this.#oso = oso;
 
         // sso
-        if (this.#sso === 0 && sso > 0) {
+        if (this.#sso === 0 && sso > THRESHOLD) {
             this.#stepOn(this.#x, this.#y, PadPart.SSO);
-        } else if (this.#sso > 0 && sso === 0) {
+            this.#sso = sso;
+        } else if (this.#sso > THRESHOLD && sso === 0) {
             this.#stepOff(this.#x, this.#y, PadPart.SSO);
+            this.#sso = sso;
         }
-        this.#sso = sso;
 
         // ssw
-        if (this.#ssw === 0 && ssw > 0) {
+        if (this.#ssw === 0 && ssw > THRESHOLD) {
             this.#stepOn(this.#x, this.#y, PadPart.SSW);
-        } else if (this.#ssw > 0 && ssw === 0) {
+            this.#ssw = ssw;
+        } else if (this.#ssw > THRESHOLD && ssw === 0) {
             this.#stepOff(this.#x, this.#y, PadPart.SSW);
+            this.#ssw = ssw;
         }
-        this.#ssw = ssw;
 
         // wsw
-        if (this.#wsw === 0 && wsw > 0) {
+        if (this.#wsw === 0 && wsw > THRESHOLD) {
             this.#stepOn(this.#x, this.#y, PadPart.WSW);
-        } else if (this.#wsw > 0 && wsw === 0) {
+            this.#wsw = wsw;
+        } else if (this.#wsw > THRESHOLD && wsw === 0) {
             this.#stepOn(this.#x, this.#y, PadPart.WSW);
+            this.#wsw = wsw;
         }
-        this.#wsw = wsw;
+
+        // wnw
+        if (this.#wnw === 0 && wnw > THRESHOLD) {
+            this.#stepOn(this.#x, this.#y, PadPart.WNW);
+            this.#wnw = wnw;
+        } else if (this.#wnw > THRESHOLD && wnw === 0) {
+            this.#stepOff(this.#x, this.#y, PadPart.WNW);
+            this.#wnw = wnw;
+        }
+
+        // nnw
+        if (this.#nnw === 0 && nnw > THRESHOLD) {
+            this.#stepOn(this.#x, this.#y, PadPart.NNW);
+            this.#nnw = nnw;
+        } else if (this.#nnw > THRESHOLD && nnw === 0) {
+            this.#stepOff(this.#x, this.#y, PadPart.NNW);
+            this.#nnw = nnw;
+        }
     }
 }

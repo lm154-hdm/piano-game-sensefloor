@@ -12,11 +12,6 @@ const stepOnListeners: Array<StepCallback> = [];
 const stepOffListeners: Array<StepCallback> = [];
 
 export function initialise(padCountWidth: number, padCountHeight: number): void {
-    if (padStates.length === 0) {
-        console.error("Failed to initialise SensFloor because it's already initialised");
-        return;
-    }
-
     for (let x = 1; x <= padCountWidth; x++) {
         const padColumn: Array<PadState> = [];
         for (let y = 1; y <= padCountHeight; y++) {
@@ -43,21 +38,21 @@ export function connect(ip: string, port: number): void {
     });
 
     socket.on("raw", (data: { raw: Uint8Array }) => {
-        const x: number = data.raw[RawDataMapping.POSITION_X];
-        const y: number = data.raw[RawDataMapping.POSITION_X];
+        const x: number = data.raw[RawDataMapping.POSITION_X] - 1;
+        const y: number = data.raw[RawDataMapping.POSITION_Y] - 1;
 
         // Pad values in default state (no pressure on pad) have slight variations from 125-128
         // Subtract 128 and take the max with 0 to map default state to 0
-        const wnw: number = Math.max(data.raw[RawDataMapping.PAD_WNW] - 128, 0);
-        const nnw: number = Math.max(data.raw[RawDataMapping.PAD_NNW] - 128, 0);
         const nno: number = Math.max(data.raw[RawDataMapping.PAD_NNO] - 128, 0);
         const ono: number = Math.max(data.raw[RawDataMapping.PAD_ONO] - 128, 0);
         const oso: number = Math.max(data.raw[RawDataMapping.PAD_OSO] - 128, 0);
         const sso: number = Math.max(data.raw[RawDataMapping.PAD_SSO] - 128, 0);
         const ssw: number = Math.max(data.raw[RawDataMapping.PAD_SSW] - 128, 0);
         const wsw: number = Math.max(data.raw[RawDataMapping.PAD_WSW] - 128, 0);
+        const wnw: number = Math.max(data.raw[RawDataMapping.PAD_WNW] - 128, 0);
+        const nnw: number = Math.max(data.raw[RawDataMapping.PAD_NNW] - 128, 0);
 
-        padStates[x][y].update(wnw, nnw, nno, ono, oso, sso, ssw, wsw);
+        padStates[x][y].update(nno, ono, oso, sso, ssw, wsw, wnw, nnw);
     });
 }
 
