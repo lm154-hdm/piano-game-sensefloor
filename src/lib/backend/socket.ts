@@ -24,10 +24,19 @@ export function connect(ip: string, port: number): void {
     console.error("Already connected to socket");
     return;
   }
-  socket = io(`http://${ip}:${port}`);
-
+  socket = io(`http://${ip}:${port}`, {
+    reconnection: true,
+    reconnectionAttempts: 2,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    randomizationFactor: 0.5,
+    timeout: 20000,
+  });
   socket.on("connect", () => {
     console.log(`Connected to ${ip} on port ${port}`);
+  });
+  socket.on("connect_error", (error: any) => {
+    console.log(`Could NOT connect to ${ip} on port ${port}.`, error);
   });
 
   socket.on("raw", (data: RawData) => {
