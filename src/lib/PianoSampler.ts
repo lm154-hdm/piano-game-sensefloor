@@ -1,7 +1,6 @@
-// PianoSampler.js
-import * as Tone from 'tone';
+import * as Tone from "tone";
 
-const piano = new Tone.Sampler({
+const piano: Tone.Sampler = new Tone.Sampler({
     urls: {
         C4: "C4.mp3",
         "D#4": "Ds4.mp3",
@@ -9,8 +8,7 @@ const piano = new Tone.Sampler({
         A4: "A4.mp3",
     },
     release: 1,
-    baseUrl: "/samples/"
+    baseUrl: "/samples/",
 }).toDestination();
 
 export default piano;
-
