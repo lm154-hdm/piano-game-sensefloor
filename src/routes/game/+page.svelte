@@ -67,7 +67,7 @@
                 const animationDelay = note.time - firstNoteTime;
                 notes.push({
                     delay: animationDelay,
-                    height: note.duration * 250,
+                    height: note.duration * speedInPixelsPerSecond, // * 250
                     left: myMap.get(note.name) - 1,
                 });
                 Tone.Transport.schedule((time) => {
