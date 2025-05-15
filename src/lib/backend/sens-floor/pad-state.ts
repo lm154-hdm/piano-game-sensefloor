@@ -1,5 +1,5 @@
 import { PadPart } from "./pad-part";
-import type { StepCallback } from "./sens-floor";
+import type { StepEvent } from "./sens-floor";
 
 const THRESHOLD: number = 5;
 
@@ -15,10 +15,10 @@ export default class PadState {
 
     readonly #x: number;
     readonly #y: number;
-    readonly #stepOn: StepCallback;
-    readonly #stepOff: StepCallback;
+    readonly #stepOn: StepEvent;
+    readonly #stepOff: StepEvent;
 
-    constructor(x: number, y: number, stepOn: StepCallback, stepOff: StepCallback) {
+    constructor(x: number, y: number, stepOn: StepEvent, stepOff: StepEvent) {
         this.#x = x;
         this.#y = y;
         this.#stepOn = stepOn;
