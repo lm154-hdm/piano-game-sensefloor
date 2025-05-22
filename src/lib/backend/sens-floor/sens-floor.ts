@@ -84,6 +84,11 @@ export function addStepOffListener(listener: StepEventCallback): void {
     stepOffListeners.push(listener);
 }
 
+export function removeAllListeners(): void {
+    stepOnListeners.length = 0;
+    stepOffListeners.length = 0;
+}
+
 export function calculateNormalisedCoordinates(
     x: number,
     y: number,

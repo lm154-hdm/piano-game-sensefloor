@@ -7,6 +7,7 @@
         addStepOnListener,
         addStepOffListener,
         type StepEventData,
+        removeAllListeners,
     } from "$lib/backend/sens-floor/sens-floor";
     import { onMount, onDestroy } from "svelte";
     import piano from "$lib/PianoSampler";
@@ -24,15 +25,10 @@
         initialise(8, 6);
         Tone.loaded().then(() => {
             addStepOnListener((event: StepEventData) => {
-                clickAtPosition(
-                    event.normalisedX * width,
-                    event.normalisedY * height,
-                );
+                clickAtPosition(event.normalisedX * width, event.normalisedY * height);
             });
             addStepOffListener((event: StepEventData) => {
-                console.log(
-                    `Stepped off pad (${event.padX} | ${event.padY}) part: ${PadPart[event.padPart]}`,
-                );
+                console.log(`Stepped off pad (${event.padX} | ${event.padY}) part: ${PadPart[event.padPart]}`);
             });
             console.log("added listeners");
         });
@@ -41,14 +37,12 @@
     });
 
     onDestroy(() => {
+        removeAllListeners();
         disconnect();
     });
 
     function clickAtPosition(x: number, y: number): void {
-        const element: HTMLButtonElement = document.elementFromPoint(
-            x,
-            y,
-        ) as HTMLButtonElement;
+        const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
         if (element) {
             element.click();
         }
