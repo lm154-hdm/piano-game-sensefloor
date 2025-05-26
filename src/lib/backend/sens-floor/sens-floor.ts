@@ -3,13 +3,22 @@ import PadState from "./pad-state";
 import { PadPart } from "./pad-part";
 import { RawDataMapping } from "./raw-data-mapping";
 
-export type StepCallback = (x: number, y: number, part: PadPart) => void;
+export type StepEvent = (x: number, y: number, padPart: PadPart) => void;
+export type StepEventData = {
+    padX: number;
+    padY: number;
+    padPart: PadPart;
+    normalisedX: number;
+    normalisedY: number;
+};
+export type StepEventCallback = (event: StepEventData) => void;
 
 let socket: SocketIOClient.Socket;
+let dimension: { x: number; y: number } = { x: -1, y: -1 };
 
 const padStates: Array<Array<PadState>> = [];
-const stepOnListeners: Array<StepCallback> = [];
-const stepOffListeners: Array<StepCallback> = [];
+const stepOnListeners: Array<StepEventCallback> = [];
+const stepOffListeners: Array<StepEventCallback> = [];
 
 export function initialise(padCountWidth: number, padCountHeight: number): void {
     for (let x = 1; x <= padCountWidth; x++) {
@@ -19,6 +28,9 @@ export function initialise(padCountWidth: number, padCountHeight: number): void 
         }
         padStates.push(padColumn);
     }
+
+    dimension.x = padCountWidth;
+    dimension.y = padCountHeight;
 }
 
 export function connect(ip: string, port: number): void {
@@ -64,22 +76,80 @@ export function disconnect(): void {
     socket.close();
 }
 
-export function addStepOnListener(listener: StepCallback) {
+export function addStepOnListener(listener: StepEventCallback): void {
     stepOnListeners.push(listener);
 }
 
-export function addStepOffListener(listener: StepCallback) {
+export function addStepOffListener(listener: StepEventCallback): void {
     stepOffListeners.push(listener);
 }
 
-function stepOn(x: number, y: number, direction: PadPart): void {
+export function removeAllListeners(): void {
+    stepOnListeners.length = 0;
+    stepOffListeners.length = 0;
+}
+
+export function calculateNormalisedCoordinates(
+    x: number,
+    y: number,
+    normalisedCoordinatespadPart: PadPart,
+): { x: number; y: number } {
+    const halfPadSize = 1 / (dimension.x * 2) / 2;
+    let result = { x: 0, y: 0 };
+
+    // Caluclate x coordinate
+    result.x = x / dimension.x;
+    result.x -= 1 / (dimension.x * 2); // Move coordinate to the middle of the pad
+    if (
+        normalisedCoordinatespadPart == PadPart.NNO ||
+        normalisedCoordinatespadPart == PadPart.ONO ||
+        normalisedCoordinatespadPart == PadPart.OSO ||
+        normalisedCoordinatespadPart == PadPart.SSO
+    ) {
+        result.x += halfPadSize;
+    } else {
+        result.x -= halfPadSize;
+    }
+
+    // Caluclate y coordinate
+    result.y = y / dimension.y;
+    result.y -= 1 / (dimension.y * 2); // Move coordinate to the middle of the pad
+    if (
+        normalisedCoordinatespadPart == PadPart.WNW ||
+        normalisedCoordinatespadPart == PadPart.NNW ||
+        normalisedCoordinatespadPart == PadPart.NNO ||
+        normalisedCoordinatespadPart == PadPart.ONO
+    ) {
+        result.y += halfPadSize;
+    } else {
+        result.y -= halfPadSize;
+    }
+
+    return result;
+}
+
+function stepOn(x: number, y: number, padPart: PadPart): void {
+    const normalisedCoordinates = calculateNormalisedCoordinates(x, y, padPart);
     for (const listener of stepOnListeners) {
-        listener(x, y, direction);
+        listener({
+            padX: x,
+            padY: y,
+            padPart: padPart,
+            normalisedX: normalisedCoordinates.x,
+            normalisedY: normalisedCoordinates.y,
+        });
     }
 }
 
-function stepOff(x: number, y: number, direction: PadPart): void {
+function stepOff(x: number, y: number, padPart: PadPart): void {
+    const normalisedCoordinates = calculateNormalisedCoordinates(x, y, padPart);
     for (const listener of stepOffListeners) {
-        listener(x, y, direction);
+        listener({
+            padX: x,
+            padY: y,
+            padPart: padPart,
+            normalisedX: normalisedCoordinates.x,
+            normalisedY: normalisedCoordinates.y,
+        });
     }
 }

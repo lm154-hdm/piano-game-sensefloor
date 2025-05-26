@@ -1,72 +1,62 @@
 <script lang="ts">
-    import { PadPart } from "$lib/backend/sens-floor/pad-part";
-    import {
-        initialise,
-        connect,
-        disconnect,
-        addStepOnListener,
-        addStepOffListener,
-    } from "$lib/backend/sens-floor/sens-floor";
-    import { onMount, onDestroy } from "svelte";
-    import * as Tone from "tone";
-    import piano from "$lib/PianoSampler";
+    import { settings, colorSchemes } from "$lib/backend/settings.svelte";
 
-    let synth: Tone.Synth<Tone.SynthOptions>;
+    function onChangeBpm(event: Event): void {
+        console.log(`Changed bpm to ${settings.bpm}`);
+    }
 
-    onMount(async () => {
-        synth = new Tone.Synth().toDestination();
-
-        initialise(8, 6);
-        Tone.loaded().then(() => {
-            addStepOnListener((x: number, y: number, part: PadPart) => {
-                console.log(
-                    `Stepped on pad (${x}|${y}), part ${PadPart[part]}`,
-                );
-                play(x, y, true);
-            });
-            addStepOffListener((x: number, y: number, part: PadPart) => {
-                console.log(
-                    `Stepped off pad (${x}|${y}), part ${PadPart[part]}`,
-                );
-                play(x, y, false);
-            });
-            console.log("added listeners");
-        });
-
-        connect("192.168.178.22", 8000);
-    });
-
-    onDestroy(() => {
-        disconnect();
-    });
-
-    function play(pitch: number, key: number, startTone: boolean): void {
-        let tone: string = "C";
-        switch (key) {
-            case 1:
-                tone = "C" + (pitch + 1);
-                break;
-            case 2:
-                tone = "D" + (pitch + 1);
-                break;
-            case 3:
-                tone = "E" + (pitch + 1);
-                break;
-            case 4:
-                tone = "F" + (pitch + 1);
-                break;
-            case 5:
-                tone = "G" + (pitch + 1);
-                break;
-            case 6:
-                tone = "A" + (pitch + 1);
-                break;
-        }
-
-        if (startTone) {
-            piano.triggerAttack(tone);
-        } else {
-            piano.triggerRelease(tone);
-        }
+    function onColorSchemeChange(event: Event): void {
+        console.log(`Changed color scheme to '${settings.colorSchemeId}'`);
     }
 </script>
+
+<main>
+    <a href="/prototype" role="button">Play</a>
+    <hr />
+    <div>
+        <label for="bpm-input">Bpm: {settings.bpm}</label>
+        <br />
+        <input
+            id="bpm-input"
+            name="bpm-input"
+            type="range"
+            min="20"
+            max="200"
+            step="1"
+            defaultValue="120"
+            onchange={onChangeBpm}
+            bind:value={settings.bpm}
+        />
+    </div>
+    <hr />
+    <div>
+        <label for="color-scheme-select">Color scheme: {settings.colorSchemeId}</label>
+        <br />
+        <select
+            id="bpm-input"
+            name="color-scheme-select"
+            onchange={onColorSchemeChange}
+            bind:value={settings.colorSchemeId}
+        >
+            {#each colorSchemes as colorScheme}
+                <option value={colorScheme.id}>{colorScheme.displayText}</option>
+            {/each}
+        </select>
+    </div>
+</main>
+
+<style>
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    hr {
+        width: 200px;
+    }
+</style>
