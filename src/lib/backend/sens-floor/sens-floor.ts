@@ -128,6 +128,10 @@ export function calculateNormalisedCoordinates(
     return result;
 }
 
+export function getDimension(): { x: number; y: number } {
+    return { x: dimension.x, y: dimension.y };
+}
+
 function stepOn(x: number, y: number, padPart: PadPart): void {
     const normalisedCoordinates = calculateNormalisedCoordinates(x, y, padPart);
     for (const listener of stepOnListeners) {
