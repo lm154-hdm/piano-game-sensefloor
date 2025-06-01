@@ -1,4 +1,5 @@
 import { settings } from "./settings.svelte";
+import { getDimension } from "./sens-floor/sens-floor";
 import { Midi } from "@tonejs/midi";
 
 type NoteData = {
@@ -51,8 +52,7 @@ export async function initialise(
 
     const track = midi.tracks[1];
     const trackDelay = track.notes[0].time;
-    //const noteWidth = windowWidth / getDimension().x;
-    const noteWidth = windowWidth / 6;
+    const noteWidth = windowWidth / getDimension().x;
     for (const note of track.notes) {
         const height = note.duration * animationSpeed;
         notes.push({
