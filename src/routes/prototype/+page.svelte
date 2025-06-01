@@ -14,6 +14,8 @@
     import { onMount, onDestroy } from "svelte";
     import { settings } from "$lib/backend/settings.svelte";
     import * as Tone from "tone";
+    import AnimatedKey from "$lib/components/animated-key.svelte";
+    import PianoKey from "$lib/components/piano-key.svelte";
 
     type NoteData = {
         width: number;
@@ -31,7 +33,6 @@
         finished: 2,
     };
 
-    let synth: Tone.PolySynth;
     let time: number = 0;
     let animationSpeed: number = 0;
     let notes: NoteData[] = [];
@@ -46,8 +47,6 @@
     const keys: string[] = ["D4", "E4", "F#4", "G4", "A4", "B4"];
 
     onMount(async () => {
-        synth = new Tone.PolySynth().toDestination();
-
         initialise(8, 6);
         Tone.loaded().then(() => {
             addStepOnListener((event: StepEventData) => {
@@ -106,10 +105,6 @@
         }
     }
 
-    function play(key: string): void {
-        synth.triggerAttackRelease(key, "4n");
-    }
-
     async function loadMidiFile(path: string): Promise<boolean> {
         const res = await fetch(path);
         if (!res) {
@@ -148,21 +143,12 @@
 <main bind:clientWidth={windowWidth} bind:clientHeight={windowHeight}>
     <div bind:clientHeight={animationContainerHeight} class="animated-container">
         {#each renderedNotes as note}
-            <div
-                class="animated-key"
-                style="
-                    --width: {note.width}px;
-                    --height: {note.height}px;
-                    --top: {note.top}px;
-                    --left: {note.left}px;"
-            ></div>
+            <AnimatedKey width={note.width} height={note.height} top={note.top} left={note.left} />
         {/each}
     </div>
     <div class="piano-container">
         {#each keys as key}
-            <button class="piano-key" onclick={() => play(key)}>
-                {key}
-            </button>
+            <PianoKey {key} />
         {/each}
     </div>
 </main>
@@ -192,19 +178,5 @@
         align-items: flex-end;
         justify-content: space-evenly;
         z-index: 1;
-    }
-
-    .piano-key {
-        height: 100%;
-        flex-grow: 1;
-    }
-
-    .animated-key {
-        position: absolute;
-        width: var(--width);
-        height: var(--height);
-        left: var(--left);
-        top: var(--top);
-        background-color: #0000ff;
     }
 </style>
