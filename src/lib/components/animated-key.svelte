@@ -18,6 +18,6 @@
         height: var(--height);
         left: var(--left);
         top: var(--top);
-        background-color: #0000ff;
+        background-color: darkblue;
     }
 </style>

@@ -52,7 +52,8 @@ export async function initialise(
 
     const track = midi.tracks[1];
     const trackDelay = track.notes[0].time;
-    const noteWidth = windowWidth / getDimension().x;
+    //const noteWidth = windowWidth / getDimension().x;
+    const noteWidth = windowWidth / 6;
     for (const note of track.notes) {
         const height = note.duration * animationSpeed;
         notes.push({
@@ -82,6 +83,7 @@ function animationLoop(currentTime: number): void {
     const deltaTime = (currentTime - previousTime) / 1000.0;
     previousTime = currentTime;
     time += deltaTime;
+    //console.log(visibleNotes.length)
 
     // Animate visible keys
     for (const note of visibleNotes) {
@@ -100,6 +102,8 @@ function animationLoop(currentTime: number): void {
             visibleNotes.push(note);
         }
     }
-
-    frameId = requestAnimationFrame(animationLoop);
+    const animationFinished = (visibleNotes.length == 0 && notes.length > 0 && notes[notes.length - 1].startTime < time)
+    if (!animationFinished) {
+        frameId = requestAnimationFrame(animationLoop);
+    }
 }

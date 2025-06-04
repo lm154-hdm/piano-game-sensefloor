@@ -83,5 +83,10 @@
         align-items: flex-end;
         justify-content: space-evenly;
         z-index: 1;
+        padding: 8px;
+        gap: 8px;
+        background-color: black;
+        box-sizing: border-box;
+        border-top: 4px solid red;
     }
 </style>
