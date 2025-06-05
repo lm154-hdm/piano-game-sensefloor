@@ -23,7 +23,7 @@
 
         Tone.loaded().then(() => {
             SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
-                clickAtPosition(event.normalisedX * windowWidth, event.normalisedY * windowHeight);
+                clickAtPosition(event.normalisedX * windowWidth, event.normalisedY * windowHeight * (4 / 3));
             });
             console.log("added listeners");
         });
@@ -38,6 +38,7 @@
     });
 
     function clickAtPosition(x: number, y: number): void {
+        console.log(x, y)
         const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
         if (element) {
             element.click();

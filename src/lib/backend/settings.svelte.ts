@@ -26,6 +26,6 @@ export const colorSchemes: ColorScheme[] = [
 
 export const settings: Settings = $state({
     midiFilePath: "AlleMeineEntchen.mid",
-    bpm: 120,
+    bpm: 60,
     colorSchemeId: "default",
 });
