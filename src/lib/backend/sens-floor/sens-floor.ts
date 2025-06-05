@@ -125,6 +125,17 @@ export function calculateNormalisedCoordinates(
         result.y -= halfPadSize;
     }
 
+    result.y = 1.0 - result.y;
+
+    result.y -= 0.5;
+    result.x -= 0.5;
+
+    result.y = -result.y;
+    result.x = -result.x;
+
+    result.y += 0.5;
+    result.x += 0.5;
+
     return result;
 }
 
