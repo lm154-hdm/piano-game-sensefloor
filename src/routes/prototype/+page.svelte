@@ -5,6 +5,7 @@
     import * as Animation from "$lib/backend/animation.svelte";
     import AnimatedKey from "$lib/components/animated-key.svelte";
     import PianoKey from "$lib/components/piano-key.svelte";
+    import { settings } from "$lib/backend/settings.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -23,7 +24,9 @@
 
         Tone.loaded().then(() => {
             SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
-                clickAtPosition(event.normalisedX * windowWidth, event.normalisedY * windowHeight * (4 / 3));
+                const x = event.normalisedX * windowWidth * settings.sensFloorConfig.scaleX;
+                const y = event.normalisedY * windowHeight * settings.sensFloorConfig.scaleY;
+                clickAtPosition(x, y);
             });
             console.log("added listeners");
         });
@@ -38,7 +41,6 @@
     });
 
     function clickAtPosition(x: number, y: number): void {
-        console.log(x, y)
         const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
         if (element) {
             element.click();
