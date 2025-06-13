@@ -1,5 +1,4 @@
 import { settings } from "./settings.svelte";
-import { getDimension } from "./sens-floor/sens-floor";
 import { Midi } from "@tonejs/midi";
 
 type NoteData = {
@@ -32,10 +31,11 @@ export async function initialise(
     windowWidth: number,
     windowHeight: number,
     animationContainerHeight: number,
+    midi: Midi
 ): Promise<boolean> {
     height = windowHeight;
 
-    const res = await fetch(settings.midiFilePath);
+    /*const res = await fetch(settings.midiFilePath);
     if (!res) {
         console.error("Failed to fetch midi file", settings.midiFilePath);
         return false;
@@ -43,7 +43,7 @@ export async function initialise(
     const data = await res.arrayBuffer();
     const midi = new Midi(data);
 
-    midi.header.setTempo(settings.bpm);
+    midi.header.setTempo(settings.bpm);*/
 
     const beatsPerBar = midi.header.timeSignatures[0].timeSignature[0];
     const secondsPerBeat = 60 / settings.bpm;

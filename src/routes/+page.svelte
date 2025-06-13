@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { settings, colorSchemes } from "$lib/backend/settings.svelte";
+    import { settings, Mode, colorSchemes } from "$lib/backend/settings.svelte";
 
     function onChangeBpm(event: Event): void {
         console.log(`Changed bpm to ${settings.bpm}`);
@@ -42,6 +42,19 @@
                 <option value={colorScheme.id}>{colorScheme.displayText}</option>
             {/each}
         </select>
+    </div>
+    <hr />
+    <div>
+        <h4 style="margin: 0 0 5px 0">Mode</h4>
+        <label>
+            <input type="radio" bind:group={settings.mode} value={Mode.Playback} />
+            Playback
+        </label><br />
+
+        <label>
+            <input type="radio" bind:group={settings.mode} value={Mode.Pause} />
+            Stop/Pause
+        </label><br />
     </div>
 </main>
 

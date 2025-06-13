@@ -5,7 +5,9 @@
     import * as Animation from "$lib/backend/animation.svelte";
     import AnimatedKey from "$lib/components/animated-key.svelte";
     import PianoKey from "$lib/components/piano-key.svelte";
-    import { settings } from "$lib/backend/settings.svelte";
+    import {Mode, settings} from "$lib/backend/settings.svelte";
+    import {Midi} from "@tonejs/midi";
+    import piano from "$lib/PianoSampler";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -14,10 +16,13 @@
     const keys: string[] = ["D4", "E4", "F#4", "G4", "A4", "B4"];
 
     onMount(async () => {
+        console.log("on mount");
         SensFloor.initialise(8, 6);
         SensFloor.connect("192.168.178.22", 8000);
 
-        if (!(await Animation.initialise(keys, windowWidth, windowHeight, animationContainerHeight))) {
+        const midi = await loadMidi(settings.midiFilePath);
+
+        if (!(await Animation.initialise(keys, windowWidth, windowHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
@@ -32,6 +37,9 @@
         });
 
         Animation.start();
+        if (settings.mode == Mode.Playback) {
+            playSong(midi);
+        }
     });
 
     onDestroy(() => {
@@ -45,6 +53,40 @@
         if (element) {
             element.click();
         }
+    }
+
+    async function loadMidi(path: string): Promise<Midi> {
+        const res = await fetch(path);
+        if (!res) {
+            console.error("Failed to fetch midi file", settings.midiFilePath);
+        }
+        const data = await res.arrayBuffer();
+        const midi = new Midi(data);
+        midi.header.setTempo(settings.bpm);
+        return midi;
+    }
+
+    function playSong(midi: Midi) {
+        // const firstNoteTime = midi.tracks[1].notes[0].time;
+        midi.tracks.forEach((track) => {
+            track.notes.forEach((note) => {
+                Tone.getTransport().schedule((time) => {
+                    // time = When your scheduled event fires
+                    piano.triggerAttackRelease(
+                        note.name,
+                        note.duration,
+                        time, // + now ?
+                        note.velocity - 0.3,
+                    );
+                }, note.time);
+            });
+        });
+        Tone.getTransport().start();
+        /*const startDelay = parseInt(durationInMs) - firstNoteTime * 1000; // 0.95s - 0.5s
+        started = true;
+        setTimeout(() => {
+            Tone.getTransport().start();
+        }, startDelay);*/
     }
 </script>
 
