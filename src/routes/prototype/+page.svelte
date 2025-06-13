@@ -16,7 +16,6 @@
     const keys: string[] = ["D4", "E4", "F#4", "G4", "A4", "B4"];
 
     onMount(async () => {
-        console.log("on mount");
         SensFloor.initialise(8, 6);
         SensFloor.connect("192.168.178.22", 8000);
 
@@ -33,7 +32,6 @@
                 const y = event.normalisedY * windowHeight * settings.sensFloorConfig.scaleY;
                 clickAtPosition(x, y);
             });
-            console.log("added listeners");
         });
 
         Animation.start();
@@ -46,6 +44,9 @@
         SensFloor.removeAllListeners();
         SensFloor.disconnect();
         Animation.stop();
+        Animation.reset(); // doesn't work properly
+        Tone.getTransport().stop();
+        Tone.getTransport().cancel();  // works
     });
 
     function clickAtPosition(x: number, y: number): void {

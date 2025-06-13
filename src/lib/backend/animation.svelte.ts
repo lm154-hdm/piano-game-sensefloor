@@ -78,6 +78,11 @@ export function stop(): void {
     cancelAnimationFrame(frameId);
 }
 
+export function reset(): void {
+    notes.length = 0;
+    visibleNotes.length = 0;
+}
+
 function animationLoop(currentTime: number): void {
     // Calculate time values
     const deltaTime = (currentTime - previousTime) / 1000.0;
