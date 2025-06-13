@@ -36,7 +36,7 @@
         const res = await fetch("AlleMeineEntchen.mid");
         const data = await res.arrayBuffer();
         const midi = new Midi(data);
-        console.log(midi)
+        console.log(midi);
         /*midi.header.setTempo(180);
         const secondsPerQuarter = 60 / midi.header.tempos[0].bpm;*/
         // 180 w ppq 384
@@ -44,20 +44,22 @@
 
         const bpm = 180;
         midi.header.setTempo(bpm);
+
+        //---
+
         const beatsPerBar = midi.header.timeSignatures[0].timeSignature[0];
-        console.log(beatsPerBar)
+        console.log(beatsPerBar);
         const timeFor1Beat = 60 / bpm;
-        console.log(timeFor1Beat)
+        console.log(timeFor1Beat);
         const timeFor2Bars = 2 * beatsPerBar * timeFor1Beat;
-        console.log(timeFor2Bars)
+        console.log(timeFor2Bars);
 
         const speedInPixelsPerSecond = 700 / timeFor2Bars;
-
 
         duration = timeFor2Bars + "s";
         durationInMs = timeFor2Bars * 1000;
 
-        console.log(duration)
+        console.log(duration);
 
         const firstNoteTime = midi.tracks[1].notes[0].time;
         midi.tracks.forEach((track) => {
@@ -81,7 +83,7 @@
                 }, note.time);
             });
         });
-        const startDelay = parseInt(durationInMs) - (firstNoteTime * 1000); // 0.95s - 0.5s
+        const startDelay = parseInt(durationInMs) - firstNoteTime * 1000; // 0.95s - 0.5s
         started = true;
         setTimeout(() => {
             Tone.Transport.start();
@@ -103,9 +105,7 @@
 </script>
 
 <div style="width: 100%; background-color: wheat; padding: 20px;">
-    <div
-        style="border: 1px solid black; height: 700px; position: relative; display: flex; overflow: hidden"
-    >
+    <div style="border: 1px solid black; height: 700px; position: relative; display: flex; overflow: hidden">
         {#if started}
             {#each notes as note, index}
                 <div
@@ -124,20 +124,14 @@
         {/if}
     </div>
     <!-- padding-left: 42px; -->
-    <div
-        style="display: flex; border: 1px solid red;"
-    >
+    <div style="display: flex; border: 1px solid red;">
         {#each keys as key, index}
-            <button id="key" onclick={() => playNote(key.name)}
-                >{key.name}</button
-            >
+            <button id="key" onclick={() => playNote(key.name)}>{key.name}</button>
         {/each}
     </div>
 
     <div style="display: flex;">
-        <button onclick={start} style="margin: 60px 20px 20px 20px"
-            >Start</button
-        >
+        <button onclick={start} style="margin: 60px 20px 20px 20px">Start</button>
         <button
             onclick={() => {
                 Tone.Transport.stop();

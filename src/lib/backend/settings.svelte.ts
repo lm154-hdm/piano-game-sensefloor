@@ -1,11 +1,21 @@
 type Settings = {
+    midiFilePath: string;
     bpm: number;
     colorSchemeId: string;
+    sensFloorConfig: SensFloorConfig;
 };
 
 type ColorScheme = {
     id: string;
     displayText: string;
+};
+
+type SensFloorConfig = {
+    scaleX: number;
+    scaleY: number;
+    flipX: boolean;
+    flipY: boolean;
+    rotateBy: number;
 };
 
 export const colorSchemes: ColorScheme[] = [
@@ -24,6 +34,14 @@ export const colorSchemes: ColorScheme[] = [
 ];
 
 export const settings: Settings = $state({
-    bpm: 120,
+    midiFilePath: "AlleMeineEntchen.mid",
+    bpm: 60,
     colorSchemeId: "default",
+    sensFloorConfig: {
+        scaleX: 1,
+        scaleY: 4.0 / 3.0,
+        flipX: true,
+        flipY: false,
+        rotateBy: Math.PI / 2.0,
+    },
 });

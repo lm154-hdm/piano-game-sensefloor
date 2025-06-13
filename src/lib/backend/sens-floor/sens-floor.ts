@@ -2,6 +2,7 @@ import io from "socket.io-client";
 import PadState from "./pad-state";
 import { PadPart } from "./pad-part";
 import { RawDataMapping } from "./raw-data-mapping";
+import { settings } from "../settings.svelte";
 
 export type StepEvent = (x: number, y: number, padPart: PadPart) => void;
 export type StepEventData = {
@@ -125,7 +126,36 @@ export function calculateNormalisedCoordinates(
         result.y -= halfPadSize;
     }
 
-    return result;
+    return applyMappingToCoordinates(result.x, result.y);
+}
+
+function applyMappingToCoordinates(x: number, y: number): { x: number; y: number } {
+    if (settings.sensFloorConfig.flipX) {
+        x = 1.0 - x;
+    }
+    if (settings.sensFloorConfig.flipY) {
+        y = 1.0 - y;
+    }
+
+    // Coordinates range from {0, 1}, move them so they range from {-0.5, 0.5}
+    x -= 0.5;
+    y -= 0.5;
+
+    // Rotate around origin
+    const backupX = x;
+    const angle = settings.sensFloorConfig.rotateBy;
+    x = x * Math.cos(angle) - y * Math.sin(angle);
+    y = backupX * Math.sin(angle) + y * Math.cos(angle);
+
+    // Move coordinates back to {0, 1}
+    x += 0.5;
+    y += 0.5;
+
+    return { x, y };
+}
+
+export function getDimension(): { x: number; y: number } {
+    return { x: dimension.x, y: dimension.y };
 }
 
 function stepOn(x: number, y: number, padPart: PadPart): void {
