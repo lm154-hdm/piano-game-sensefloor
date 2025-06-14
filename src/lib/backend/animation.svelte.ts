@@ -1,4 +1,4 @@
-import { settings } from "./settings.svelte";
+import {Mode, settings} from "./settings.svelte";
 import { Midi } from "@tonejs/midi";
 
 type NoteData = {
@@ -8,6 +8,8 @@ type NoteData = {
     left: number;
     startTime: number;
     animationState: number;
+    name: string;
+    stopped: boolean;
 };
 
 // We need to do the animation state with an object like this because enums are discouraged in .svelte files
@@ -18,6 +20,7 @@ const animationState = {
 };
 
 let height: number = 0;
+let _animationContainerHeight: number = 0;
 let previousTime: number = 0;
 let time: number = 0;
 let animationSpeed: number = 0;
@@ -25,6 +28,10 @@ let frameId: number = 0;
 const notes: NoteData[] = [];
 
 export const visibleNotes: NoteData[] = $state([]);
+let nextNote = $state("");
+export function getNextNote() {
+    return nextNote;
+}
 
 export async function initialise(
     keys: string[],
@@ -34,16 +41,7 @@ export async function initialise(
     midi: Midi
 ): Promise<boolean> {
     height = windowHeight;
-
-    /*const res = await fetch(settings.midiFilePath);
-    if (!res) {
-        console.error("Failed to fetch midi file", settings.midiFilePath);
-        return false;
-    }
-    const data = await res.arrayBuffer();
-    const midi = new Midi(data);
-
-    midi.header.setTempo(settings.bpm);*/
+    _animationContainerHeight = animationContainerHeight;
 
     const beatsPerBar = midi.header.timeSignatures[0].timeSignature[0];
     const secondsPerBeat = 60 / settings.bpm;
@@ -63,6 +61,8 @@ export async function initialise(
             left: keys.indexOf(note.name) * noteWidth, // Currently hardcoded, need a proper mapping system later on
             startTime: note.time - trackDelay, // Subtract start time of first note to make it start immediately
             animationState: animationState.none,
+            name: note.name,
+            stopped: false
         });
     }
 
@@ -88,7 +88,6 @@ function animationLoop(currentTime: number): void {
     const deltaTime = (currentTime - previousTime) / 1000.0;
     previousTime = currentTime;
     time += deltaTime;
-    //console.log(visibleNotes.length)
 
     // Animate visible keys
     for (const note of visibleNotes) {
@@ -97,6 +96,15 @@ function animationLoop(currentTime: number): void {
             note.animationState = animationState.finished;
             visibleNotes.splice(visibleNotes.indexOf(note), 1);
         }
+        if (settings.mode == Mode.Pause
+            && note.top >= _animationContainerHeight - note.height
+            && !note.stopped) {
+                nextNote = note.name;
+                stop();
+                note.stopped = true;
+                return;
+        }
+
     }
 
     // Checks which keys should become visible

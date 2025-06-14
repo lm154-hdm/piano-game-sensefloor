@@ -34,9 +34,10 @@
             });
         });
 
+        scheduleSong(midi);
         Animation.start();
         if (settings.mode == Mode.Playback) {
-            playSong(midi);
+            Tone.getTransport().start();
         }
     });
 
@@ -67,7 +68,7 @@
         return midi;
     }
 
-    function playSong(midi: Midi) {
+    function scheduleSong(midi: Midi) {
         // const firstNoteTime = midi.tracks[1].notes[0].time;
         midi.tracks.forEach((track) => {
             track.notes.forEach((note) => {
@@ -82,12 +83,12 @@
                 }, note.time);
             });
         });
-        Tone.getTransport().start();
-        /*const startDelay = parseInt(durationInMs) - firstNoteTime * 1000; // 0.95s - 0.5s
-        started = true;
-        setTimeout(() => {
-            Tone.getTransport().start();
-        }, startDelay);*/
+    }
+
+    function onPressedKey(key: string) {
+        if (key == Animation.getNextNote()) {
+            Animation.start();
+        }
     }
 </script>
 
@@ -99,7 +100,7 @@
     </div>
     <div class="piano-container">
         {#each keys as key}
-            <PianoKey {key} />
+            <PianoKey key={key} pressKey={() => onPressedKey(key)} />
         {/each}
     </div>
 </main>
