@@ -1,78 +1,55 @@
 <script lang="ts">
-    import { applyMappingToCoordinates } from "$lib/backend/sens-floor/sens-floor";
+    import { onMount } from "svelte";
+    import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
 
-    let {
-        title,
-        initialCoordinates,
-        transformCoordinates = false,
-    }: { title: string; initialCoordinates: { x: number; y: number }[]; transformCoordinates: boolean } = $props();
+    let elements: HTMLDivElement[] = $state([]);
 
-    let coordinates: { x: number; y: number }[] = $state([]);
-
-    $effect(() => {
-        for (let i = 0; i < initialCoordinates.length; i++) {
-            if (transformCoordinates) {
-                const c = applyMappingToCoordinates(initialCoordinates[i].x, initialCoordinates[i].y);
-                c.x = Math.round(c.x);
-                c.y = Math.round(c.y);
-                coordinates[i] = c;
-            } else {
-                coordinates[i] = { x: initialCoordinates[i].x, y: initialCoordinates[i].y };
-            }
-        }
+    onMount(() => {
+        SensFloor.initialise(8, 6);
+        SensFloor.connect("192.168.178.22", 8000);
+        SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
+            highlightElement(event.padX - 1, event.padY - 1, true);
+        });
+        SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
+            highlightElement(event.padX - 1, event.padY - 1, false);
+        });
     });
+
+    function highlightElement(x: number, y: number, highlight: boolean): void {
+        const element = elements[x + 1 * y + 1];
+        if (highlight) {
+            element.classList.add("sensfloor-display-highlighted-pad");
+        } else {
+            element.classList.remove("sensfloor-display-highlighted-pad");
+        }
+    }
 </script>
 
-<div class="sensfloor-display-container">
-    <div class="sensfloor-display">
-        {#if coordinates.length == 4}
-            <span class="sensfloor-display-coordinates-top-left">{coordinates[0].x}|{coordinates[0].y}</span>
-            <span class="sensfloor-display-coordinates-top-right">{coordinates[1].x}|{coordinates[1].y}</span>
-            <span class="sensfloor-display-coordinates-bottom-right">{coordinates[2].x}|{coordinates[2].y}</span>
-            <span class="sensfloor-display-coordinates-bottom-left">{coordinates[3].x}|{coordinates[3].y}</span>
-        {/if}
-    </div>
-    <h2>{title}</h2>
+<div class="sensfloor-display" style="--rows: {SensFloor.getDimension().x}; --columns: {SensFloor.getDimension().y}">
+    {#each { length: SensFloor.getDimension().x } as _, x}
+        {#each { length: SensFloor.getDimension().y } as _, y}
+            <div bind:this={elements[x + 1 * y + 1]} class="sensfloor-display-pad"></div>
+        {/each}
+    {/each}
 </div>
 
 <style>
-    .sensfloor-display-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
     .sensfloor-display {
         position: relative;
         width: 480px;
         height: 270px;
+        display: grid;
+        grid-template-rows: repeat(var(--rows), 1fr);
+        grid-template-columns: repeat(var(--columns), 1fr);
         background-color: transparent;
         outline: solid;
     }
 
-    .sensfloor-display-coordinates-top-left {
-        position: absolute;
-        top: -30px;
-        left: 0;
+    .sensfloor-display-pad {
+        outline: solid;
     }
 
-    .sensfloor-display-coordinates-top-right {
-        position: absolute;
-        top: -30px;
-        right: 0;
-        text-align: right;
-    }
-
-    .sensfloor-display-coordinates-bottom-right {
-        position: absolute;
-        bottom: -30px;
-        right: 0;
-        text-align: right;
-    }
-
-    .sensfloor-display-coordinates-bottom-left {
-        position: absolute;
-        bottom: -30px;
-        left: 0;
+    :global(.sensfloor-display-highlighted-pad) {
+        background-color: red;
     }
 </style>

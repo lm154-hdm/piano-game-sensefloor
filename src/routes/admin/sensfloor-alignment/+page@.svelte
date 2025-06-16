@@ -38,51 +38,7 @@
     <Title text="Adminpanel - SensFloor-Ausrichtung" />
 
     <div class="sensfloor-alignment-container">
-        <div class="sensfloor-alignment-visuals-container">
-            <SensfloorDisplay
-                title="Aktuell"
-                transformCoordinates={true}
-                initialCoordinates={[
-                    {
-                        x: 1,
-                        y: 1,
-                    },
-                    {
-                        x: 1,
-                        y: 0,
-                    },
-                    {
-                        x: 0,
-                        y: 0,
-                    },
-                    {
-                        x: 0,
-                        y: 1,
-                    },
-                ]}
-            />
-            <SensfloorDisplay
-                title="Ziel"
-                initialCoordinates={[
-                    {
-                        x: 0,
-                        y: 0,
-                    },
-                    {
-                        x: 1,
-                        y: 0,
-                    },
-                    {
-                        x: 1,
-                        y: 1,
-                    },
-                    {
-                        x: 0,
-                        y: 1,
-                    },
-                ]}
-            />
-        </div>
+        <SensfloorDisplay />
         <div class="sensfloor-alignment-button-container">
             <SensfloorAlignmentButton
                 text="-90°"
@@ -129,7 +85,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 20px;
+        gap: 50px;
     }
 
     .sensfloor-alignment-button-container {
@@ -137,12 +93,5 @@
         flex-direction: row;
         justify-content: center;
         gap: 20px;
-    }
-
-    .sensfloor-alignment-visuals-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        gap: 30px;
     }
 </style>
