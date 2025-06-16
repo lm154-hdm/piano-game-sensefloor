@@ -48,7 +48,7 @@
     }
 </script>
 
-<main bind:clientWidth={windowWidth} bind:clientHeight={windowHeight}>
+<div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
     <div bind:clientHeight={animationContainerHeight} class="animated-container">
         {#each Animation.visibleNotes as note}
             <AnimatedKey width={note.width} height={note.height} top={note.top} left={note.left} />
@@ -59,10 +59,10 @@
             <PianoKey {key} />
         {/each}
     </div>
-</main>
+</div>
 
 <style>
-    main {
+    .prototype-container {
         width: 100vw;
         height: 100vh;
         display: flex;

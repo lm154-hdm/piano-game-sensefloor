@@ -11,4 +11,17 @@
     });
 </script>
 
-<slot />
+<main>
+    <slot />
+</main>
+
+<style>
+    main {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+    }
+</style>
