@@ -1,18 +1,17 @@
 <script lang="ts">
     import { settings } from "$lib/backend/settings.svelte";
     import BackButton from "$lib/components/back-button.svelte";
-    import MenuButton from "$lib/components/menu-button.svelte";
     import Title from "$lib/components/title.svelte";
 </script>
 
 <Title text="Einstellungen - Geschwindigkeit" />
 
 <div class="difficulty-container">
-    <h2>Aktuelle Geschwindigkeit: {settings.bpm}%</h2>
+    <h2>Aktuelle Geschwindigkeit: {settings.speed}%</h2>
     <div class="difficulty-button-container">
         <button
             onclick={() => {
-                settings.bpm += 10;
+                settings.speed += 10;
             }}
         >
             Schneller
@@ -20,7 +19,7 @@
 
         <button
             onclick={() => {
-                settings.bpm -= 10;
+                settings.speed -= 10;
             }}
         >
             Langsamer

@@ -1,6 +1,6 @@
 type Settings = {
     midiFilePath: string;
-    bpm: number;
+    speed: number;
     colorSchemeId: string;
     sensFloorConfig: SensFloorConfig;
 };
@@ -35,7 +35,7 @@ export const colorSchemes: ColorScheme[] = [
 
 export const settings: Settings = $state({
     midiFilePath: "AlleMeineEntchen.mid",
-    bpm: 60,
+    speed: 100,
     colorSchemeId: "default",
     sensFloorConfig: {
         scaleX: 1,
