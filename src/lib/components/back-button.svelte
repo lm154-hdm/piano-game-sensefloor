@@ -1,9 +1,9 @@
 <script lang="ts">
-    const { slug }: { slug: string } = $props();
+    let { text = "Zurück", slug }: { text: string; slug: string } = $props();
 </script>
 
 <a href={slug}>
-    <button>Zurück</button>
+    <button>{text}</button>
 </a>
 
 <style>

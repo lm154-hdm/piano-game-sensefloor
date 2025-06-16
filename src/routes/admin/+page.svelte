@@ -4,7 +4,7 @@
     import Title from "$lib/components/title.svelte";
 </script>
 
-<Title text="Einstellungen" />
-<NavigationButton text="Geschwindigkeit" slug="/settings/difficulty" />
-<NavigationButton text="Farbschema" slug="/settings/colourscheme" />
-<BackButton slug="/" />
+<Title text="Adminpanel" />
+<NavigationButton text="Songauswahl" slug="/admin/songselection" />
+<NavigationButton text="SensFloor-Ausrichtung" slug="/admin/sensfloor-alignment" />
+<BackButton text="Hauptmenü" slug="/" />

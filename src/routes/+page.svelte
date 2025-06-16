@@ -1,8 +1,24 @@
 <script lang="ts">
-    import MenuButton from "$lib/components/menu-button.svelte";
+    import { goto } from "$app/navigation";
+    import NavigationButton from "$lib/components/navigation-button.svelte";
     import Title from "$lib/components/title.svelte";
+    import { onDestroy, onMount } from "svelte";
+
+    onMount(() => {
+        window.addEventListener("keydown", onKeyDown);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("keydown", onKeyDown);
+    });
+
+    function onKeyDown(event: KeyboardEvent): void {
+        if (event.key === "1") {
+            goto("/admin");
+        }
+    }
 </script>
 
 <Title text="Menü" />
-<MenuButton text="Spielen" slug="/prototype" />
-<MenuButton text="Einstellungen" slug="/settings" />
+<NavigationButton text="Spielen" slug="/prototype" />
+<NavigationButton text="Einstellungen" slug="/settings" />
