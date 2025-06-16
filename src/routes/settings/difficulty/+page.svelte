@@ -28,7 +28,7 @@
 
 <style>
     button {
-        width: calc(100vw / 6);
+        width: var(--button-width);
         aspect-ratio: 1 / 1;
         text-align: center;
     }

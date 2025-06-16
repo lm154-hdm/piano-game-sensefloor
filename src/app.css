@@ -1,4 +1,6 @@
 :root {
+    --button-width: calc(100vw / 6);
+
     --background-color: white;
 }
 

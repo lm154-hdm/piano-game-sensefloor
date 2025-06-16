@@ -1,14 +1,14 @@
 <script lang="ts">
-    const { text, slug, width }: { text: string; slug: string; width: number } = $props();
+    const { text, slug }: { text: string; slug: string } = $props();
 </script>
 
-<a href={slug} style="--width: {width}">
+<a href={slug}>
     <button>{text}</button>
 </a>
 
 <style>
     a {
-        width: calc(100vw / var(--width));
+        width: var(--button-width);
         aspect-ratio: 1 / 1;
     }
 

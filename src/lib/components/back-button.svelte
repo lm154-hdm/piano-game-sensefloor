@@ -11,7 +11,7 @@
         position: absolute;
         bottom: 0;
         right: 0;
-        width: calc(100vw / 6);
+        width: var(--button-width);
         aspect-ratio: 1 / 1;
     }
 

@@ -5,6 +5,6 @@
 </script>
 
 <Title text="Einstellungen" />
-<MenuButton text="Geschwindigkeit" slug="/settings/difficulty" width={6} />
-<MenuButton text="Farbschema" slug="/settings/colourscheme" width={6} />
+<MenuButton text="Geschwindigkeit" slug="/settings/difficulty" />
+<MenuButton text="Farbschema" slug="/settings/colourscheme" />
 <BackButton slug="/" />

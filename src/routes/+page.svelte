@@ -4,5 +4,5 @@
 </script>
 
 <Title text="Menü" />
-<MenuButton text="Spielen" slug="/prototype" width={6} />
-<MenuButton text="Einstellungen" slug="/settings" width={6} />
+<MenuButton text="Spielen" slug="/prototype" />
+<MenuButton text="Einstellungen" slug="/settings" />
