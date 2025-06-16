@@ -1,5 +1,14 @@
+:root {
+    --background-color: white;
+}
+
+[data-colorscheme="monochrome"] {
+    --background-color: red;
+}
+
 body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: var(--background-color);
     margin: 0;
     overflow: hidden;
 }

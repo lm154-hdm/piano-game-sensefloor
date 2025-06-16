@@ -24,11 +24,7 @@ export const colorSchemes: ColorScheme[] = [
         displayText: "Default",
     },
     {
-        id: "redgreen",
-        displayText: "Red-green",
-    },
-    {
-        id: "monochromatic",
+        id: "monochrome",
         displayText: "Monochromatic",
     },
 ];

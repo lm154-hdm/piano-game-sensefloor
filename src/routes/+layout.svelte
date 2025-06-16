@@ -3,6 +3,8 @@
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import "../app.css";
 
+    const { children } = $props();
+
     onMount(async () => {
         const window = getCurrentWindow();
         await window.setFullscreen(true);
@@ -12,7 +14,7 @@
 </script>
 
 <main>
-    <slot />
+    {@render children()}
 </main>
 
 <style>
