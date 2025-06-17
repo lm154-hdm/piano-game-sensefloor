@@ -21,8 +21,8 @@
 
 <style>
     .piano-key {
-        height: 100%;
-        flex-grow: 1;
+        width: var(--button-width);
+        aspect-ratio: 1 / 1;
         font-size: 30px;
         font-weight: bold;
     }
