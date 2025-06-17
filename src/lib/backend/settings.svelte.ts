@@ -16,6 +16,8 @@ type SensFloorConfig = {
     flipX: boolean;
     flipY: boolean;
     rotateBy: number;
+    cropLeft: number;
+    cropRight: number;
 };
 
 export const colorSchemes: ColorScheme[] = [
@@ -39,5 +41,7 @@ export const settings: Settings = $state({
         flipX: true,
         flipY: false,
         rotateBy: Math.PI / 2.0,
+        cropLeft: 0,
+        cropRight: 0,
     },
 });

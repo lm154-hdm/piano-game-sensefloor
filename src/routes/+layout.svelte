@@ -14,16 +14,30 @@
 </script>
 
 <main>
-    {@render children()}
+    <div id="application-container">
+        {@render children()}
+    </div>
 </main>
 
 <style>
     main {
         display: flex;
         flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: var(--crop-left);
+        width: calc(100vw - var(--crop-left) - var(--crop-right));
+        height: 100vh;
+    }
+
+    #application-container {
+        display: flex;
+        flex-direction: row;
         align-items: flex-end;
         justify-content: center;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
+        background-color: var(--background-color);
     }
 </style>

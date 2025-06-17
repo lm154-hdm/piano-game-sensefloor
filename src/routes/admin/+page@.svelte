@@ -7,4 +7,5 @@
 <Title text="Adminpanel" />
 <NavigationButton text="Songauswahl" slug="/admin/songselection" />
 <NavigationButton text="SensFloor-Ausrichtung" slug="/admin/sensfloor-alignment" />
+<NavigationButton text="SensFloor zuschneiden" slug="/admin/sensfloor-cropping" />
 <BackButton text="Hauptmenü" slug="/" />

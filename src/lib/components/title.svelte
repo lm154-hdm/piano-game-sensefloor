@@ -11,7 +11,7 @@
         position: absolute;
         top: 20px;
         left: 0px;
-        width: 100vw;
+        width: 100%;
         text-align: center;
     }
 </style>
