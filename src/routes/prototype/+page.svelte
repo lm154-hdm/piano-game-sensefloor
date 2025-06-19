@@ -8,6 +8,7 @@
     import {Mode, settings} from "$lib/backend/settings.svelte";
     import {Midi} from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
+    import {animationIsRunning} from "$lib/backend/animation.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -86,7 +87,7 @@
     }
 
     function onPressedKey(key: string) {
-        if (key == Animation.getNextNote()) {
+        if (!animationIsRunning && key == Animation.getNextNote()) {
             Animation.start();
         }
     }

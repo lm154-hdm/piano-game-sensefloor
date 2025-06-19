@@ -32,6 +32,7 @@ let nextNote = $state("");
 export function getNextNote() {
     return nextNote;
 }
+export let animationIsRunning: boolean = false;
 
 export async function initialise(
     keys: string[],
@@ -72,10 +73,12 @@ export async function initialise(
 export function start(): void {
     previousTime = performance.now();
     frameId = requestAnimationFrame(animationLoop);
+    animationIsRunning = true;
 }
 
 export function stop(): void {
     cancelAnimationFrame(frameId);
+    animationIsRunning = false;
 }
 
 export function reset(): void {
