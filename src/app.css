@@ -1,4 +1,24 @@
+:root {
+    --crop-left: 0px;
+    --crop-right: 0px;
+    --button-width: calc((100vw - var(--crop-left) - var(--crop-right)) / 6);
+
+    --background-color: white;
+}
+
+[data-colorscheme="monochrome"] {
+    --background-color: red;
+}
+
 body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: black;
     margin: 0;
     overflow: hidden;
+    user-select: none;
+}
+
+#application-container.align-center {
+    background-color: var(--background-color);
+    align-items: center !important;
 }

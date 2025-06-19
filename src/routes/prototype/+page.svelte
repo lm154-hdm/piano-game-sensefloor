@@ -22,7 +22,7 @@
 
         const midi = await loadMidi(settings.midiFilePath);
 
-        if (!(await Animation.initialise(keys, windowWidth, windowHeight, animationContainerHeight, midi))) {
+        if (!(await Animation.initialise(keys, windowHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
@@ -93,10 +93,10 @@
     }
 </script>
 
-<main bind:clientWidth={windowWidth} bind:clientHeight={windowHeight}>
+<div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
     <div bind:clientHeight={animationContainerHeight} class="animated-container">
         {#each Animation.visibleNotes as note}
-            <AnimatedKey width={note.width} height={note.height} top={note.top} left={note.left} />
+            <AnimatedKey height={note.height} top={note.top} left={note.left} />
         {/each}
     </div>
     <div class="piano-container">
@@ -104,10 +104,10 @@
             <PianoKey key={key} pressKey={() => onPressedKey(key)} />
         {/each}
     </div>
-</main>
+</div>
 
 <style>
-    main {
+    .prototype-container {
         width: 100vw;
         height: 100vh;
         display: flex;
@@ -125,7 +125,7 @@
 
     .piano-container {
         width: 100%;
-        height: 100px;
+        height: fit-content;
         display: flex;
         flex-direction: row;
         align-items: flex-end;

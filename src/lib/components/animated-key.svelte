@@ -1,22 +1,21 @@
 <script lang="ts">
-    const { width, height, top, left } = $props();
+    let { height, top, left }: { height: number; top: number; left: number } = $props();
 </script>
 
 <div
     class="animated-key"
     style="
-        --width: {width}px;
         --height: {height}px;
         --top: {top}px;
-        --left: {left}px;"
+        --left: {left};"
 ></div>
 
 <style>
     .animated-key {
         position: absolute;
-        width: var(--width);
+        width: var(--button-width);
         height: var(--height);
-        left: var(--left);
+        left: calc(var(--button-width) * var(--left));
         top: var(--top);
         background-color: darkblue;
     }

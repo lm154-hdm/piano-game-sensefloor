@@ -2,7 +2,6 @@ import {Mode, settings} from "./settings.svelte";
 import { Midi } from "@tonejs/midi";
 
 type NoteData = {
-    width: number;
     height: number;
     top: number;
     left: number;
@@ -36,7 +35,6 @@ export let animationIsRunning: boolean = false;
 
 export async function initialise(
     keys: string[],
-    windowWidth: number,
     windowHeight: number,
     animationContainerHeight: number,
     midi: Midi
@@ -44,22 +42,30 @@ export async function initialise(
     height = windowHeight;
     _animationContainerHeight = animationContainerHeight;
 
+    /*const res = await fetch(settings.midiFilePath);
+    if (!res) {
+        console.error("Failed to fetch midi file", settings.midiFilePath);
+        return false;
+    }
+    const data = await res.arrayBuffer();
+    const midi = new Midi(data);
+
+    const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
+    midi.header.setTempo(bpm);*/
+
     const beatsPerBar = midi.header.timeSignatures[0].timeSignature[0];
-    const secondsPerBeat = 60 / settings.bpm;
+    const secondsPerBeat = 60 / bpm;
     const secondsPerBar = beatsPerBar * secondsPerBeat;
     animationSpeed = animationContainerHeight / secondsPerBar;
 
     const track = midi.tracks[1];
     const trackDelay = track.notes[0].time;
-    //const noteWidth = windowWidth / getDimension().x;
-    const noteWidth = windowWidth / 6;
     for (const note of track.notes) {
         const height = note.duration * animationSpeed;
         notes.push({
-            width: noteWidth,
             height: height,
             top: -height,
-            left: keys.indexOf(note.name) * noteWidth, // Currently hardcoded, need a proper mapping system later on
+            left: keys.indexOf(note.name), // Currently hardcoded, need a proper mapping system later on
             startTime: note.time - trackDelay, // Subtract start time of first note to make it start immediately
             animationState: animationState.none,
             name: note.name,
@@ -118,7 +124,7 @@ function animationLoop(currentTime: number): void {
             visibleNotes.push(note);
         }
     }
-    const animationFinished = (visibleNotes.length == 0 && notes.length > 0 && notes[notes.length - 1].startTime < time)
+    const animationFinished = visibleNotes.length == 0 && notes.length > 0 && notes[notes.length - 1].startTime < time;
     if (!animationFinished) {
         frameId = requestAnimationFrame(animationLoop);
     }
