@@ -40,7 +40,7 @@ export const colorSchemes: ColorScheme[] = [
 export const settings: Settings = $state({
     midiFilePath: "AlleMeineEntchen.mid",
     speed: 100,
-    mode: Mode.Playback,
+    mode: Mode.Pause,
     colorSchemeId: "default",
     sensFloorConfig: {
         scaleX: 1,

@@ -1,5 +1,5 @@
 <script lang="ts">
-    let { text = "Zurück", slug }: { text: string; slug: string } = $props();
+    let { text = "Zurück", slug }: { text?: string; slug: string } = $props();
 </script>
 
 <a href={slug}>

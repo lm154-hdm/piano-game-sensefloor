@@ -42,19 +42,8 @@ export async function initialise(
     height = windowHeight;
     _animationContainerHeight = animationContainerHeight;
 
-    /*const res = await fetch(settings.midiFilePath);
-    if (!res) {
-        console.error("Failed to fetch midi file", settings.midiFilePath);
-        return false;
-    }
-    const data = await res.arrayBuffer();
-    const midi = new Midi(data);
-
-    const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
-    midi.header.setTempo(bpm);*/
-
     const beatsPerBar = midi.header.timeSignatures[0].timeSignature[0];
-    const secondsPerBeat = 60 / bpm;
+    const secondsPerBeat = 60 / midi.header.tempos[0].bpm;
     const secondsPerBar = beatsPerBar * secondsPerBeat;
     animationSpeed = animationContainerHeight / secondsPerBar;
 

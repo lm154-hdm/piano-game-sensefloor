@@ -65,7 +65,8 @@
         }
         const data = await res.arrayBuffer();
         const midi = new Midi(data);
-        midi.header.setTempo(settings.bpm);
+        const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
+        midi.header.setTempo(bpm);
         return midi;
     }
 
