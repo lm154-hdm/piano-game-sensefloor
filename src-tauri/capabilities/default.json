@@ -5,10 +5,18 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "core:path:default",
     "core:window:default",
     "core:window:allow-set-focus",
     "core:window:allow-set-fullscreen",
     "core:window:allow-show",
-    "opener:default"
+    "opener:default",
+    "fs:default",
+    "fs:allow-applocaldata-read",
+    "fs:allow-applocaldata-write",
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [{ "path": "$APPLOCALDATA/**" }]
+    }
   ]
 }

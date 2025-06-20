@@ -7,4 +7,4 @@
 
 Incoming...
 
-<BackButton slug="/admin" />
+<BackButton text="Zurück" slug="/admin" shouldSave={true} />

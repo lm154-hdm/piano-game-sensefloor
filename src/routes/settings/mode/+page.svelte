@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {Mode, settings} from "$lib/backend/settings.svelte";
+    import { Mode, settings } from "$lib/backend/settings.svelte";
     import BackButton from "$lib/components/back-button.svelte";
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container.svelte";
     import Title from "$lib/components/title.svelte";
@@ -9,14 +9,14 @@
 
 <LabelledSettingsContainer text="Aktueller Modus: {Mode[settings.mode]}">
     <button
-            onclick={() => {
+        onclick={() => {
             settings.mode = Mode.Playback;
         }}
     >
         Playback
     </button>
     <button
-            onclick={() => {
+        onclick={() => {
             settings.mode = Mode.Pause;
         }}
     >
@@ -24,7 +24,7 @@
     </button>
 </LabelledSettingsContainer>
 
-<BackButton slug="/settings" />
+<BackButton text="Speichern und zurück" slug="/settings" shouldSave={true} />
 
 <style>
     button {

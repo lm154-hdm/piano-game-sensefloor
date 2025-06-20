@@ -8,4 +8,4 @@
 <NavigationButton text="Geschwindigkeit" slug="/settings/difficulty" />
 <NavigationButton text="Farbschema" slug="/settings/colourscheme" />
 <NavigationButton text="Modus" slug="/settings/mode" />
-<BackButton slug="/" />
+<BackButton text="Zurück" slug="/" />

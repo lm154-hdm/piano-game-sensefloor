@@ -18,4 +18,4 @@
     {/each}
 </LabelledSettingsContainer>
 
-<BackButton slug="/settings" />
+<BackButton text="Speichern und zurück" slug="/settings" shouldSave={true} />

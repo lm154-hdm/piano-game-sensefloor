@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { load } from "$lib/backend/settings.svelte";
     import { getCurrentWindow } from "@tauri-apps/api/window";
+    import { onMount } from "svelte";
     import "../app.css";
 
     const { children } = $props();
@@ -10,6 +11,8 @@
         await window.setFullscreen(true);
         await window.show();
         await window.setFocus();
+
+        await load();
     });
 </script>
 

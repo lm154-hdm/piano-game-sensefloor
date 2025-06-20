@@ -1,9 +1,24 @@
 <script lang="ts">
-    let { text = "Zurück", slug }: { text?: string; slug: string } = $props();
+    import { save } from "$lib/backend/settings.svelte";
+
+    interface BackButtonProps {
+        text: string;
+        slug: string;
+        shouldSave?: boolean;
+    }
+
+    let { text, slug, shouldSave = true }: BackButtonProps = $props();
+
+    async function onClick(): Promise<void> {
+        if (shouldSave) {
+            console.log("Save");
+            await save();
+        }
+    }
 </script>
 
 <a href={slug}>
-    <button>{text}</button>
+    <button onclick={onClick}>{text}</button>
 </a>
 
 <style>
@@ -22,7 +37,7 @@
         font-size: 1.2em;
         background-color: var(--accent);
         color: var(--text);
-        border-radius:5%;
+        border-radius: 5%;
         border: 2px solid var(--background-color);
     }
 </style>
