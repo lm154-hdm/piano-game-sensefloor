@@ -10,7 +10,6 @@
     a {
         width: var(--button-width);
         aspect-ratio: 1 / 1;
-
     }
 
     button {
@@ -20,7 +19,7 @@
         font-size: 1.2em;
         background-color: var(--primary);
         color: var(--text-dark);
-        border-radius:5%;
+        border-radius: 5%;
         border: 2px solid var(--background-color);
     }
 </style>
