@@ -17,6 +17,8 @@
         height: var(--height);
         left: calc(var(--button-width) * var(--left));
         top: var(--top);
-        background-color: darkblue;
+        background-color: var(--primary);
+        border-radius:5%;
+        border: 2px solid var(--background-color);
     }
 </style>

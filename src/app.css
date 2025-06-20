@@ -3,11 +3,25 @@
     --crop-right: 0px;
     --button-width: calc((100vw - var(--crop-left) - var(--crop-right)) / 6);
 
-    --background-color: white;
+    --correct-note: var(--primary);
+    --false-note: var(--accent);
+
+    --background-color: black;
+    --text: #ffeef1;
+    --text-dark: #150003;
+    --background: #000000;
+    --primary: #ff5f78;
+    --secondary: #ffbcc7;
+    --accent: #9e1038;
 }
 
-[data-colorscheme="monochrome"] {
-    --background-color: red;
+[data-colorscheme="blueYellow"] {
+    --text: #fff5ee;
+    --text-dark: #00252f;
+    --background: #000000;
+    --primary: #5bdbff;
+    --secondary: #ffdcad;
+    --accent: #8a5b1a;
 }
 
 body {

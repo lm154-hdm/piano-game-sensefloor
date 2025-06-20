@@ -23,11 +23,11 @@ type SensFloorConfig = {
 export const colorSchemes: ColorScheme[] = [
     {
         id: "default",
-        displayText: "Default",
+        displayText: "Berry",
     },
     {
-        id: "monochrome",
-        displayText: "Monochromatic",
+        id: "blueYellow",
+        displayText: "Beach",
     },
 ];
 

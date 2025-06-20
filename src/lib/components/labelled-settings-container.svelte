@@ -11,6 +11,7 @@
 
 <style>
     .labelled-settings-container {
+        color: var(--text);
         width: 100vw;
         display: flex;
         flex-direction: column;

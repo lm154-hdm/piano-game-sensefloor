@@ -69,6 +69,9 @@
 <BackButton slug="/admin" />
 
 <style>
+    * {
+        color: var(--text);
+    }
     .sensfloor-alignment-container {
         display: flex;
         flex-direction: column;
