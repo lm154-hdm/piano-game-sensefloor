@@ -1,62 +1,24 @@
 <script lang="ts">
-    import { settings, colorSchemes } from "$lib/backend/settings.svelte";
+    import { goto } from "$app/navigation";
+    import NavigationButton from "$lib/components/navigation-button.svelte";
+    import Title from "$lib/components/title.svelte";
+    import { onDestroy, onMount } from "svelte";
 
-    function onChangeBpm(event: Event): void {
-        console.log(`Changed bpm to ${settings.bpm}`);
-    }
+    onMount(() => {
+        window.addEventListener("keydown", onKeyDown);
+    });
 
-    function onColorSchemeChange(event: Event): void {
-        console.log(`Changed color scheme to '${settings.colorSchemeId}'`);
+    onDestroy(() => {
+        window.removeEventListener("keydown", onKeyDown);
+    });
+
+    function onKeyDown(event: KeyboardEvent): void {
+        if (event.key === "1") {
+            goto("/admin");
+        }
     }
 </script>
 
-<main>
-    <a href="/prototype" role="button">Play</a>
-    <hr />
-    <div>
-        <label for="bpm-input">Bpm: {settings.bpm}</label>
-        <br />
-        <input
-            id="bpm-input"
-            name="bpm-input"
-            type="range"
-            min="20"
-            max="200"
-            step="1"
-            defaultValue="120"
-            onchange={onChangeBpm}
-            bind:value={settings.bpm}
-        />
-    </div>
-    <hr />
-    <div>
-        <label for="color-scheme-select">Color scheme: {settings.colorSchemeId}</label>
-        <br />
-        <select
-            id="bpm-input"
-            name="color-scheme-select"
-            onchange={onColorSchemeChange}
-            bind:value={settings.colorSchemeId}
-        >
-            {#each colorSchemes as colorScheme}
-                <option value={colorScheme.id}>{colorScheme.displayText}</option>
-            {/each}
-        </select>
-    </div>
-</main>
-
-<style>
-    main {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        width: 100vw;
-        height: 100vh;
-    }
-
-    hr {
-        width: 200px;
-    }
-</style>
+<Title text="Menü" />
+<NavigationButton text="Spielen" slug="/prototype" />
+<NavigationButton text="Einstellungen" slug="/settings" />

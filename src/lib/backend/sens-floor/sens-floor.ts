@@ -129,7 +129,7 @@ export function calculateNormalisedCoordinates(
     return applyMappingToCoordinates(result.x, result.y);
 }
 
-function applyMappingToCoordinates(x: number, y: number): { x: number; y: number } {
+export function applyMappingToCoordinates(x: number, y: number): { x: number; y: number } {
     if (settings.sensFloorConfig.flipX) {
         x = 1.0 - x;
     }
