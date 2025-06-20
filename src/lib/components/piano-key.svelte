@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import * as Tone from "tone";
 
-    const { key } = $props();
+    let { key, pressKey } = $props();
 
     let synth: Tone.Synth;
 
@@ -12,6 +12,7 @@
 
     function play(): void {
         synth.triggerAttackRelease(key, "4n");
+        pressKey();
     }
 </script>
 

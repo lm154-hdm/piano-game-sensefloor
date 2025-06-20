@@ -2,6 +2,7 @@ type Settings = {
     midiFilePath: string;
     speed: number;
     colorSchemeId: string;
+    mode: Mode;
     sensFloorConfig: SensFloorConfig;
 };
 
@@ -20,6 +21,11 @@ type SensFloorConfig = {
     cropRight: number;
 };
 
+export enum Mode {
+    Playback = 0,
+    Pause = 1
+}
+
 export const colorSchemes: ColorScheme[] = [
     {
         id: "default",
@@ -34,6 +40,7 @@ export const colorSchemes: ColorScheme[] = [
 export const settings: Settings = $state({
     midiFilePath: "AlleMeineEntchen.mid",
     speed: 100,
+    mode: Mode.Pause,
     colorSchemeId: "default",
     sensFloorConfig: {
         scaleX: 1,

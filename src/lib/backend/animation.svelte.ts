@@ -1,4 +1,4 @@
-import { settings } from "./settings.svelte";
+import {Mode, settings} from "./settings.svelte";
 import { Midi } from "@tonejs/midi";
 
 type NoteData = {
@@ -7,6 +7,8 @@ type NoteData = {
     left: number;
     startTime: number;
     animationState: number;
+    name: string;
+    stopped: boolean;
 };
 
 // We need to do the animation state with an object like this because enums are discouraged in .svelte files
@@ -17,6 +19,7 @@ const animationState = {
 };
 
 let height: number = 0;
+let _animationContainerHeight: number = 0;
 let previousTime: number = 0;
 let time: number = 0;
 let animationSpeed: number = 0;
@@ -24,27 +27,23 @@ let frameId: number = 0;
 const notes: NoteData[] = [];
 
 export const visibleNotes: NoteData[] = $state([]);
+let nextNote = $state("");
+export function getNextNote() {
+    return nextNote;
+}
+export let animationIsRunning: boolean = false;
 
 export async function initialise(
     keys: string[],
     windowHeight: number,
     animationContainerHeight: number,
+    midi: Midi
 ): Promise<boolean> {
     height = windowHeight;
-
-    const res = await fetch(settings.midiFilePath);
-    if (!res) {
-        console.error("Failed to fetch midi file", settings.midiFilePath);
-        return false;
-    }
-    const data = await res.arrayBuffer();
-    const midi = new Midi(data);
-
-    const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
-    midi.header.setTempo(bpm);
+    _animationContainerHeight = animationContainerHeight;
 
     const beatsPerBar = midi.header.timeSignatures[0].timeSignature[0];
-    const secondsPerBeat = 60 / bpm;
+    const secondsPerBeat = 60 / midi.header.tempos[0].bpm;
     const secondsPerBar = beatsPerBar * secondsPerBeat;
     animationSpeed = animationContainerHeight / secondsPerBar;
 
@@ -58,6 +57,8 @@ export async function initialise(
             left: keys.indexOf(note.name), // Currently hardcoded, need a proper mapping system later on
             startTime: note.time - trackDelay, // Subtract start time of first note to make it start immediately
             animationState: animationState.none,
+            name: note.name,
+            stopped: false
         });
     }
 
@@ -67,10 +68,17 @@ export async function initialise(
 export function start(): void {
     previousTime = performance.now();
     frameId = requestAnimationFrame(animationLoop);
+    animationIsRunning = true;
 }
 
 export function stop(): void {
     cancelAnimationFrame(frameId);
+    animationIsRunning = false;
+}
+
+export function reset(): void {
+    notes.length = 0;
+    visibleNotes.length = 0;
 }
 
 function animationLoop(currentTime: number): void {
@@ -86,6 +94,15 @@ function animationLoop(currentTime: number): void {
             note.animationState = animationState.finished;
             visibleNotes.splice(visibleNotes.indexOf(note), 1);
         }
+        if (settings.mode == Mode.Pause
+            && note.top >= _animationContainerHeight - note.height
+            && !note.stopped) {
+                nextNote = note.name;
+                stop();
+                note.stopped = true;
+                return;
+        }
+
     }
 
     // Checks which keys should become visible

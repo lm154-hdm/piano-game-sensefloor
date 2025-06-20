@@ -5,7 +5,10 @@
     import * as Animation from "$lib/backend/animation.svelte";
     import AnimatedKey from "$lib/components/animated-key.svelte";
     import PianoKey from "$lib/components/piano-key.svelte";
-    import { settings } from "$lib/backend/settings.svelte";
+    import {Mode, settings} from "$lib/backend/settings.svelte";
+    import {Midi} from "@tonejs/midi";
+    import piano from "$lib/PianoSampler";
+    import {animationIsRunning} from "$lib/backend/animation.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -17,7 +20,9 @@
         SensFloor.initialise(8, 6);
         SensFloor.connect("192.168.178.22", 8000);
 
-        if (!(await Animation.initialise(keys, windowHeight, animationContainerHeight))) {
+        const midi = await loadMidi(settings.midiFilePath);
+
+        if (!(await Animation.initialise(keys, windowHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
@@ -28,22 +33,63 @@
                 const y = event.normalisedY * windowHeight * settings.sensFloorConfig.scaleY;
                 clickAtPosition(x, y);
             });
-            console.log("added listeners");
         });
 
+        scheduleSong(midi);
         Animation.start();
+        if (settings.mode == Mode.Playback) {
+            Tone.getTransport().start();
+        }
     });
 
     onDestroy(() => {
         SensFloor.removeAllListeners();
         SensFloor.disconnect();
         Animation.stop();
+        Animation.reset(); // doesn't work properly
+        Tone.getTransport().stop();
+        Tone.getTransport().cancel();  // works
     });
 
     function clickAtPosition(x: number, y: number): void {
         const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
         if (element) {
             element.click();
+        }
+    }
+
+    async function loadMidi(path: string): Promise<Midi> {
+        const res = await fetch(path);
+        if (!res) {
+            console.error("Failed to fetch midi file", settings.midiFilePath);
+        }
+        const data = await res.arrayBuffer();
+        const midi = new Midi(data);
+        const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
+        midi.header.setTempo(bpm);
+        return midi;
+    }
+
+    function scheduleSong(midi: Midi) {
+        // const firstNoteTime = midi.tracks[1].notes[0].time;
+        midi.tracks.forEach((track) => {
+            track.notes.forEach((note) => {
+                Tone.getTransport().schedule((time) => {
+                    // time = When your scheduled event fires
+                    piano.triggerAttackRelease(
+                        note.name,
+                        note.duration,
+                        time, // + now ?
+                        note.velocity - 0.3,
+                    );
+                }, note.time);
+            });
+        });
+    }
+
+    function onPressedKey(key: string) {
+        if (!animationIsRunning && key == Animation.getNextNote()) {
+            Animation.start();
         }
     }
 </script>
@@ -56,7 +102,7 @@
     </div>
     <div class="piano-container">
         {#each keys as key}
-            <PianoKey {key} />
+            <PianoKey key={key} pressKey={() => onPressedKey(key)} />
         {/each}
     </div>
 </div>
