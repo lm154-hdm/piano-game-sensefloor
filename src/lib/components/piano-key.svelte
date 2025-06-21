@@ -36,20 +36,21 @@
         // Set color of key & note
         const key = keys.find(k => k.name === keyName)!;
         console.log(key.color)
-        if (nextNote
-            && key.name === nextNote.name
-            && !nextNote.wasHit) {
+        if (nextNote && key.name === nextNote.name && !nextNote.wasHit) {
             nextNote.color = colors.correctNote;
             nextNote.wasHit = true;
             key.color = colors.correctNote;
             score.correctlyPressed++;
             score.totalCount++;
-            Tone.getContext().lookAhead = 0;
-            piano.triggerAttackRelease(keyName, duration == 0 ? "4n" : duration);
+            if (settings.mode !== Mode.Playback) {
+                piano.triggerAttackRelease(keyName, duration == 0 ? "4n" : duration);
+            }
         } else {
             key.color = colors.falseNote;
             score.totalCount++;
-            piano.triggerAttackRelease("C2", duration == 0 ? "4n" : duration,  Tone.now(), 2);
+            if (settings.mode !== Mode.Playback) {
+                piano.triggerAttackRelease("C2", duration == 0 ? "4n" : duration, Tone.now(), 2);
+            }
         }
 
     }

@@ -15,6 +15,7 @@
     let animationContainerHeight: number = $state(0);
 
     onMount(async () => {
+        Tone.getContext().lookAhead = 0;
         SensFloor.initialise(8, 6);
         SensFloor.connect("192.168.178.22", 8000);
 
