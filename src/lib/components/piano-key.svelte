@@ -3,8 +3,11 @@
     import * as Tone from "tone";
 
     import * as Animation from "$lib/backend/animation.svelte";
+    import {Mode, settings} from "$lib/backend/settings.svelte";
+    import {animationIsRunning} from "$lib/backend/animation.svelte";
+    import {colors, keys, score} from "$lib/backend/ui-state.svelte";
 
-    let { keyName, color, pressKey }: { keyName: string, color: string, pressKey: () => void }  = $props();
+    let { keyName, color}: { keyName: string, color: string }  = $props();
 
     let synth: Tone.Synth;
 
@@ -14,16 +17,40 @@
 
     function play(): void {
         let duration: number = 0;
-        // für playback mode ?
-        const nextNote = Animation.getNextNote();
+        const nextNote = Animation.getNextNote();  // gets actual reference
         if (nextNote && keyName === nextNote.name) {
             duration = nextNote.duration;
         }
+        // Play sound
         synth.triggerAttackRelease(keyName, duration == 0 ? "4n" : duration);
+        if (settings.mode === Mode.Pause
+            && !animationIsRunning
+            && keyName == Animation.getNextNote()?.name) {
+            Animation.start();
+        }
+        // Reset color of previous clicked key
+        const previousColoredKey = keys.find(k => k.color !== "white"); // default key color
+        if (previousColoredKey && previousColoredKey.name !== keyName) {
+            previousColoredKey.color = 'white';
+        }
+        // Set color of key & note
+        const key = keys.find(k => k.name === keyName)!;
+        console.log(key.color)
+        if (nextNote
+            && key.name === nextNote.name
+            && !nextNote.wasHit) {
+            nextNote.color = colors.correctNote;
+            nextNote.wasHit = true;
+            key.color = colors.correctNote;
+            score.correctlyPressed++;
+            score.totalCount++;
+            console.log("ayeee")
+        } else {
+            key.color = colors.falseNote;
+            score.totalCount++;
+            console.log("fail")
+        }
 
-
-
-        pressKey();
     }
 </script>
 

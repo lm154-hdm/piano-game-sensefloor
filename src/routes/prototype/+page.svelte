@@ -8,8 +8,7 @@
     import {Mode, settings} from "$lib/backend/settings.svelte";
     import {Midi} from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
-    import {animationIsRunning} from "$lib/backend/animation.svelte";
-    import {keys, type KeyData, colors} from "$lib/backend/ui-state.svelte";
+    import {keys} from "$lib/backend/ui-state.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -36,7 +35,7 @@
 
         scheduleSong(midi);
         Animation.start();
-        if (settings.mode == Mode.Playback) {
+        if (settings.mode === Mode.Playback) {
             Tone.getTransport().start();
         }
     });
@@ -70,8 +69,9 @@
     }
 
     function scheduleSong(midi: Midi) {
-        // const firstNoteTime = midi.tracks[1].notes[0].time;
+        // TD: use trackNumber of chose track
         midi.tracks.forEach((track) => {
+            //score.totalCount = track.notes.length;
             track.notes.forEach((note) => {
                 Tone.getTransport().schedule((time) => {
                     // time = When your scheduled event fires
@@ -86,27 +86,6 @@
         });
     }
 
-    function onPressedKey(keyName: string) {
-        if (settings.mode === Mode.Pause
-            && !animationIsRunning
-            && keyName == Animation.getNextNote()?.name) {
-            Animation.start();
-        }
-
-        const previousColoredKey = keys.find(k => k.color !== "white"); // default key color
-        if (previousColoredKey) {
-            previousColoredKey.color = 'white';
-        }
-
-        const nextNote = Animation.getNextNote();  // gets actual reference
-        const key = keys.find(k => k.name === keyName)!;
-        if (nextNote && key.name === nextNote.name && key.color === "white") {
-            nextNote.color = colors.correctNote;
-            key.color = colors.correctNote;
-        } else {
-            key.color = colors.falseNote;
-        }
-    }
 </script>
 
 <div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
@@ -117,7 +96,7 @@
     </div>
     <div class="piano-container">
         {#each keys as key}
-            <PianoKey keyName={key.name} color={key.color} pressKey={() => onPressedKey(key.name)} />
+            <PianoKey keyName={key.name} color={key.color} />
         {/each}
     </div>
 </div>

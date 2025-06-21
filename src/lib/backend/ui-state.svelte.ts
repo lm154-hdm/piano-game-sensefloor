@@ -16,5 +16,10 @@ export const colors = {
     falseNote: getVar('--false-note'),
 };
 
+export const score = {
+    totalCount: 0,
+    correctlyPressed: 0
+}
+
 
 

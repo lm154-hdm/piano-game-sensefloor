@@ -1,6 +1,7 @@
 import { Midi } from "@tonejs/midi";
 import { keys, colors } from "./ui-state.svelte";
 import {Mode, settings} from "$lib/backend/settings.svelte";
+import {goto} from "$app/navigation";
 
 type NoteData = {
     height: number;
@@ -11,6 +12,7 @@ type NoteData = {
     name: string;
     stopped: boolean;
     color: string;
+    wasHit: boolean;  // if the note was already pressed at the correct time
 };
 
 let _windowHeight: number = 0;
@@ -57,6 +59,7 @@ export async function initialise(
             name: note.name,
             stopped: false,
             color: colors.primary,
+            wasHit: false,
         });
     }
     return true;
@@ -95,9 +98,11 @@ function animationLoop(currentTime: number): void {
         if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
             if (note.top >= _animationContainerHeight - note.height) {
-                nextNote = note;
+                if (note.name != nextNote?.name || note.startTime != nextNote?.startTime) {
+                    nextNote = note;
+                }
                 if (settings.mode === Mode.Pause && !note.stopped) {
-                    const aKey = keys.find(key2 => key2.color === colors.correctNote);
+                    const aKey = keys.find(key2 => key2.color !== "white");
                     if (aKey) {
                         aKey.color = 'white';
                     }
@@ -110,7 +115,8 @@ function animationLoop(currentTime: number): void {
     const lastNote = notes[notes.length - 1];
     const animationFinished = time > (lastNote.startTime + lastNote.duration + (_windowHeight / animationSpeed));
     if (animationFinished) {
-        shouldStop = true;
+        stop();
+        goto('/prototype/result');
     } else {
         frameId = requestAnimationFrame(animationLoop);
     }
