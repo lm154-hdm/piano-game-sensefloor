@@ -4,10 +4,14 @@
     --button-width: calc((100vw - var(--crop-left) - var(--crop-right)) / 6);
 
     --background-color: white;
+    --correct-note: green;
+    --false-note: red;
 }
 
-[data-colorscheme="monochrome"] {
+:root[data-colorscheme="monochrome"] {
     --background-color: red;
+    --correct-note: yellow;
+    --false-note: blue;
 }
 
 body {

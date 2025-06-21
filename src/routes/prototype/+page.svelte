@@ -8,13 +8,12 @@
     import {Mode, settings} from "$lib/backend/settings.svelte";
     import {Midi} from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
-    import {animationIsRunning} from "$lib/backend/animation.svelte";
+    import {animationIsRunning, visibleNotes} from "$lib/backend/animation.svelte";
+    import {keys, type KeyData} from "$lib/backend/ui-state.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
     let animationContainerHeight: number = $state(0);
-
-    const keys: string[] = ["D4", "E4", "F#4", "G4", "A4", "B4"];
 
     onMount(async () => {
         SensFloor.initialise(8, 6);
@@ -22,7 +21,7 @@
 
         const midi = await loadMidi(settings.midiFilePath);
 
-        if (!(await Animation.initialise(keys, windowHeight, animationContainerHeight, midi))) {
+        if (!(await Animation.initialise(keys.map(k => k.name), windowHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
@@ -87,9 +86,33 @@
         });
     }
 
-    function onPressedKey(key: string) {
-        if (!animationIsRunning && key == Animation.getNextNote()) {
+    function onPressedKey(keyName: string) {
+        const rootStyles = getComputedStyle(document.documentElement);
+
+        if (settings.mode === Mode.Pause
+            && !animationIsRunning
+            && keyName == Animation.getNextNote()?.name) {
             Animation.start();
+        }
+
+        const previousWrongKey = keys.find(k => k.color === 'red');
+        if (previousWrongKey) {
+            previousWrongKey.color = 'white';
+        }
+
+        // BEFORE
+        const nextNote = Animation.getNextNote();  // gets actual reference
+        const key = keys.find(k => k.name === keyName)!;
+        console.log(nextNote)
+        console.log(key)
+        if (nextNote && key.name === nextNote.name && key.color === "white") {
+            const correctColor = rootStyles.getPropertyValue('--correct-note').trim();
+            nextNote.color = correctColor;
+            key.color = correctColor;
+            console.log("GREEN TIME", Animation.getTime())
+        } else {
+            const falseColor = rootStyles.getPropertyValue('--false-note').trim();
+            key.color = falseColor;
         }
     }
 </script>
@@ -97,12 +120,12 @@
 <div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
     <div bind:clientHeight={animationContainerHeight} class="animated-container">
         {#each Animation.visibleNotes as note}
-            <AnimatedKey height={note.height} top={note.top} left={note.left} />
+            <AnimatedKey height={note.height} top={note.top} left={note.left} color={note.color} />
         {/each}
     </div>
     <div class="piano-container">
         {#each keys as key}
-            <PianoKey key={key} pressKey={() => onPressedKey(key)} />
+            <PianoKey keyName={key.name} color={key.color} pressKey={() => onPressedKey(key.name)} />
         {/each}
     </div>
 </div>

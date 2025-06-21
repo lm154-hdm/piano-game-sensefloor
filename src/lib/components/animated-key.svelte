@@ -1,5 +1,5 @@
 <script lang="ts">
-    let { height, top, left }: { height: number; top: number; left: number } = $props();
+    let { height, top, left, color }: { height: number; top: number; left: number; color: string } = $props();
 </script>
 
 <div
@@ -7,7 +7,8 @@
     style="
         --height: {height}px;
         --top: {top}px;
-        --left: {left};"
+        --left: {left};
+        --color: {color}"
 ></div>
 
 <style>
@@ -16,7 +17,8 @@
         width: var(--button-width);
         height: var(--height);
         left: calc(var(--button-width) * var(--left));
-        top: var(--top);
-        background-color: darkblue;
+        /*top: var(--top);*/
+        transform: translateY(var(--top));
+        background-color: var(--color);
     }
 </style>
