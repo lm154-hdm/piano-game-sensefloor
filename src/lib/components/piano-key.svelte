@@ -6,6 +6,7 @@
     import {Mode, settings} from "$lib/backend/settings.svelte";
     import {animationIsRunning} from "$lib/backend/animation.svelte";
     import {colors, keys, score} from "$lib/backend/ui-state.svelte";
+    import piano from "$lib/PianoSampler";
 
     let { keyName, color}: { keyName: string, color: string }  = $props();
 
@@ -21,8 +22,7 @@
         if (nextNote && keyName === nextNote.name) {
             duration = nextNote.duration;
         }
-        // Play sound
-        synth.triggerAttackRelease(keyName, duration == 0 ? "4n" : duration);
+        // Continue Animation
         if (settings.mode === Mode.Pause
             && !animationIsRunning
             && keyName == Animation.getNextNote()?.name) {
@@ -44,11 +44,12 @@
             key.color = colors.correctNote;
             score.correctlyPressed++;
             score.totalCount++;
-            console.log("ayeee")
+            Tone.getContext().lookAhead = 0;
+            piano.triggerAttackRelease(keyName, duration == 0 ? "4n" : duration);
         } else {
             key.color = colors.falseNote;
             score.totalCount++;
-            console.log("fail")
+            piano.triggerAttackRelease("C2", duration == 0 ? "4n" : duration,  Tone.now(), 2);
         }
 
     }
