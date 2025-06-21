@@ -14,7 +14,7 @@
 
     function play(): void {
         let duration: number = 0;
-
+        // für playback mode ?
         const nextNote = Animation.getNextNote();
         if (nextNote && keyName === nextNote.name) {
             duration = nextNote.duration;
@@ -37,7 +37,8 @@
         aspect-ratio: 1 / 1;
         font-size: 30px;
         font-weight: bold;
-        background-color: var(--secondary);
+        /*background-color: var(--secondary);*/
+        background-color: var(--color);
         color: var(--text-dark);
         border-radius:5%;
         border: 2px solid var(--background-color);

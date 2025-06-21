@@ -9,7 +9,7 @@
     import {Midi} from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
     import {animationIsRunning} from "$lib/backend/animation.svelte";
-    import {keys, type KeyData} from "$lib/backend/ui-state.svelte";
+    import {keys, type KeyData, colors} from "$lib/backend/ui-state.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -87,29 +87,24 @@
     }
 
     function onPressedKey(keyName: string) {
-        const rootStyles = getComputedStyle(document.documentElement);
-
         if (settings.mode === Mode.Pause
             && !animationIsRunning
             && keyName == Animation.getNextNote()?.name) {
             Animation.start();
         }
 
-        const previousWrongKey = keys.find(k => k.color === 'red');
-        if (previousWrongKey) {
-            previousWrongKey.color = 'white';
+        const previousColoredKey = keys.find(k => k.color !== "white"); // default key color
+        if (previousColoredKey) {
+            previousColoredKey.color = 'white';
         }
 
-        // BEFORE
         const nextNote = Animation.getNextNote();  // gets actual reference
         const key = keys.find(k => k.name === keyName)!;
         if (nextNote && key.name === nextNote.name && key.color === "white") {
-            const correctColor = rootStyles.getPropertyValue('--correct-note').trim();
-            nextNote.color = correctColor;
-            key.color = correctColor;
+            nextNote.color = colors.correctNote;
+            key.color = colors.correctNote;
         } else {
-            const falseColor = rootStyles.getPropertyValue('--false-note').trim();
-            key.color = falseColor;
+            key.color = colors.falseNote;
         }
     }
 </script>

@@ -1,6 +1,6 @@
-import {Mode, settings} from "./settings.svelte";
 import { Midi } from "@tonejs/midi";
-import { keys } from "./ui-state.svelte";
+import { keys, colors } from "./ui-state.svelte";
+import {Mode, settings} from "$lib/backend/settings.svelte";
 
 type NoteData = {
     height: number;
@@ -56,7 +56,7 @@ export async function initialise(
             duration: note.duration,
             name: note.name,
             stopped: false,
-            color: 'darkblue'
+            color: colors.primary,
         });
     }
     return true;
@@ -90,31 +90,31 @@ function animationLoop(currentTime: number): void {
     const deltaTime = (currentTime - previousTime) / 1000.0;
     previousTime = currentTime;
     time += deltaTime;
-
     let shouldStop = false;
-
     for (const note of notes) {
         if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
-            if (note.top >= _animationContainerHeight - note.height && !note.stopped) {
-                const aKey = keys.find(key2 => key2.color !== "white");
-                if (aKey) {
-                    aKey.color = 'white';
-                }
+            if (note.top >= _animationContainerHeight - note.height) {
                 nextNote = note;
-                shouldStop = true;
-                note.stopped = true;
+                if (settings.mode === Mode.Pause && !note.stopped) {
+                    const aKey = keys.find(key2 => key2.color === colors.correctNote);
+                    if (aKey) {
+                        aKey.color = 'white';
+                    }
+                    shouldStop = true;
+                    note.stopped = true;
+                }
             }
         }
     }
-
     const lastNote = notes[notes.length - 1];
     const animationFinished = time > (lastNote.startTime + lastNote.duration + (_windowHeight / animationSpeed));
     if (animationFinished) {
-        stop();
+        shouldStop = true;
     } else {
         frameId = requestAnimationFrame(animationLoop);
     }
-
-    if (shouldStop) stop();
+    if (shouldStop) {
+        stop();
+    }
 }

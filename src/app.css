@@ -3,7 +3,8 @@
     --crop-right: 0px;
     --button-width: calc((100vw - var(--crop-left) - var(--crop-right)) / 6);
 
-    --correct-note: var(--primary);
+    /*--correct-note: var(--primary);*/
+    --correct-note: yellow;
     --false-note: var(--accent);
 
     --background-color: black;
@@ -13,9 +14,6 @@
     --primary: #ff5f78;
     --secondary: #ffbcc7;
     --accent: #9e1038;
-
-    -correct-note: green;
-    --false-note: red;
 }
 
 [data-colorscheme="blueYellow"] {
