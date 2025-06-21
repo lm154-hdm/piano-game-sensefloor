@@ -125,19 +125,9 @@
             <PianoKey keyName={key.name} color={key.color} pressKey={() => onPressedKey(key.name)} />
         {/each}
     </div>
-    <div class="buttons">
-        <button onclick={() => Animation.stop()}>Stop</button>
-        <button onclick={() => Animation.resume()}>Resume</button>
-
-    </div>
 </div>
 
 <style>
-    .buttons {
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
     .prototype-container {
         width: 100vw;
         height: 100vh;

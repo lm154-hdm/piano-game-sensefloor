@@ -8,18 +8,9 @@ type NoteData = {
     left: number;
     startTime: number;
     duration: number;
-    animationState: number;
     name: string;
     stopped: boolean;
     color: string;
-};
-
-// We need to do the animation state with an object like this because enums are discouraged in .svelte files
-const animationState = {
-    none: 0,
-    running: 1,
-    invisibleBehindKeys: 2,
-    finished: 3,
 };
 
 let _windowHeight: number = 0;
@@ -28,9 +19,6 @@ let previousTime: number = 0;
 let animationSpeed: number = 0;
 let frameId: number = 0;
 export const notes: NoteData[] = $state([]);
-/*
-export const visibleNotes: NoteData[] = $state([]);
-*/
 export let activeNote: NoteData;
 let time: number = 0;
 export function getTime(): number {
@@ -41,8 +29,6 @@ export function getNextNote() {
     return nextNote;
 }
 export let animationIsRunning: boolean = false;
-
-let atx = 0;
 
 export async function initialise(
     keys: string[],
@@ -67,9 +53,7 @@ export async function initialise(
             top: -height,
             left: keys.indexOf(note.name), // Currently hardcoded, need a proper mapping system later on
             startTime: note.time - trackDelay, // Subtract start time of first note to make it start immediately
-            // Subtract start time of first note to make it start immediately
             duration: note.duration,
-            animationState: animationState.none,
             name: note.name,
             stopped: false,
             color: 'darkblue'
@@ -102,48 +86,35 @@ export function reset(): void {
     notes.length = 0;
 }
 
-function
-
-animationLoop(currentTime: number): void {
-    // Calculate time values
-    const deltaTime = (currentTime - previousTime) / 1000.0;  // // 0.01669999999999999
+function animationLoop(currentTime: number): void {
+    const deltaTime = (currentTime - previousTime) / 1000.0;
     previousTime = currentTime;
     time += deltaTime;
 
     let shouldStop = false;
 
-    // Animate visible keys
     for (const note of notes) {
-
-        const noteStart = time >= note.startTime;
-        if (noteStart) {
+        if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
-            if (note.animationState === animationState.none) {
-                note.animationState = animationState.running;
+            if (note.top >= _animationContainerHeight - note.height && !note.stopped) {
+                const aKey = keys.find(key2 => key2.color !== "white");
+                if (aKey) {
+                    aKey.color = 'white';
+                }
+                nextNote = note;
+                shouldStop = true;
+                note.stopped = true;
             }
-        }
-
-        if (note.top >= _animationContainerHeight - note.height
-            && !note.stopped) {
-            const aKey = keys.find(key2 => key2.color !== "white");
-            if (aKey && note.animationState == animationState.running) {
-                aKey.color = 'white';
-                note.animationState = animationState.invisibleBehindKeys;
-                console.log("STOP")
-            }
-            nextNote = note;
-            shouldStop = true;
-            note.stopped = true;
         }
     }
 
     const lastNote = notes[notes.length - 1];
-    const animationFinished = time > lastNote.startTime + lastNote.duration + (_windowHeight / animationSpeed);
-    if (!animationFinished) {
+    const animationFinished = time > (lastNote.startTime + lastNote.duration + (_windowHeight / animationSpeed));
+    if (animationFinished) {
+        stop();
+    } else {
         frameId = requestAnimationFrame(animationLoop);
     }
 
-    if (shouldStop) {
-        stop();
-    }
+    if (shouldStop) stop();
 }
