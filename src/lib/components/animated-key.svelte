@@ -15,10 +15,13 @@
     .animated-key {
         position: absolute;
         width: var(--button-width);
-        height: var(--height); /**/
+        height: var(--height);
         left: calc(var(--button-width) * var(--left));
-        /*top: var(--top);*/
+        top: var(--top);
         transform: translateY(var(--top)); /**/
-        background-color: var(--color);
+
+        background-color: var(--primary);
+        border-radius:5%;
+        border: 2px solid var(--background-color);
     }
 </style>

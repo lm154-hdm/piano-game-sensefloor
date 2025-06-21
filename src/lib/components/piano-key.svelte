@@ -37,8 +37,9 @@
         aspect-ratio: 1 / 1;
         font-size: 30px;
         font-weight: bold;
-        background-color: var(--color);
-        /*border: 5px solid var(--color, gray);
-        background-color: transparent;*/
+        background-color: var(--secondary);
+        color: var(--text-dark);
+        border-radius:5%;
+        border: 2px solid var(--background-color);
     }
 </style>

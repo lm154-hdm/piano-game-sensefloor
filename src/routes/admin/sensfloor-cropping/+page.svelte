@@ -7,4 +7,4 @@
 <Title text="Adminpanel - SensFloor zuschneiden" />
 <SensfloorCroppingVerticalHandle isLeftHandle={true} />
 <SensfloorCroppingVerticalHandle isLeftHandle={false} />
-<BackButton slug="/admin" />
+<BackButton text="Zurück" slug="/admin" shouldSave={true} />

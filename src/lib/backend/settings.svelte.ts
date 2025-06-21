@@ -1,3 +1,6 @@
+import * as Fs from "@tauri-apps/plugin-fs";
+import * as Path from "@tauri-apps/api/path";
+
 type Settings = {
     midiFilePath: string;
     speed: number;
@@ -23,19 +26,51 @@ type SensFloorConfig = {
 
 export enum Mode {
     Playback = 0,
-    Pause = 1
+    Pause = 1,
 }
 
 export const colorSchemes: ColorScheme[] = [
     {
         id: "default",
-        displayText: "Default",
+        displayText: "Berry",
     },
     {
-        id: "monochrome",
-        displayText: "Monochromatic",
+        id: "blueYellow",
+        displayText: "Beach",
     },
 ];
+
+async function getSettingsPath(): Promise<string> {
+    const dataPath = await Path.appLocalDataDir();
+    return await Path.join(dataPath, "settings.json");
+}
+
+export async function load(): Promise<void> {
+    const path = await getSettingsPath();
+
+    if (await Fs.exists(path)) {
+        const data = await Fs.readTextFile(path);
+        const json = JSON.parse(data) as Settings;
+
+        // Set loaded settings
+        settings.midiFilePath = json.midiFilePath;
+        settings.speed = json.speed;
+        settings.mode = json.mode;
+        settings.colorSchemeId = json.colorSchemeId;
+        settings.sensFloorConfig = json.sensFloorConfig;
+
+        // Apply loaded settings
+        document.documentElement.setAttribute("data-colorscheme", settings.colorSchemeId);
+    } else {
+        await save();
+    }
+}
+
+export async function save(): Promise<void> {
+    const path = await getSettingsPath();
+    const content = JSON.stringify(settings, null, 2);
+    await Fs.writeTextFile(path, content);
+}
 
 export const settings: Settings = $state({
     midiFilePath: "AlleMeineEntchen.mid",
@@ -44,10 +79,10 @@ export const settings: Settings = $state({
     colorSchemeId: "default",
     sensFloorConfig: {
         scaleX: 1,
-        scaleY: 4.0 / 3.0,
-        flipX: true,
+        scaleY: 1,
+        flipX: false,
         flipY: false,
-        rotateBy: Math.PI / 2.0,
+        rotateBy: 0,
         cropLeft: 0,
         cropRight: 0,
     },

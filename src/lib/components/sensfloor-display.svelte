@@ -1,18 +1,15 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
 
     let elements: HTMLDivElement[] = $state([]);
 
-    onMount(() => {
-        SensFloor.initialise(8, 6);
-        SensFloor.connect("192.168.178.22", 8000);
-        SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
-            highlightElement(event.padX - 1, event.padY - 1, true);
-        });
-        SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
-            highlightElement(event.padX - 1, event.padY - 1, false);
-        });
+    SensFloor.initialise(8, 6);
+    SensFloor.connect("192.168.178.22", 8000);
+    SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
+        highlightElement(event.padX - 1, event.padY - 1, true);
+    });
+    SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
+        highlightElement(event.padX - 1, event.padY - 1, false);
     });
 
     function highlightElement(x: number, y: number, highlight: boolean): void {

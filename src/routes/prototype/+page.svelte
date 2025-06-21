@@ -156,6 +156,6 @@
         gap: 8px;
         background-color: black;
         box-sizing: border-box;
-        border-top: 4px solid red;
+        border-top: 4px solid var(--accent);
     }
 </style>

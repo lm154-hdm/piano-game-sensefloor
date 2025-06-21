@@ -66,9 +66,12 @@
     </div>
 </div>
 
-<BackButton slug="/admin" />
+<BackButton text="Zurück" slug="/admin" shouldSave={true} />
 
 <style>
+    * {
+        color: var(--text);
+    }
     .sensfloor-alignment-container {
         display: flex;
         flex-direction: column;
