@@ -27,8 +27,10 @@ let _animationContainerHeight: number = 0;
 let previousTime: number = 0;
 let animationSpeed: number = 0;
 let frameId: number = 0;
-const notes: NoteData[] = [];
+export const notes: NoteData[] = $state([]);
+/*
 export const visibleNotes: NoteData[] = $state([]);
+*/
 export let activeNote: NoteData;
 let time: number = 0;
 export function getTime(): number {
@@ -61,7 +63,7 @@ export async function initialise(
     for (const note of track.notes) {
         const height = note.duration * animationSpeed;
         notes.push({
-            height: height,
+            height: height - 5, // treshold to avoid overlapping / sticking out
             top: -height,
             left: keys.indexOf(note.name), // Currently hardcoded, need a proper mapping system later on
             startTime: note.time - trackDelay, // Subtract start time of first note to make it start immediately
@@ -72,11 +74,7 @@ export async function initialise(
             stopped: false,
             color: 'darkblue'
         });
-        if (note.time === 2.9557291666666665) {
-            atx = note.time - trackDelay;
-        }
     }
-    console.log(midi.tracks[1].notes)
     return true;
 }
 
@@ -91,12 +89,17 @@ export function stop(): void {
     animationIsRunning = false;
 }
 
+export function resume(): void {
+    previousTime = performance.now();
+    frameId = requestAnimationFrame(animationLoop);
+    animationIsRunning = true;
+}
+
 export function reset(): void {
     stop();
     time = 0;
-    // previousTime = 0;
+    previousTime = 0;
     notes.length = 0;
-    visibleNotes.length = 0;
 }
 
 function
@@ -107,64 +110,40 @@ animationLoop(currentTime: number): void {
     previousTime = currentTime;
     time += deltaTime;
 
-    const n = visibleNotes.find(n => n.startTime == atx);
-    if (n) {
-        console.log(n.top)
-    }
+    let shouldStop = false;
 
     // Animate visible keys
-    for (const note of visibleNotes) {
-        note.top += animationSpeed * deltaTime;
-        if (note.top >= _windowHeight) {
-            note.animationState = animationState.finished;
-            visibleNotes.splice(visibleNotes.indexOf(note), 1);
-        }
-        // AFTER
-        // Problem #1: Not called weil
-        if (note.top >= _animationContainerHeight
-            && note.animationState == animationState.running) {
-            const aKey = keys.find(key2 =>
-                key2.name === note.name
-                && key2.color !== "white"
-            );
-            if (aKey) {
-                aKey.color = 'white';
-                note.animationState = animationState.invisibleBehindKeys;
-                console.log("white TIME", getTime())
+    for (const note of notes) {
+
+        const noteStart = time >= note.startTime;
+        if (noteStart) {
+            note.top += animationSpeed * deltaTime;
+            if (note.animationState === animationState.none) {
+                note.animationState = animationState.running;
             }
         }
-        if (settings.mode == Mode.Pause
-            && note.top >= _animationContainerHeight - note.height
+
+        if (note.top >= _animationContainerHeight - note.height
             && !note.stopped) {
-                nextNote = note;
-                stop();
-                note.stopped = true;
-                return;
-        }
-
-        // problematisch, activenote schon zu früh geändert...
-        const activeStartTime = note.startTime + (_animationContainerHeight / animationSpeed)
-        if (time >= activeStartTime && time <= activeStartTime + note.duration) {
-            activeNote = note;
-        }
-        // option A: do it outside of animation loop
-        // option B: do it via "top" --> kinda stupid...
-
-    }
-
-    // Checks which keys should become visible
-    for (const note of notes) {
-        if (note.startTime <= time && note.animationState === animationState.none) {
-            note.top += animationSpeed * (time - note.startTime); // Move note down by potential delay because of discrete timesteps
-            note.animationState = animationState.running;
-            visibleNotes.push(note);
+            const aKey = keys.find(key2 => key2.color !== "white");
+            if (aKey && note.animationState == animationState.running) {
+                aKey.color = 'white';
+                note.animationState = animationState.invisibleBehindKeys;
+                console.log("STOP")
+            }
+            nextNote = note;
+            shouldStop = true;
+            note.stopped = true;
         }
     }
-    const animationFinished =
-        visibleNotes.length == 0
-        && notes.length > 0
-        && notes[notes.length - 1].startTime < time;
+
+    const lastNote = notes[notes.length - 1];
+    const animationFinished = time > lastNote.startTime + lastNote.duration + (_windowHeight / animationSpeed);
     if (!animationFinished) {
         frameId = requestAnimationFrame(animationLoop);
+    }
+
+    if (shouldStop) {
+        stop();
     }
 }

@@ -8,7 +8,7 @@
     import {Mode, settings} from "$lib/backend/settings.svelte";
     import {Midi} from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
-    import {animationIsRunning, visibleNotes} from "$lib/backend/animation.svelte";
+    import {animationIsRunning} from "$lib/backend/animation.svelte";
     import {keys, type KeyData} from "$lib/backend/ui-state.svelte";
 
     let windowWidth: number = $state(-1);
@@ -103,13 +103,10 @@
         // BEFORE
         const nextNote = Animation.getNextNote();  // gets actual reference
         const key = keys.find(k => k.name === keyName)!;
-        console.log(nextNote)
-        console.log(key)
         if (nextNote && key.name === nextNote.name && key.color === "white") {
             const correctColor = rootStyles.getPropertyValue('--correct-note').trim();
             nextNote.color = correctColor;
             key.color = correctColor;
-            console.log("GREEN TIME", Animation.getTime())
         } else {
             const falseColor = rootStyles.getPropertyValue('--false-note').trim();
             key.color = falseColor;
@@ -119,7 +116,7 @@
 
 <div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
     <div bind:clientHeight={animationContainerHeight} class="animated-container">
-        {#each Animation.visibleNotes as note}
+        {#each Animation.notes as note}
             <AnimatedKey height={note.height} top={note.top} left={note.left} color={note.color} />
         {/each}
     </div>
@@ -128,9 +125,19 @@
             <PianoKey keyName={key.name} color={key.color} pressKey={() => onPressedKey(key.name)} />
         {/each}
     </div>
+    <div class="buttons">
+        <button onclick={() => Animation.stop()}>Stop</button>
+        <button onclick={() => Animation.resume()}>Resume</button>
+
+    </div>
 </div>
 
 <style>
+    .buttons {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
     .prototype-container {
         width: 100vw;
         height: 100vh;

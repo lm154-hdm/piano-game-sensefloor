@@ -2,9 +2,7 @@
     import { onMount } from "svelte";
     import * as Tone from "tone";
 
-    import {activeNote, visibleNotes} from "$lib/backend/animation.svelte";
     import * as Animation from "$lib/backend/animation.svelte";
-    import {keys} from "$lib/backend/ui-state.svelte";
 
     let { keyName, color, pressKey }: { keyName: string, color: string, pressKey: () => void }  = $props();
 
