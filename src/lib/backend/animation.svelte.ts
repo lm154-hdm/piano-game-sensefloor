@@ -1,33 +1,32 @@
-import {Mode, settings} from "./settings.svelte";
 import { Midi } from "@tonejs/midi";
+import { keys, colors } from "./ui-state.svelte";
+import {Mode, settings} from "$lib/backend/settings.svelte";
+import {goto} from "$app/navigation";
 
 type NoteData = {
     height: number;
     top: number;
     left: number;
     startTime: number;
-    animationState: number;
+    duration: number;
     name: string;
     stopped: boolean;
+    color: string;
+    wasHit: boolean;  // if the note was already pressed at the correct time
 };
 
-// We need to do the animation state with an object like this because enums are discouraged in .svelte files
-const animationState = {
-    none: 0,
-    running: 1,
-    finished: 2,
-};
-
-let height: number = 0;
+let _windowHeight: number = 0;
 let _animationContainerHeight: number = 0;
 let previousTime: number = 0;
-let time: number = 0;
 let animationSpeed: number = 0;
 let frameId: number = 0;
-const notes: NoteData[] = [];
-
-export const visibleNotes: NoteData[] = $state([]);
-let nextNote = $state("");
+export const notes: NoteData[] = $state([]);
+export let activeNote: NoteData;
+let time: number = 0;
+export function getTime(): number {
+    return time;
+}
+let nextNote = $state<NoteData | undefined>(undefined);
 export function getNextNote() {
     return nextNote;
 }
@@ -39,7 +38,7 @@ export async function initialise(
     animationContainerHeight: number,
     midi: Midi
 ): Promise<boolean> {
-    height = windowHeight;
+    _windowHeight = windowHeight;
     _animationContainerHeight = animationContainerHeight;
 
     const beatsPerBar = midi.header.timeSignatures[0].timeSignature[0];
@@ -52,16 +51,17 @@ export async function initialise(
     for (const note of track.notes) {
         const height = note.duration * animationSpeed;
         notes.push({
-            height: height,
+            height: height - 5, // treshold to avoid overlapping / sticking out
             top: -height,
             left: keys.indexOf(note.name), // Currently hardcoded, need a proper mapping system later on
             startTime: note.time - trackDelay, // Subtract start time of first note to make it start immediately
-            animationState: animationState.none,
+            duration: note.duration,
             name: note.name,
-            stopped: false
+            stopped: false,
+            color: colors.primary,
+            wasHit: false,
         });
     }
-
     return true;
 }
 
@@ -76,45 +76,51 @@ export function stop(): void {
     animationIsRunning = false;
 }
 
+export function resume(): void {
+    previousTime = performance.now();
+    frameId = requestAnimationFrame(animationLoop);
+    animationIsRunning = true;
+}
+
 export function reset(): void {
+    stop();
+    time = 0;
+    previousTime = 0;
     notes.length = 0;
-    visibleNotes.length = 0;
 }
 
 function animationLoop(currentTime: number): void {
-    // Calculate time values
     const deltaTime = (currentTime - previousTime) / 1000.0;
     previousTime = currentTime;
     time += deltaTime;
-
-    // Animate visible keys
-    for (const note of visibleNotes) {
-        note.top += animationSpeed * deltaTime;
-        if (note.top > height) {
-            note.animationState = animationState.finished;
-            visibleNotes.splice(visibleNotes.indexOf(note), 1);
-        }
-        if (settings.mode == Mode.Pause
-            && note.top >= _animationContainerHeight - note.height
-            && !note.stopped) {
-                nextNote = note.name;
-                stop();
-                note.stopped = true;
-                return;
-        }
-
-    }
-
-    // Checks which keys should become visible
+    let shouldStop = false;
     for (const note of notes) {
-        if (note.startTime <= time && note.animationState === animationState.none) {
-            note.top += animationSpeed * (time - note.startTime); // Move note down by potential delay because of discrete timesteps
-            note.animationState = animationState.running;
-            visibleNotes.push(note);
+        if (time >= note.startTime) {
+            note.top += animationSpeed * deltaTime;
+            if (note.top >= _animationContainerHeight - note.height) {
+                if (note.name != nextNote?.name || note.startTime != nextNote?.startTime) {
+                    nextNote = note;
+                }
+                if (settings.mode === Mode.Pause && !note.stopped) {
+                    const aKey = keys.find(key2 => key2.color !== "white");
+                    if (aKey) {
+                        aKey.color = 'white';
+                    }
+                    shouldStop = true;
+                    note.stopped = true;
+                }
+            }
         }
     }
-    const animationFinished = visibleNotes.length == 0 && notes.length > 0 && notes[notes.length - 1].startTime < time;
-    if (!animationFinished) {
+    const lastNote = notes[notes.length - 1];
+    const animationFinished = time > (lastNote.startTime + lastNote.duration + (_windowHeight / animationSpeed));
+    if (animationFinished) {
+        stop();
+        goto('/prototype/result');
+    } else {
         frameId = requestAnimationFrame(animationLoop);
+    }
+    if (shouldStop) {
+        stop();
     }
 }

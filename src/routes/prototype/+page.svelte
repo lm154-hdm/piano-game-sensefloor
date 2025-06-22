@@ -8,21 +8,20 @@
     import {Mode, settings} from "$lib/backend/settings.svelte";
     import {Midi} from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
-    import {animationIsRunning} from "$lib/backend/animation.svelte";
+    import {keys} from "$lib/backend/ui-state.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
     let animationContainerHeight: number = $state(0);
 
-    const keys: string[] = ["D4", "E4", "F#4", "G4", "A4", "B4"];
-
     onMount(async () => {
+        Tone.getContext().lookAhead = 0;
         SensFloor.initialise(8, 6);
         SensFloor.connect("192.168.178.22", 8000);
 
         const midi = await loadMidi(settings.midiFilePath);
 
-        if (!(await Animation.initialise(keys, windowHeight, animationContainerHeight, midi))) {
+        if (!(await Animation.initialise(keys.map(k => k.name), windowHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
@@ -37,7 +36,7 @@
 
         scheduleSong(midi);
         Animation.start();
-        if (settings.mode == Mode.Playback) {
+        if (settings.mode === Mode.Playback) {
             Tone.getTransport().start();
         }
     });
@@ -71,8 +70,9 @@
     }
 
     function scheduleSong(midi: Midi) {
-        // const firstNoteTime = midi.tracks[1].notes[0].time;
+        // TD: use trackNumber of chose track
         midi.tracks.forEach((track) => {
+            //score.totalCount = track.notes.length;
             track.notes.forEach((note) => {
                 Tone.getTransport().schedule((time) => {
                     // time = When your scheduled event fires
@@ -87,22 +87,17 @@
         });
     }
 
-    function onPressedKey(key: string) {
-        if (!animationIsRunning && key == Animation.getNextNote()) {
-            Animation.start();
-        }
-    }
 </script>
 
 <div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
     <div bind:clientHeight={animationContainerHeight} class="animated-container">
-        {#each Animation.visibleNotes as note}
-            <AnimatedKey height={note.height} top={note.top} left={note.left} />
+        {#each Animation.notes as note}
+            <AnimatedKey height={note.height} top={note.top} left={note.left} color={note.color} />
         {/each}
     </div>
     <div class="piano-container">
         {#each keys as key}
-            <PianoKey key={key} pressKey={() => onPressedKey(key)} />
+            <PianoKey keyName={key.name} color={key.color} />
         {/each}
     </div>
 </div>
