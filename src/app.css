@@ -3,16 +3,19 @@
     --crop-right: 0px;
     --button-width: calc((100vw - var(--crop-left) - var(--crop-right)) / 6);
 
-    --correct-note: var(--primary);
-    --false-note: var(--accent);
+    --correct-note: var(--primary-active);
+    --false-note: var(--accent-active);
 
     --background-color: black;
     --text: #ffeef1;
     --text-dark: #150003;
     --background: #000000;
     --primary: #ff5f78;
+    --primary-active: #fc8a9a;
     --secondary: #ffbcc7;
+    --secondary-active: #ffd9e0;
     --accent: #9e1038;
+    --accent-active: #800e2e;
 }
 
 [data-colorscheme="blueYellow"] {
@@ -20,8 +23,11 @@
     --text-dark: #00252f;
     --background: #000000;
     --primary: #5bdbff;
+    --primary-active: #9ce8ff;
     --secondary: #ffdcad;
-    --accent: #8a5b1a;
+    --secondary-active: #fde9ce;
+    --accent: #836437;
+    --accent-active: #70552f;
 }
 
 body {
