@@ -1,5 +1,9 @@
 <script lang="ts">
-    const { text }: { text: string } = $props();
+    interface TitleProps {
+        text: string;
+    }
+
+    let { text }: TitleProps = $props();
 </script>
 
 <div class="title-container">

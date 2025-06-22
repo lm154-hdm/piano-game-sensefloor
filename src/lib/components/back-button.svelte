@@ -18,7 +18,7 @@
 </script>
 
 <a href={slug}>
-    <button onclick={onClick}>{text}</button>
+    <button class="menu-button secondary-button" onclick={onClick}>{text}</button>
 </a>
 
 <style>
@@ -27,17 +27,6 @@
         bottom: 0;
         right: 0;
         width: var(--button-width);
-        aspect-ratio: 1 / 1;
-    }
-
-    button {
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        font-size: 1.2em;
-        background-color: var(--accent);
-        color: var(--text);
-        border-radius: 5%;
-        border: 2px solid var(--background-color);
+        height: var(--button-width);
     }
 </style>

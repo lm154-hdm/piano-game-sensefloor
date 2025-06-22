@@ -2,11 +2,15 @@
     import { settings } from "$lib/backend/settings.svelte";
     import { onMount } from "svelte";
 
-    let { isLeftHandle }: { isLeftHandle: boolean } = $props();
+    interface SensfloorCroppingVerticalHandleProps {
+        isLeftHandle: boolean;
+    }
 
-    let position: number = $state(0);
+    let { isLeftHandle }: SensfloorCroppingVerticalHandleProps = $props();
+
+    let position: number = 0;
+    let lastMouseX: number = 0;
     let element: HTMLDivElement;
-    let lastMouseX = 0;
 
     onMount(() => {
         position = isLeftHandle ? settings.sensFloorConfig.cropLeft : settings.sensFloorConfig.cropRight;
@@ -64,7 +68,7 @@
         right: var(--right);
         width: 10px;
         height: 100vh;
-        background-color: red;
+        background-color: var(--primary);
     }
 
     .sensfloor-cropping-vertical-handle:hover {

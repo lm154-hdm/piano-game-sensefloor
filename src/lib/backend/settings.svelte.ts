@@ -61,6 +61,8 @@ export async function load(): Promise<void> {
 
         // Apply loaded settings
         document.documentElement.setAttribute("data-colorscheme", settings.colorSchemeId);
+        document.documentElement.style.setProperty("--crop-left", settings.sensFloorConfig.cropLeft + "px");
+        document.documentElement.style.setProperty("--crop-right", settings.sensFloorConfig.cropRight + "px");
     } else {
         await save();
     }

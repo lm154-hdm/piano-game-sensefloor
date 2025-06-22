@@ -16,7 +16,12 @@
     "fs:allow-applocaldata-write",
     {
       "identifier": "fs:allow-exists",
-      "allow": [{ "path": "$APPLOCALDATA/**" }]
-    }
+      "allow": [
+        {
+          "path": "$APPLOCALDATA/**"
+        }
+      ]
+    },
+    "process:allow-exit"
   ]
 }
