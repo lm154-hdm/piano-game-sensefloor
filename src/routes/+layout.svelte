@@ -7,12 +7,12 @@
     const { children } = $props();
 
     onMount(async () => {
+        await load();
+
         const window = getCurrentWindow();
         await window.setFullscreen(true);
         await window.show();
         await window.setFocus();
-
-        await load();
     });
 </script>
 

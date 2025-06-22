@@ -1,5 +1,10 @@
 <script lang="ts">
-    const { text, children }: { text: string; children: any } = $props();
+    interface LabelledSettingsContainerProps {
+        text: string;
+        children: any;
+    }
+
+    let { text, children }: LabelledSettingsContainerProps = $props();
 </script>
 
 <div class="labelled-settings-container">

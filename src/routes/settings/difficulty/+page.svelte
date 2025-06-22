@@ -9,6 +9,7 @@
 
 <LabelledSettingsContainer text="Aktuelle Geschwindigkeit: {settings.speed}%">
     <button
+        class="menu-button primary-button"
         onclick={() => {
             settings.speed -= 10;
         }}
@@ -16,6 +17,7 @@
         Langsamer (-10%)
     </button>
     <button
+        class="menu-button primary-button"
         onclick={() => {
             settings.speed += 10;
         }}
@@ -29,12 +31,6 @@
 <style>
     button {
         width: var(--button-width);
-        aspect-ratio: 1 / 1;
-        text-align: center;
-        font-size: 1.2em;
-        background-color: var(--primary);
-        color: var(--text-dark);
-        border-radius: 5%;
-        border: 2px solid var(--background-color);
+        height: var(--button-width);
     }
 </style>

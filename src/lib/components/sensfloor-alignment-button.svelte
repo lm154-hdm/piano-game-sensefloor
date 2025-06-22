@@ -1,9 +1,16 @@
 <script lang="ts">
-    let { text, icon, alt, onClick } = $props();
+    interface SensFloorAlignmentButtonProps {
+        text: string;
+        icon: string;
+        alt: string;
+        onClick: (event: MouseEvent) => void;
+    }
+
+    let { text, icon, alt, onClick }: SensFloorAlignmentButtonProps = $props();
 </script>
 
 <div class="sensfloor-alignment-button">
-    <button onclick={onClick}>
+    <button class="menu-button primary-button" onclick={onClick}>
         <img src={icon} {alt} />
     </button>
     <div class="sensfloor-alignment-button-text">
@@ -23,8 +30,9 @@
     }
 
     button {
-        width: 50px;
-        height: 50px;
+        width: 65px;
+        height: 65px;
+        padding: 5px;
     }
 
     img {

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
+    import ExitButton from "$lib/components/exit-button.svelte";
     import NavigationButton from "$lib/components/navigation-button.svelte";
     import Title from "$lib/components/title.svelte";
     import { onDestroy, onMount } from "svelte";
@@ -22,3 +23,4 @@
 <Title text="Menü" />
 <NavigationButton text="Spielen" slug="/prototype" />
 <NavigationButton text="Einstellungen" slug="/settings" />
+<ExitButton />
