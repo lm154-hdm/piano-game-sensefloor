@@ -1,13 +1,13 @@
 <script lang="ts">
     import { settings } from "$lib/backend/settings.svelte";
+    import { Midi } from "@tonejs/midi";
+    import { onMount } from "svelte";
+    import { invoke } from "@tauri-apps/api/core";
     import BackButton from "$lib/components/back-button.svelte";
     import Title from "$lib/components/title.svelte";
-    import { Midi } from "@tonejs/midi";
-    import * as dialog from "@tauri-apps/plugin-dialog";
-    import * as fs from "@tauri-apps/plugin-fs";
+    import * as Dialog from "@tauri-apps/plugin-dialog";
     import * as Path from "@tauri-apps/api/path";
     import * as Tone from "tone";
-    import { onMount } from "svelte";
 
     // This error is handled inside of the svelte config
     enum PlaybackMode {
@@ -33,7 +33,7 @@
     async function selectMidiFile(): Promise<void> {
         stopPlayback();
 
-        const path = await dialog.open({
+        const path = await Dialog.open({
             multiple: false,
             filters: [
                 {
@@ -51,20 +51,30 @@
 
             settings.midiConfig.path = path;
             midi = await loadMidiFile();
-            trackIndex = 0;
+
+            if (!midi) {
+                console.error("Failed to load midi file");
+                return;
+            }
+
+            for (let i = 0; i < midi.tracks.length; i++) {
+                if (midi.tracks[i].notes.length > 0) {
+                    trackIndex = i;
+                    break;
+                }
+            }
         }
     }
 
     async function loadMidiFile(): Promise<Midi | undefined> {
         name = await Path.basename(settings.midiConfig.path);
-        const doesFileExist = await fs.exists(settings.midiConfig.path);
+        const doesFileExist = await invoke<boolean>("does_file_exist", { path: settings.midiConfig.path });
 
         if (!doesFileExist) {
-            console.error("File at path '" + settings.midiConfig.path + "' does't exist");
+            console.error("File at path '" + settings.midiConfig.path + "' doesn't exist");
             return undefined;
         }
-
-        const data = await fs.readFile(settings.midiConfig.path);
+        const data = await invoke<Uint8Array>("read_binary_file", { path: settings.midiConfig.path });
         const midi = new Midi(data);
 
         // Set bpm
@@ -136,19 +146,22 @@
         <h2>Wähle die MIDI-Spur, die du spielen möchtest</h2>
         <div id="song-selection-track-container">
             {#each midi.tracks as track, i}
-                <label>
-                    <input
-                        type="radio"
-                        name="track-selection"
-                        value={track.name}
-                        checked={i === trackIndex}
-                        onchange={() => {
-                            stopPlayback();
-                            trackIndex = i;
-                        }}
-                    />
-                    {track.name || "UNNAMED"}
-                </label>
+                {#if track.notes.length > 0}
+                    <label>
+                        <input
+                            type="radio"
+                            name="track-selection"
+                            value={track.name}
+                            checked={i === trackIndex}
+                            onchange={() => {
+                                stopPlayback();
+                                trackIndex = i;
+                                settings.midiConfig.trackIndex = i;
+                            }}
+                        />
+                        {track.name || "UNNAMED"}
+                    </label>
+                {/if}
             {/each}
         </div>
         <hr />

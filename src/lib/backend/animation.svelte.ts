@@ -1,7 +1,7 @@
 import { Midi } from "@tonejs/midi";
 import { keys, colors } from "./ui-state.svelte";
-import {Mode, settings} from "$lib/backend/settings.svelte";
-import {goto} from "$app/navigation";
+import { Mode, settings } from "$lib/backend/settings.svelte";
+import { goto } from "$app/navigation";
 
 type NoteData = {
     height: number;
@@ -12,7 +12,7 @@ type NoteData = {
     name: string;
     stopped: boolean;
     color: string;
-    wasHit: boolean;  // if the note was already pressed at the correct time
+    wasHit: boolean; // if the note was already pressed at the correct time
 };
 
 let _windowHeight: number = 0;
@@ -36,7 +36,7 @@ export async function initialise(
     keys: string[],
     windowHeight: number,
     animationContainerHeight: number,
-    midi: Midi
+    midi: Midi,
 ): Promise<boolean> {
     _windowHeight = windowHeight;
     _animationContainerHeight = animationContainerHeight;
@@ -46,7 +46,8 @@ export async function initialise(
     const secondsPerBar = beatsPerBar * secondsPerBeat;
     animationSpeed = animationContainerHeight / secondsPerBar;
 
-    const track = midi.tracks[1];
+    const track = midi.tracks[settings.midiConfig.trackIndex];
+
     const trackDelay = track.notes[0].time;
     for (const note of track.notes) {
         const height = note.duration * animationSpeed;
@@ -102,9 +103,9 @@ function animationLoop(currentTime: number): void {
                     nextNote = note;
                 }
                 if (settings.mode === Mode.Pause && !note.stopped) {
-                    const aKey = keys.find(key2 => key2.color !== "white");
+                    const aKey = keys.find((key2) => key2.color !== "white");
                     if (aKey) {
-                        aKey.color = 'white';
+                        aKey.color = "white";
                     }
                     shouldStop = true;
                     note.stopped = true;
@@ -113,10 +114,10 @@ function animationLoop(currentTime: number): void {
         }
     }
     const lastNote = notes[notes.length - 1];
-    const animationFinished = time > (lastNote.startTime + lastNote.duration + (_windowHeight / animationSpeed));
+    const animationFinished = time > lastNote.startTime + lastNote.duration + _windowHeight / animationSpeed;
     if (animationFinished) {
         stop();
-        goto('/prototype/result');
+        goto("/prototype/result");
     } else {
         frameId = requestAnimationFrame(animationLoop);
     }

@@ -1,4 +1,3 @@
-import * as Fs from "@tauri-apps/plugin-fs";
 import * as Path from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -90,7 +89,7 @@ export async function save(): Promise<void> {
 
     const path = await getSettingsPath();
     const content = JSON.stringify(settings, null, 2);
-    await Fs.writeTextFile(path, content);
+    await invoke("write_text_file", { path, content });
 }
 
 export const settings: Settings = $state({

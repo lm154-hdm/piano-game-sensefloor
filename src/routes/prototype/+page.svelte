@@ -9,6 +9,7 @@
     import { Midi } from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
     import { keys } from "$lib/backend/ui-state.svelte";
+    import { invoke } from "@tauri-apps/api/core";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -19,7 +20,7 @@
         SensFloor.initialise(8, 6);
         SensFloor.connect("192.168.178.22", 8000);
 
-        const midi = await loadMidi(settings.midiConfig.path);
+        const midi = await loadMidi();
 
         if (
             !(await Animation.initialise(
@@ -64,12 +65,8 @@
         }
     }
 
-    async function loadMidi(path: string): Promise<Midi> {
-        const res = await fetch(path);
-        if (!res) {
-            console.error("Failed to fetch midi file", settings.midiConfig.path);
-        }
-        const data = await res.arrayBuffer();
+    async function loadMidi(): Promise<Midi> {
+        const data = await invoke<Uint8Array>("read_binary_file", { path: settings.midiConfig.path });
         const midi = new Midi(data);
         const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
         midi.header.setTempo(bpm);
