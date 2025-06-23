@@ -1,5 +1,6 @@
 import * as Fs from "@tauri-apps/plugin-fs";
 import * as Path from "@tauri-apps/api/path";
+import { invoke } from "@tauri-apps/api/core";
 
 const SETTINGS_VERSION: string = "1.1.0";
 
@@ -54,10 +55,13 @@ async function getSettingsPath(): Promise<string> {
 }
 
 export async function load(): Promise<void> {
-    const path = await getSettingsPath();
+    console.log("Loading settings");
 
-    if (await Fs.exists(path)) {
-        const data = await Fs.readTextFile(path);
+    const path = await getSettingsPath();
+    const doesFileExist = await invoke<boolean>("does_file_exist", { path });
+
+    if (doesFileExist) {
+        const data = await invoke<string>("read_text_file", { path });
         const json = JSON.parse(data);
 
         if (json.settingsVersion == SETTINGS_VERSION) {
@@ -82,6 +86,8 @@ export async function load(): Promise<void> {
 }
 
 export async function save(): Promise<void> {
+    console.log("Saving settings");
+
     const path = await getSettingsPath();
     const content = JSON.stringify(settings, null, 2);
     await Fs.writeTextFile(path, content);
