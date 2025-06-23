@@ -5,10 +5,10 @@
     import * as Animation from "$lib/backend/animation.svelte";
     import AnimatedKey from "$lib/components/animated-key.svelte";
     import PianoKey from "$lib/components/piano-key.svelte";
-    import {Mode, settings} from "$lib/backend/settings.svelte";
-    import {Midi} from "@tonejs/midi";
+    import { Mode, settings } from "$lib/backend/settings.svelte";
+    import { Midi } from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
-    import {keys} from "$lib/backend/ui-state.svelte";
+    import { keys } from "$lib/backend/ui-state.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -19,9 +19,16 @@
         SensFloor.initialise(8, 6);
         SensFloor.connect("192.168.178.22", 8000);
 
-        const midi = await loadMidi(settings.midiFilePath);
+        const midi = await loadMidi(settings.midiConfig.path);
 
-        if (!(await Animation.initialise(keys.map(k => k.name), windowHeight, animationContainerHeight, midi))) {
+        if (
+            !(await Animation.initialise(
+                keys.map((k) => k.name),
+                windowHeight,
+                animationContainerHeight,
+                midi,
+            ))
+        ) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
@@ -47,7 +54,7 @@
         Animation.stop();
         Animation.reset(); // doesn't work properly
         Tone.getTransport().stop();
-        Tone.getTransport().cancel();  // works
+        Tone.getTransport().cancel(); // works
     });
 
     function clickAtPosition(x: number, y: number): void {
@@ -60,7 +67,7 @@
     async function loadMidi(path: string): Promise<Midi> {
         const res = await fetch(path);
         if (!res) {
-            console.error("Failed to fetch midi file", settings.midiFilePath);
+            console.error("Failed to fetch midi file", settings.midiConfig.path);
         }
         const data = await res.arrayBuffer();
         const midi = new Midi(data);
@@ -86,7 +93,6 @@
             });
         });
     }
-
 </script>
 
 <div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">

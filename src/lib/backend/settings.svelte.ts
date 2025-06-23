@@ -1,11 +1,14 @@
 import * as Fs from "@tauri-apps/plugin-fs";
 import * as Path from "@tauri-apps/api/path";
 
+const SETTINGS_VERSION: string = "1.1.0";
+
 type Settings = {
-    midiFilePath: string;
+    settingsVersion: string;
     speed: number;
     colorSchemeId: string;
     mode: Mode;
+    midiConfig: MidiConfig;
     sensFloorConfig: SensFloorConfig;
 };
 
@@ -22,6 +25,11 @@ type SensFloorConfig = {
     rotateBy: number;
     cropLeft: number;
     cropRight: number;
+};
+
+type MidiConfig = {
+    path: string;
+    trackIndex: number;
 };
 
 export enum Mode {
@@ -50,14 +58,19 @@ export async function load(): Promise<void> {
 
     if (await Fs.exists(path)) {
         const data = await Fs.readTextFile(path);
-        const json = JSON.parse(data) as Settings;
+        const json = JSON.parse(data);
 
-        // Set loaded settings
-        settings.midiFilePath = json.midiFilePath;
-        settings.speed = json.speed;
-        settings.mode = json.mode;
-        settings.colorSchemeId = json.colorSchemeId;
-        settings.sensFloorConfig = json.sensFloorConfig;
+        if (json.settingsVersion == SETTINGS_VERSION) {
+            settings.speed = json.speed;
+            settings.colorSchemeId = json.colorSchemeId;
+            settings.mode = json.mode;
+            settings.midiConfig = json.midiConfig;
+            settings.sensFloorConfig = json.sensFloorConfig;
+        } else {
+            console.error(
+                "The version of your settings is different from the current applications settings version, reverting to default settings",
+            );
+        }
 
         // Apply loaded settings
         document.documentElement.setAttribute("data-colorscheme", settings.colorSchemeId);
@@ -75,10 +88,15 @@ export async function save(): Promise<void> {
 }
 
 export const settings: Settings = $state({
+    settingsVersion: SETTINGS_VERSION,
     midiFilePath: "AlleMeineEntchen.mid",
     speed: 100,
     mode: Mode.Pause,
     colorSchemeId: "default",
+    midiConfig: {
+        path: "",
+        track: 0,
+    },
     sensFloorConfig: {
         scaleX: 1,
         scaleY: 1,

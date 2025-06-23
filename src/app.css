@@ -34,6 +34,7 @@ body {
     margin: 0;
     overflow: hidden;
     user-select: none;
+    color: var(--text);
 
     /* Needed for linux */
     -webkit-user-select: none;
