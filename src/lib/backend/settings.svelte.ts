@@ -95,7 +95,7 @@ export const settings: Settings = $state({
     colorSchemeId: "default",
     midiConfig: {
         path: "",
-        track: 0,
+        trackIndex: 0,
     },
     sensFloorConfig: {
         scaleX: 1,

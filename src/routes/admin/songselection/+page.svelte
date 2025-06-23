@@ -5,6 +5,7 @@
     import { Midi } from "@tonejs/midi";
     import * as dialog from "@tauri-apps/plugin-dialog";
     import * as fs from "@tauri-apps/plugin-fs";
+    import * as Path from "@tauri-apps/api/path";
     import * as Tone from "tone";
     import { onMount } from "svelte";
 
@@ -17,20 +18,17 @@
 
     let midi: Midi | undefined = $state();
     let trackIndex: number = $state(0);
+    let name: string = $state("");
 
     let isPlaybackRunning: PlaybackMode = PlaybackMode.STOPPED;
     const synth: Tone.PolySynth = new Tone.PolySynth(Tone.Synth).toDestination();
 
-    onMount(
-        /*async */ () => {
-            console.log("Mount");
-            /*if (settings.midiConfig.path) {
-            console.log("lkasd");
+    onMount(async () => {
+        if (settings.midiConfig.path) {
             midi = await loadMidiFile();
             trackIndex = settings.midiConfig.trackIndex;
-            }*/
-        },
-    );
+        }
+    });
 
     async function selectMidiFile(): Promise<void> {
         stopPlayback();
@@ -58,23 +56,21 @@
     }
 
     async function loadMidiFile(): Promise<Midi | undefined> {
-        console.log("Test");
-
+        name = await Path.basename(settings.midiConfig.path);
         const doesFileExist = await fs.exists(settings.midiConfig.path);
+
         if (!doesFileExist) {
             console.error("File at path '" + settings.midiConfig.path + "' does't exist");
-            return;
+            return undefined;
         }
-
-        console.log("Test2");
 
         const data = await fs.readFile(settings.midiConfig.path);
         const midi = new Midi(data);
 
         // Set bpm
-        //const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
-        //midi.header.setTempo(bpm);
-        //Tone.getTransport().bpm.value = bpm;
+        const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
+        midi.header.setTempo(bpm);
+        Tone.getTransport().bpm.value = bpm;
 
         return midi;
     }
@@ -133,7 +129,7 @@
 <div id="song-selection-container">
     <h2>Wähle die MIDI-Datei, die du spielen möchtest</h2>
     <button class="menu-button primary-button" onclick={selectMidiFile}>
-        {midi?.name || "Datei auswählen"}
+        {name || "Datei auswählen"}
     </button>
     {#if midi}
         <hr />
@@ -164,7 +160,6 @@
     {/if}
 </div>
 
-<!-- TODO: Stop playback when clicking on this button --> --
 <BackButton text="Speichern und zurück" slug="/admin" shouldSave={true} />
 
 <style>
