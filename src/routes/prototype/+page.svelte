@@ -8,7 +8,6 @@
     import { Mode, settings } from "$lib/backend/settings.svelte";
     import { Midi } from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
-    import { keys } from "$lib/backend/ui-state.svelte";
     import { invoke } from "@tauri-apps/api/core";
 
     let windowWidth: number = $state(-1);
@@ -16,20 +15,12 @@
     let animationContainerHeight: number = $state(0);
 
     onMount(async () => {
-        Tone.getContext().lookAhead = 0;
         SensFloor.initialise(8, 6);
         SensFloor.connect("192.168.178.22", 8000);
 
         const midi = await loadMidi();
 
-        if (
-            !(await Animation.initialise(
-                keys.map((k) => k.name),
-                windowHeight,
-                animationContainerHeight,
-                midi,
-            ))
-        ) {
+        if (!(await Animation.initialise(windowHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
@@ -75,9 +66,12 @@
 
     function scheduleSong(midi: Midi) {
         // TD: use trackNumber of chose track
-        midi.tracks.forEach((track) => {
-            //score.totalCount = track.notes.length;
-            track.notes.forEach((note) => {
+        for (const track of midi.tracks) {
+            if (track.notes.length <= 0) {
+                continue;
+            }
+
+            for (const note of track.notes) {
                 Tone.getTransport().schedule((time) => {
                     // time = When your scheduled event fires
                     piano.triggerAttackRelease(
@@ -87,20 +81,20 @@
                         note.velocity - 0.3,
                     );
                 }, note.time);
-            });
-        });
+            }
+        }
     }
 </script>
 
 <div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
-    <div bind:clientHeight={animationContainerHeight} class="animated-container">
+    <div bind:offsetHeight={animationContainerHeight} class="animated-container">
         {#each Animation.notes as note}
             <AnimatedKey height={note.height} top={note.top} left={note.left} color={note.color} />
         {/each}
     </div>
     <div class="piano-container">
-        {#each keys as key}
-            <PianoKey keyName={key.name} color={key.color} />
+        {#each Animation.keyGroups as keyGroup, i}
+            <PianoKey index={i} text={keyGroup.displayName} color={keyGroup.color} />
         {/each}
     </div>
 </div>
@@ -124,16 +118,13 @@
 
     .piano-container {
         width: 100%;
-        height: fit-content;
+        height: var(--button-width);
         display: flex;
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-evenly;
         z-index: 1;
-        padding: 8px;
-        gap: 8px;
         background-color: black;
-        box-sizing: border-box;
         border-top: 4px solid var(--accent);
     }
 </style>

@@ -17,7 +17,6 @@
     }
 
     let midi: Midi | undefined = $state();
-    let trackIndex: number = $state(0);
     let name: string = $state("");
 
     let isPlaybackRunning: PlaybackMode = PlaybackMode.STOPPED;
@@ -26,7 +25,6 @@
     onMount(async () => {
         if (settings.midiConfig.path) {
             midi = await loadMidiFile();
-            trackIndex = settings.midiConfig.trackIndex;
         }
     });
 
@@ -59,7 +57,7 @@
 
             for (let i = 0; i < midi.tracks.length; i++) {
                 if (midi.tracks[i].notes.length > 0) {
-                    trackIndex = i;
+                    settings.midiConfig.trackIndex = i;
                     break;
                 }
             }
@@ -115,7 +113,7 @@
 
         await Tone.start();
 
-        const track = midi!.tracks[trackIndex];
+        const track = midi!.tracks[settings.midiConfig.trackIndex];
         for (const note of track.notes) {
             Tone.getTransport().schedule((time) => {
                 synth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
@@ -152,10 +150,9 @@
                             type="radio"
                             name="track-selection"
                             value={track.name}
-                            checked={i === trackIndex}
+                            checked={i === settings.midiConfig.trackIndex}
                             onchange={() => {
                                 stopPlayback();
-                                trackIndex = i;
                                 settings.midiConfig.trackIndex = i;
                             }}
                         />
