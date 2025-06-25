@@ -11,6 +11,14 @@
     <button
             class="menu-button primary-button"
             onclick={() => {
+            settings.mode = Mode.Normal;
+        }}
+    >
+        Normal
+    </button>
+    <button
+            class="menu-button primary-button"
+            onclick={() => {
             settings.mode = Mode.Pause;
         }}
     >
