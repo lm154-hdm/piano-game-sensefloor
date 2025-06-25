@@ -33,8 +33,9 @@ type SensFloorConfig = {
 };
 
 export enum Mode {
-    Playback = 0,
+    Normal = 0,
     Pause = 1,
+    Playback = 2,
 }
 
 export const colorSchemes: ColorScheme[] = [
