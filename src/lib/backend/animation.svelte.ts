@@ -25,14 +25,13 @@ let _windowHeight: number = 0;
 let _animationContainerHeight: number = 0;
 let previousTime: number = 0;
 let animationSpeed: number = 0;
+export function getAnimationSpeed(): number {
+    return animationSpeed;
+}
 let frameId: number = 0;
 export const notes: NoteData[] = $state([]);
 export const keyGroups: KeyGroup[] = $state([]);
-export let activeNote: NoteData;
 let time: number = 0;
-export function getTime(): number {
-    return time;
-}
 let nextNote = $state<NoteData | undefined>(undefined);
 export function getNextNote() {
     return nextNote;

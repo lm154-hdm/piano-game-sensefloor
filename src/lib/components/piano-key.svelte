@@ -38,13 +38,12 @@
             nextNote.wasHit = true;
             keyGroup.color = "--correct-note";
             score.correctlyPressed++;
-            score.totalPressed++;
             if (settings.mode !== Mode.Playback) {
                 piano.triggerAttackRelease(nextNote.name, duration == 0 ? "4n" : duration);
             }
         } else {
             keyGroup.color = "--false-note";
-            score.totalPressed++;
+            score.incorrectlyPressed++;
             if (settings.mode !== Mode.Playback) {
                 piano.triggerAttackRelease("C2", duration == 0 ? "4n" : duration, Tone.now(), 2);
             }
