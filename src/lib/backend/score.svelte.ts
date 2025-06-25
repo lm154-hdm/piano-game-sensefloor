@@ -1,9 +1,11 @@
 type Score = {
-    totalPressed: number;
+    totalNotes: number;
     correctlyPressed: number;
+    incorrectlyPressed: number;
 };
 
 export const score: Score = $state({
-    totalPressed: 0,
+    totalNotes: 0,
     correctlyPressed: 0,
+    incorrectlyPressed: 0,
 });

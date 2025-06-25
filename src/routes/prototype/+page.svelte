@@ -9,6 +9,7 @@
     import { Midi } from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
     import { invoke } from "@tauri-apps/api/core";
+    import { score } from "$lib/backend/score.svelte";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
@@ -19,6 +20,7 @@
         SensFloor.connect("192.168.178.22", 8000);
 
         const midi = await loadMidi();
+        score.totalNotes = midi.tracks[settings.midiConfig.trackIndex].notes.length;
 
         if (!(await Animation.initialise(windowHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
