@@ -33,7 +33,9 @@
             });
         });
 
-        scheduleSong(midi);
+        if (settings.mode === Mode.Playback) {
+            schedulePlaybackSong(midi);
+        }
         Animation.start();
         if (settings.mode === Mode.Playback) {
             Tone.getTransport().start();
@@ -64,20 +66,21 @@
         return midi;
     }
 
-    function scheduleSong(midi: Midi) {
+    function schedulePlaybackSong(midi: Midi) {
         // TD: use trackNumber of chose track
         for (const track of midi.tracks) {
             if (track.notes.length <= 0) {
                 continue;
             }
 
+            const scheduleDelay = animationContainerHeight / Animation.getAnimationSpeed(); // time, that animated note needs to move down to key (set in Animation)
             for (const note of track.notes) {
                 Tone.getTransport().schedule((time) => {
                     // time = When your scheduled event fires
                     piano.triggerAttackRelease(
                         note.name,
                         note.duration,
-                        time, // + now ?
+                        time + scheduleDelay, // + now ?
                         note.velocity - 0.3,
                     );
                 }, note.time);
