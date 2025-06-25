@@ -7,11 +7,10 @@
         shouldSave?: boolean;
     }
 
-    let { text, slug, shouldSave = true }: BackButtonProps = $props();
+    let { text, slug, shouldSave = false }: BackButtonProps = $props();
 
     async function onClick(): Promise<void> {
         if (shouldSave) {
-            console.log("Save");
             await save();
         }
     }

@@ -1,18 +1,21 @@
 <script lang="ts">
+    import "../app.css";
     import { load } from "$lib/backend/settings.svelte";
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import { onMount } from "svelte";
-    import "../app.css";
+    import * as Tone from "tone";
 
     const { children } = $props();
 
     onMount(async () => {
-        await load();
-
         const window = getCurrentWindow();
-        await window.setFullscreen(true);
         await window.show();
+        await window.setFullscreen(true);
         await window.setFocus();
+
+        await load();
+        await Tone.loaded();
+        Tone.getContext().lookAhead = 0;
     });
 </script>
 

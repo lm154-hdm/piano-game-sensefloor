@@ -10,12 +10,13 @@ export default defineConfig(async () => ({
 
     // Prevent styling issues
     build: {
-        target: "esnext",
-        rollupOptions: {
+        cssCodeSplit: false,
+        cssMinify: false,
+        /*rollupOptions: {
             output: {
                 manualChunks: undefined,
             },
-        },
+        },*/
     },
 
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

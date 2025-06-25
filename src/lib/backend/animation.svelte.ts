@@ -1,7 +1,6 @@
 import { Midi } from "@tonejs/midi";
-import { keys, colors } from "./ui-state.svelte";
-import {Mode, settings} from "$lib/backend/settings.svelte";
-import {goto} from "$app/navigation";
+import { Mode, settings } from "$lib/backend/settings.svelte";
+import { goto } from "$app/navigation";
 
 type NoteData = {
     height: number;
@@ -10,9 +9,16 @@ type NoteData = {
     startTime: number;
     duration: number;
     name: string;
+    groupIndex: number;
     stopped: boolean;
     color: string;
-    wasHit: boolean;  // if the note was already pressed at the correct time
+    wasHit: boolean; // if the note was already pressed at the correct time
+};
+
+type KeyGroup = {
+    color: string;
+    displayName: string;
+    keyNames: string[];
 };
 
 let _windowHeight: number = 0;
@@ -21,6 +27,7 @@ let previousTime: number = 0;
 let animationSpeed: number = 0;
 let frameId: number = 0;
 export const notes: NoteData[] = $state([]);
+export const keyGroups: KeyGroup[] = $state([]);
 export let activeNote: NoteData;
 let time: number = 0;
 export function getTime(): number {
@@ -32,12 +39,7 @@ export function getNextNote() {
 }
 export let animationIsRunning: boolean = false;
 
-export async function initialise(
-    keys: string[],
-    windowHeight: number,
-    animationContainerHeight: number,
-    midi: Midi
-): Promise<boolean> {
+export async function initialise(windowHeight: number, animationContainerHeight: number, midi: Midi): Promise<boolean> {
     _windowHeight = windowHeight;
     _animationContainerHeight = animationContainerHeight;
 
@@ -46,19 +48,57 @@ export async function initialise(
     const secondsPerBar = beatsPerBar * secondsPerBeat;
     animationSpeed = animationContainerHeight / secondsPerBar;
 
-    const track = midi.tracks[1];
-    const trackDelay = track.notes[0].time;
+    const track = midi.tracks[settings.midiConfig.trackIndex];
+
+    // Find all used keys in the selected track and sort them in the piano scale
+    const keyNames: { name: string; midiValue: number }[] = [];
     for (const note of track.notes) {
+        if (!keyNames.some((n) => n.midiValue === note.midi)) {
+            keyNames.push({ name: note.name, midiValue: note.midi });
+        }
+    }
+    keyNames.sort((a, b) => a.midiValue - b.midiValue);
+
+    // Create empty key groups
+    keyGroups.length = 0;
+    for (let i = 0; i < 6; i++) {
+        keyGroups.push({ color: "--primary", displayName: "", keyNames: [] });
+    }
+
+    // Group the keys into 6 groups after the round-robin principle
+    let keysPerGroup = keyNames.length / 6;
+    for (let i = 0; i < keyNames.length; i++) {
+        const key = keyNames[i];
+        const index = Math.floor(i / keysPerGroup);
+        keyGroups[index].keyNames.push(key.name);
+    }
+
+    // Create the display names for the groups
+    for (const keyGroup of keyGroups) {
+        for (let i = 0; i < keyGroup.keyNames.length; i++) {
+            keyGroup.displayName += keyGroup.keyNames[i];
+            if (i !== keyGroup.keyNames.length - 1) {
+                keyGroup.displayName += " / ";
+            }
+        }
+    }
+
+    // Create data for rendering the animated keys
+    const trackDelay = track.notes[0].time;
+    for (let i = 0; i < track.notes.length; i++) {
+        const note = track.notes[i];
         const height = note.duration * animationSpeed;
+        const groupIndex = keyGroups.findIndex((group) => group.keyNames.includes(note.name));
         notes.push({
             height: height - 5, // treshold to avoid overlapping / sticking out
             top: -height,
-            left: keys.indexOf(note.name), // Currently hardcoded, need a proper mapping system later on
+            left: groupIndex,
             startTime: note.time - trackDelay, // Subtract start time of first note to make it start immediately
             duration: note.duration,
             name: note.name,
+            groupIndex: groupIndex,
             stopped: false,
-            color: colors.primary,
+            color: "--secondary",
             wasHit: false,
         });
     }
@@ -98,13 +138,13 @@ function animationLoop(currentTime: number): void {
         if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
             if (note.top >= _animationContainerHeight - note.height) {
-                if (note.name != nextNote?.name || note.startTime != nextNote?.startTime) {
+                if (note.name !== nextNote?.name || note.startTime !== nextNote?.startTime) {
                     nextNote = note;
                 }
                 if (settings.mode === Mode.Pause && !note.stopped) {
-                    const aKey = keys.find(key2 => key2.color !== "white");
-                    if (aKey) {
-                        aKey.color = 'white';
+                    const keyGroup = keyGroups.find((key) => key.color !== "--primary");
+                    if (keyGroup) {
+                        keyGroup.color = "--primary";
                     }
                     shouldStop = true;
                     note.stopped = true;
@@ -113,10 +153,10 @@ function animationLoop(currentTime: number): void {
         }
     }
     const lastNote = notes[notes.length - 1];
-    const animationFinished = time > (lastNote.startTime + lastNote.duration + (_windowHeight / animationSpeed));
+    const animationFinished = time > lastNote.startTime + lastNote.duration + _windowHeight / animationSpeed;
     if (animationFinished) {
         stop();
-        goto('/prototype/result');
+        goto("/prototype/result");
     } else {
         frameId = requestAnimationFrame(animationLoop);
     }

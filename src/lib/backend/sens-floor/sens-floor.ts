@@ -14,7 +14,7 @@ export type StepEventData = {
 };
 export type StepEventCallback = (event: StepEventData) => void;
 
-let socket: SocketIOClient.Socket;
+let socket: SocketIOClient.Socket | undefined;
 let dimension: { x: number; y: number } = { x: -1, y: -1 };
 
 const padStates: Array<Array<PadState>> = [];
@@ -75,6 +75,7 @@ export function disconnect(): void {
         return;
     }
     socket.close();
+    socket = undefined;
 }
 
 export function addStepOnListener(listener: StepEventCallback): void {
@@ -129,7 +130,7 @@ export function calculateNormalisedCoordinates(
     return applyMappingToCoordinates(result.x, result.y);
 }
 
-export function applyMappingToCoordinates(x: number, y: number): { x: number; y: number } {
+function applyMappingToCoordinates(x: number, y: number): { x: number; y: number } {
     if (settings.sensFloorConfig.flipX) {
         x = 1.0 - x;
     }

@@ -1,17 +1,25 @@
-import * as Fs from "@tauri-apps/plugin-fs";
 import * as Path from "@tauri-apps/api/path";
+import { invoke } from "@tauri-apps/api/core";
+
+const SETTINGS_VERSION: string = "1.1.0";
 
 type Settings = {
-    midiFilePath: string;
+    settingsVersion: string;
     speed: number;
     colorSchemeId: string;
     mode: Mode;
+    midiConfig: MidiConfig;
     sensFloorConfig: SensFloorConfig;
 };
 
 type ColorScheme = {
     id: string;
     displayText: string;
+};
+
+type MidiConfig = {
+    path: string;
+    trackIndex: number;
 };
 
 type SensFloorConfig = {
@@ -46,18 +54,26 @@ async function getSettingsPath(): Promise<string> {
 }
 
 export async function load(): Promise<void> {
+    console.log("Loading settings");
+
     const path = await getSettingsPath();
+    const doesFileExist = await invoke<boolean>("does_file_exist", { path });
 
-    if (await Fs.exists(path)) {
-        const data = await Fs.readTextFile(path);
-        const json = JSON.parse(data) as Settings;
+    if (doesFileExist) {
+        const data = await invoke<string>("read_text_file", { path });
+        const json = JSON.parse(data);
 
-        // Set loaded settings
-        settings.midiFilePath = json.midiFilePath;
-        settings.speed = json.speed;
-        settings.mode = json.mode;
-        settings.colorSchemeId = json.colorSchemeId;
-        settings.sensFloorConfig = json.sensFloorConfig;
+        if (json.settingsVersion == SETTINGS_VERSION) {
+            settings.speed = json.speed;
+            settings.colorSchemeId = json.colorSchemeId;
+            settings.mode = json.mode;
+            settings.midiConfig = json.midiConfig;
+            settings.sensFloorConfig = json.sensFloorConfig;
+        } else {
+            console.error(
+                "The version of your settings is different from the current applications settings version, reverting to default settings",
+            );
+        }
 
         // Apply loaded settings
         document.documentElement.setAttribute("data-colorscheme", settings.colorSchemeId);
@@ -69,16 +85,23 @@ export async function load(): Promise<void> {
 }
 
 export async function save(): Promise<void> {
+    console.log("Saving settings");
+
     const path = await getSettingsPath();
     const content = JSON.stringify(settings, null, 2);
-    await Fs.writeTextFile(path, content);
+    await invoke("write_text_file", { path, content });
 }
 
 export const settings: Settings = $state({
-    midiFilePath: "AlleMeineEntchen.mid",
+    settingsVersion: SETTINGS_VERSION,
+    midiFilePath: "",
     speed: 100,
     mode: Mode.Pause,
     colorSchemeId: "default",
+    midiConfig: {
+        path: "",
+        trackIndex: 0,
+    },
     sensFloorConfig: {
         scaleX: 1,
         scaleY: 1,

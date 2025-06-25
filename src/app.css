@@ -2,6 +2,7 @@
     --crop-left: 0px;
     --crop-right: 0px;
     --button-width: calc((100vw - var(--crop-left) - var(--crop-right)) / 6);
+    --button-border-radius: 10px;
 
     /*--correct-note: var(--primary);*/
     --correct-note: yellow;
@@ -34,6 +35,7 @@ body {
     margin: 0;
     overflow: hidden;
     user-select: none;
+    color: var(--text);
 
     /* Needed for linux */
     -webkit-user-select: none;
@@ -49,7 +51,7 @@ body {
     height: 100%;
     text-align: center;
     font-size: 1.2em;
-    border-radius: 5%;
+    border-radius: var(--button-border-radius);
     border: 2px solid var(--background-color);
 }
 

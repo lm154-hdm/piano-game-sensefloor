@@ -1,5 +1,12 @@
 <script lang="ts">
-    let { height, top, left, color }: { height: number; top: number; left: number; color: string } = $props();
+    interface AnimatedKeyProps {
+        height: number;
+        top: number;
+        left: number;
+        color: string;
+    }
+
+    let { height, top, left, color }: AnimatedKeyProps = $props();
 </script>
 
 <div
@@ -8,7 +15,7 @@
         --height: {height}px;
         --top: {top}px;
         --left: {left};
-        --color: {color}"
+        --color: var({color})"
 ></div>
 
 <style>
@@ -19,7 +26,7 @@
         left: calc(var(--button-width) * var(--left));
         transform: translateY(var(--top));
         background-color: var(--color);
-        border-radius:5%;
+        border-radius: var(--button-border-radius);
         border: 2px solid var(--background-color);
     }
 </style>
