@@ -2,7 +2,8 @@ import { Midi } from "@tonejs/midi";
 import { Mode, settings } from "$lib/backend/settings.svelte";
 import { goto } from "$app/navigation";
 
-type NoteData = {
+export type NoteData = {
+    id: string,
     height: number;
     top: number;
     left: number;
@@ -29,13 +30,22 @@ export function getAnimationSpeed(): number {
     return animationSpeed;
 }
 let frameId: number = 0;
+const activeNoteIds: string[] = [];  // stores only note.id
 export const notes: NoteData[] = $state([]);
+export function getActiveNotes(): NoteData[] {
+    return notes?.filter(n => activeNoteIds
+        .includes(n.id))
+        .sort((a, b) => a.startTime - b.startTime)
+        .map(n => ({ ...n })) ?? [];  // return copies, not references
+}
+export function hitNote(id: string) {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    note.color = "--correct-note";
+    note.wasHit = true;
+}
 export const keyGroups: KeyGroup[] = $state([]);
 let time: number = 0;
-let nextNote = $state<NoteData | undefined>(undefined);
-export function getNextNote() {
-    return nextNote;
-}
 export let animationIsRunning: boolean = false;
 
 export async function initialise(windowHeight: number, animationContainerHeight: number, midi: Midi): Promise<boolean> {
@@ -89,6 +99,7 @@ export async function initialise(windowHeight: number, animationContainerHeight:
         const height = note.duration * animationSpeed;
         const groupIndex = keyGroups.findIndex((group) => group.keyNames.includes(note.name));
         notes.push({
+            id: crypto.randomUUID(),
             height: height - 5, // treshold to avoid overlapping / sticking out
             top: -height,
             left: groupIndex,
@@ -136,9 +147,17 @@ function animationLoop(currentTime: number): void {
     for (const note of notes) {
         if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
+            // TODO: check if called at correct time
+            if (note.top >= _animationContainerHeight) {
+                const index = activeNoteIds.indexOf(note.id);
+                if (index !== -1) {
+                    activeNoteIds.splice(index, 1);
+                }
+                continue;
+            }
             if (note.top >= _animationContainerHeight - note.height) {
-                if (note.name !== nextNote?.name || note.startTime !== nextNote?.startTime) {
-                    nextNote = note;
+                if (!activeNoteIds.includes(note.id)) {
+                    activeNoteIds.push(note.id)
                 }
                 if (settings.mode === Mode.Pause && !note.stopped) {
                     const keyGroup = keyGroups.find((key) => key.color !== "--primary");
@@ -148,6 +167,7 @@ function animationLoop(currentTime: number): void {
                     shouldStop = true;
                     note.stopped = true;
                 }
+                //continue;
             }
         }
     }

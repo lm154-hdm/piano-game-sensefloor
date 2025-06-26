@@ -4,7 +4,7 @@
 
     import * as Animation from "$lib/backend/animation.svelte";
     import { Mode, settings } from "$lib/backend/settings.svelte";
-    import { animationIsRunning } from "$lib/backend/animation.svelte";
+    import {animationIsRunning, type NoteData} from "$lib/backend/animation.svelte";
     import { score } from "$lib/backend/score.svelte";
     import piano from "$lib/PianoSampler";
 
@@ -17,11 +17,8 @@
     });
 
     function play(): void {
-        const nextNote = Animation.getNextNote(); // gets actual reference
-        // Continue Animation
-        if (settings.mode === Mode.Pause && !animationIsRunning && index === nextNote?.groupIndex) {
-            Animation.start();
-        }
+        const activeNotes: NoteData[] = Animation.getActiveNotes();
+        const activeNote = activeNotes.find(n => n.groupIndex === index);
         // Reset color of previous clicked key
         const previousColoredPianoKey = Animation.keyGroups.find((keyGroup) => keyGroup.color !== "--primary"); // default key color
         if (previousColoredPianoKey && Animation.keyGroups.indexOf(previousColoredPianoKey) !== index) {
@@ -29,13 +26,15 @@
         }
         // Set color of key & note
         const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
-        if (nextNote && nextNote.groupIndex === index && !nextNote.wasHit) {
-            nextNote.color = "--correct-note";
-            nextNote.wasHit = true;
+        if (activeNote && !activeNote.wasHit) {
+            Animation.hitNote(activeNote.id)
             keyGroup.color = "--correct-note";
             score.correctlyPressed++;
             if (settings.mode !== Mode.Playback) {
-                piano.triggerAttackRelease(nextNote.name, nextNote.duration == 0 ? "4n" : nextNote.duration);
+                piano.triggerAttackRelease(activeNote.name, activeNote.duration == 0 ? "4n" : activeNote.duration);
+            }
+            if (settings.mode === Mode.Pause && !animationIsRunning) {
+                Animation.start();
             }
         } else {
             keyGroup.color = "--false-note";
