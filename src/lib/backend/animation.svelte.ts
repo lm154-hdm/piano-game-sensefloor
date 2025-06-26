@@ -42,7 +42,7 @@ export async function initialise(windowHeight: number, animationContainerHeight:
     _windowHeight = windowHeight;
     _animationContainerHeight = animationContainerHeight;
 
-    const beatsPerBar = midi.header.timeSignatures[0].timeSignature[0];
+    const beatsPerBar = midi.header.timeSignatures[0]?.timeSignature?.[0] ?? 4;
     const secondsPerBeat = 60 / midi.header.tempos[0].bpm;
     const secondsPerBar = beatsPerBar * secondsPerBeat;
     animationSpeed = animationContainerHeight / secondsPerBar;
