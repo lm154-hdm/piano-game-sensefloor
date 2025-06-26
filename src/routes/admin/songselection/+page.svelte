@@ -1,7 +1,7 @@
 <script lang="ts">
     import { settings } from "$lib/backend/settings.svelte";
-    import { Midi } from "@tonejs/midi";
-    import { onMount } from "svelte";
+    import { Midi, Track } from "@tonejs/midi";
+    import {onDestroy, onMount} from "svelte";
     import { invoke } from "@tauri-apps/api/core";
     import BackButton from "$lib/components/back-button.svelte";
     import Title from "$lib/components/title.svelte";
@@ -130,6 +130,24 @@
         Tone.getTransport().position = 0;
         isPlaybackRunning = PlaybackMode.STOPPED;
     }
+
+    onDestroy(() => {
+        stopPlayback();
+    })
+
+    type DisplayTrack = {
+        track: Track,
+        trackIndex: number,
+        displayIndex: number
+    }
+    const displayTracks: DisplayTrack[] = $derived(midi?.tracks
+        .map((track, i) => ({ track, i })) // i = original track index
+        .filter(({ track }) => track.notes.length > 0)
+        .map(({ track, i }, displayIndex) => ({
+            track,
+            trackIndex: i, // for settings.midiConfig
+            displayIndex: displayIndex + 1
+        }))  ?? []);
 </script>
 
 <Title text="Adminpanel - Songauswahl" />
@@ -143,22 +161,20 @@
         <hr />
         <h2>Wähle die MIDI-Spur, die du spielen möchtest</h2>
         <div id="song-selection-track-container">
-            {#each midi.tracks as track, i}
-                {#if track.notes.length > 0}
-                    <label>
-                        <input
-                            type="radio"
-                            name="track-selection"
-                            value={track.name}
-                            checked={i === settings.midiConfig.trackIndex}
-                            onchange={() => {
-                                stopPlayback();
-                                settings.midiConfig.trackIndex = i;
-                            }}
-                        />
-                        {track.name || "UNNAMED"}
-                    </label>
-                {/if}
+            {#each displayTracks as { track, trackIndex, displayIndex }}
+                <label>
+                    <input
+                        type="radio"
+                        name="track-selection"
+                        value={track.name}
+                        checked={trackIndex === settings.midiConfig.trackIndex}
+                        onchange={() => {
+                            stopPlayback();
+                            settings.midiConfig.trackIndex = trackIndex;
+                        }}
+                    />
+                    {track.name || `Track ${displayIndex}`}
+                </label>
             {/each}
         </div>
         <hr />
@@ -199,6 +215,7 @@
         align-items: flex-start;
         justify-content: center;
         overflow-y: scroll;
+        padding-right: 20px;
     }
 
     #song-selection-playback-container {
