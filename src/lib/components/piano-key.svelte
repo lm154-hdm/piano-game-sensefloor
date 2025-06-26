@@ -17,11 +17,7 @@
     });
 
     function play(): void {
-        let duration: number = 0;
         const nextNote = Animation.getNextNote(); // gets actual reference
-        if (nextNote && index === nextNote.groupIndex) {
-            duration = nextNote.duration;
-        }
         // Continue Animation
         if (settings.mode === Mode.Pause && !animationIsRunning && index === nextNote?.groupIndex) {
             Animation.start();
@@ -33,19 +29,19 @@
         }
         // Set color of key & note
         const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
-        if (nextNote && nextNote.groupIndex === Animation.keyGroups.indexOf(keyGroup) && !nextNote.wasHit) {
+        if (nextNote && nextNote.groupIndex === index && !nextNote.wasHit) {
             nextNote.color = "--correct-note";
             nextNote.wasHit = true;
             keyGroup.color = "--correct-note";
             score.correctlyPressed++;
             if (settings.mode !== Mode.Playback) {
-                piano.triggerAttackRelease(nextNote.name, duration == 0 ? "4n" : duration);
+                piano.triggerAttackRelease(nextNote.name, nextNote.duration == 0 ? "4n" : nextNote.duration);
             }
         } else {
             keyGroup.color = "--false-note";
             score.incorrectlyPressed++;
             if (settings.mode !== Mode.Playback) {
-                piano.triggerAttackRelease("C2", duration == 0 ? "4n" : duration, Tone.now(), 2);
+                piano.triggerAttackRelease("C2", "4n", Tone.now(), 2);
             }
         }
     }
