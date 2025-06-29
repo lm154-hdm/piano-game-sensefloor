@@ -16,8 +16,8 @@
     let animationContainerHeight: number = $state(0);
 
     onMount(async () => {
-        SensFloor.initialise(8, 6);
-        SensFloor.connect("192.168.178.22", 8000);
+        //SensFloor.initialise(8, 6);
+        //SensFloor.connect("192.168.178.22", 8000);
 
         const midi = await loadMidi();
         score.totalNotes = midi.tracks[settings.midiConfig.trackIndex].notes.length;
@@ -27,13 +27,13 @@
             return;
         }
 
-        Tone.loaded().then(() => {
+        /*Tone.loaded().then(() => {
             SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
                 const x = event.normalisedX * windowWidth * settings.sensFloorConfig.scaleX;
                 const y = event.normalisedY * windowHeight * settings.sensFloorConfig.scaleY;
                 clickAtPosition(x, y);
             });
-        });
+        });*/
 
         if (settings.mode === Mode.Playback) {
             schedulePlaybackSong(midi);

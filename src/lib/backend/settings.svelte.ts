@@ -1,7 +1,7 @@
 import * as Path from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
 
-const SETTINGS_VERSION: string = "1.1.0";
+declare const __APP_VERSION__: string;
 
 type Settings = {
     settingsVersion: string;
@@ -23,6 +23,8 @@ type MidiConfig = {
 };
 
 type SensFloorConfig = {
+    width: number;
+    height: number;
     scaleX: number;
     scaleY: number;
     flipX: boolean;
@@ -64,7 +66,7 @@ export async function load(): Promise<void> {
         const data = await invoke<string>("read_text_file", { path });
         const json = JSON.parse(data);
 
-        if (json.settingsVersion == SETTINGS_VERSION) {
+        if (json.settingsVersion == __APP_VERSION__) {
             settings.speed = json.speed;
             settings.colorSchemeId = json.colorSchemeId;
             settings.mode = json.mode;
@@ -94,8 +96,7 @@ export async function save(): Promise<void> {
 }
 
 export const settings: Settings = $state({
-    settingsVersion: SETTINGS_VERSION,
-    midiFilePath: "",
+    settingsVersion: __APP_VERSION__,
     speed: 100,
     mode: Mode.Pause,
     colorSchemeId: "default",
@@ -104,11 +105,13 @@ export const settings: Settings = $state({
         trackIndex: 0,
     },
     sensFloorConfig: {
+        width: 8,
+        height: 6,
         scaleX: 1,
-        scaleY: 1,
+        scaleY: 1.3333,
         flipX: false,
-        flipY: false,
-        rotateBy: 0,
+        flipY: true,
+        rotateBy: Math.PI / 2,
         cropLeft: 0,
         cropRight: 0,
     },

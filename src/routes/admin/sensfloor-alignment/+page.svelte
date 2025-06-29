@@ -34,7 +34,7 @@
     }
 </script>
 
-<Title text="Adminpanel - SensFloor-Ausrichtung" />
+<Title text="Adminpanel - SensFloor ausrichten" />
 
 <div class="sensfloor-alignment-container">
     <SensfloorDisplay />
