@@ -40,7 +40,7 @@
     }
 </script>
 
-<main class="flex-center flex-column">
+<main class="stretch-screen flex-center flex-column">
     {#if connectionState === ConnectionState.NONE}
         <Loader />
         <p>Verbindung mit SensFloor wird hergestellt</p>
@@ -82,10 +82,3 @@
         </ErrorCard>
     {/if}
 </main>
-
-<style>
-    main {
-        width: 100vw;
-        height: 100vh;
-    }
-</style>

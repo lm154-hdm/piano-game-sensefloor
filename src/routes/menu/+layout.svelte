@@ -19,4 +19,6 @@
     }
 </script>
 
-{@render children()}
+<main class="stretch-screen flex-bottom flex-row">
+    {@render children()}
+</main>

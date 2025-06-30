@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
     import * as Tone from "tone";
-    import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
     import * as Animation from "$lib/backend/animation.svelte";
     import AnimatedKey from "$lib/components/animated-key.svelte";
     import PianoKey from "$lib/components/piano-key.svelte";
@@ -16,9 +15,6 @@
     let animationContainerHeight: number = $state(0);
 
     onMount(async () => {
-        //SensFloor.initialise(8, 6);
-        //SensFloor.connect("192.168.178.22", 8000);
-
         const midi = await loadMidi();
         score.totalNotes = midi.tracks[settings.midiConfig.trackIndex].notes.length;
 
@@ -26,14 +22,6 @@
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
-
-        /*Tone.loaded().then(() => {
-            SensFloor.addStepOnListener((event: SensFloor.StepEventData) => {
-                const x = event.normalisedX * windowWidth * settings.sensFloorConfig.scaleX;
-                const y = event.normalisedY * windowHeight * settings.sensFloorConfig.scaleY;
-                clickAtPosition(x, y);
-            });
-        });*/
 
         if (settings.mode === Mode.Playback) {
             schedulePlaybackSong(midi);
@@ -45,8 +33,6 @@
     });
 
     onDestroy(() => {
-        SensFloor.removeAllListeners();
-        SensFloor.disconnect();
         Animation.stop();
         Animation.reset(); // doesn't work properly
         Tone.getTransport().stop();

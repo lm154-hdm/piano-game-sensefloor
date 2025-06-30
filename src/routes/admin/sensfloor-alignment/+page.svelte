@@ -34,39 +34,41 @@
     }
 </script>
 
-<Title text="Adminpanel - SensFloor ausrichten" />
+<main class="stretch-screen flex-center flex-row">
+    <Title text="Adminpanel - SensFloor ausrichten" />
 
-<div class="sensfloor-alignment-container">
-    <SensfloorDisplay />
-    <div class="sensfloor-alignment-button-container">
-        <SensfloorAlignmentButton
-            text="-90°"
-            icon={rotateLeftIcon}
-            alt="Ein halbkreisförmiger, nach links gedrehter Pfeil"
-            onClick={rotateLeft}
-        />
-        <SensfloorAlignmentButton
-            text="+90°"
-            icon={rotateRightIcon}
-            alt="Ein halbkreisförmiger, nach rechts gedrehter Pfeil"
-            onClick={rotateRight}
-        />
-        <SensfloorAlignmentButton
-            text="Vertikal spiegeln<br>{settings.sensFloorConfig.flipY ? 'Ja' : 'Nein'}"
-            icon={flipVerticalIcon}
-            alt="Ein Pfeil, der nach oben und unten zeigt"
-            onClick={flipVertical}
-        />
-        <SensfloorAlignmentButton
-            text="Horizontal spiegeln<br>{settings.sensFloorConfig.flipX ? 'Ja' : 'Nein'}"
-            icon={flipHorizontalIcon}
-            alt="Ein Pfeil, der nach links und rechts zeigt"
-            onClick={flipHorizontal}
-        />
+    <div class="sensfloor-alignment-container">
+        <SensfloorDisplay />
+        <div class="sensfloor-alignment-button-container">
+            <SensfloorAlignmentButton
+                text="-90°"
+                icon={rotateLeftIcon}
+                alt="Ein halbkreisförmiger, nach links gedrehter Pfeil"
+                onClick={rotateLeft}
+            />
+            <SensfloorAlignmentButton
+                text="+90°"
+                icon={rotateRightIcon}
+                alt="Ein halbkreisförmiger, nach rechts gedrehter Pfeil"
+                onClick={rotateRight}
+            />
+            <SensfloorAlignmentButton
+                text="Vertikal spiegeln<br>{settings.sensFloorConfig.flipY ? 'Ja' : 'Nein'}"
+                icon={flipVerticalIcon}
+                alt="Ein Pfeil, der nach oben und unten zeigt"
+                onClick={flipVertical}
+            />
+            <SensfloorAlignmentButton
+                text="Horizontal spiegeln<br>{settings.sensFloorConfig.flipX ? 'Ja' : 'Nein'}"
+                icon={flipHorizontalIcon}
+                alt="Ein Pfeil, der nach links und rechts zeigt"
+                onClick={flipHorizontal}
+            />
+        </div>
     </div>
-</div>
 
-<BackButton text="Zurück" slug="/admin" shouldSave={true} />
+    <BackButton text="Zurück" slug="/admin" shouldSave={true} />
+</main>
 
 <style>
     * {
