@@ -1,7 +1,7 @@
 <script lang="ts">
     import ErrorCard from "$lib/components/error-card.svelte";
     import Loader from "$lib/components/loader.svelte";
-    import { ConnectionState } from "$lib/backend/sens-floor/sens-floor";
+    import { SensFloorState } from "$lib/backend/sens-floor/sens-floor";
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
@@ -9,7 +9,7 @@
     import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
     import * as Settings from "$lib/backend/settings.svelte";
 
-    let connectionState: ConnectionState = $state(ConnectionState.NONE);
+    let connectionState: SensFloorState = $state(SensFloorState.NONE);
 
     onMount(async () => {
         await Settings.load();
@@ -26,14 +26,14 @@
     });
 
     async function connect(): Promise<void> {
-        connectionState = ConnectionState.NONE;
+        connectionState = SensFloorState.NONE;
 
         connectionState = await SensFloor.load();
         switch (connectionState) {
-            case ConnectionState.ALREADY_CONNECTED:
+            case SensFloorState.ALREADY_CONNECTED:
                 goto("/menu");
                 break;
-            case ConnectionState.CONNECTION_SUCCESSFUL:
+            case SensFloorState.CONNECTION_SUCCESSFUL:
                 goto("/menu");
                 break;
         }
@@ -41,10 +41,10 @@
 </script>
 
 <main class="stretch-screen flex-center flex-column">
-    {#if connectionState === ConnectionState.NONE}
+    {#if connectionState === SensFloorState.NONE}
         <Loader />
         <p>Verbindung mit SensFloor wird hergestellt</p>
-    {:else if connectionState === ConnectionState.NO_CONNECTION_INFORMATION}
+    {:else if connectionState === SensFloorState.MISSING_CONFIGURATION}
         <ErrorCard
             buttonText="Zum Adminpanel"
             buttonClick={() => {
@@ -59,7 +59,7 @@
                 an.
             </p>
         </ErrorCard>
-    {:else if connectionState === ConnectionState.CONNECTION_FAILED}
+    {:else if connectionState === SensFloorState.CONNECTION_FAILED}
         <ErrorCard buttonText="Erneut versuchen" buttonClick={connect}>
             <p>
                 <strong>Die Verbindung ist aufgrund eines Timeouts fehlgeschlagen.</strong><br />Bitte überprüfen Sie,
@@ -71,7 +71,7 @@
                 <li>die korrekte IP-Adresse sowie der korrekte Port in der .env-Datei des Projektes angegeben sind</li>
             </ul>
         </ErrorCard>
-    {:else if connectionState === ConnectionState.CONNECTION_TIMEOUT}
+    {:else if connectionState === SensFloorState.CONNECTION_TIMEOUT}
         <ErrorCard buttonText="Erneut versuchen" buttonClick={connect}>
             <p><strong>Die Verbindung ist fehlgeschlagen.</strong><br />Bitte überprüfen Sie, ob:</p>
             <ul>

@@ -9,6 +9,17 @@ interface SensFloorConfig {
     port: number;
     width: number;
     height: number;
+    rotateBy: number;
+    flipX: number;
+    flipY: number;
+    cropLeft: number;
+    cropRight: number;
+    cropTop: number;
+    cropBottom: number;
+    offsetLeft: number;
+    offsetRight: number;
+    offsetTop: number;
+    offsetBottom: number;
 }
 
 export type StepEvent = (x: number, y: number, padPart: PadPart) => void;
@@ -23,53 +34,118 @@ export type StepEventData = {
 
 export type StepEventCallback = (event: StepEventData) => void;
 
-export enum ConnectionState {
+export enum SensFloorState {
     NONE,
     CONNECTING,
     CONNECTION_FAILED,
     CONNECTION_TIMEOUT,
     CONNECTION_SUCCESSFUL,
-    NO_CONNECTION_INFORMATION,
+    MISSING_CONFIGURATION,
     ALREADY_CONNECTED,
 }
 
 let socket: SocketIOClient.Socket | undefined;
-let dimension: { x: number; y: number } = { x: -1, y: -1 };
+let config: SensFloorConfig;
 
 const padStates: Array<Array<PadState>> = [];
 const stepOnListeners: Array<StepEventCallback> = [];
 const stepOffListeners: Array<StepEventCallback> = [];
 
-function getSensFloorConfig(): SensFloorConfig {
+function loadSensFloorConfig(): SensFloorConfig {
     const ip = import.meta.env.VITE_SENSFLOOR_IP;
     const port = import.meta.env.VITE_SENSFLOOR_PORT;
     const width = import.meta.env.VITE_SENSFLOOR_WIDTH;
     const height = import.meta.env.VITE_SENSFLOOR_HEIGHT;
+    const rotateBy = import.meta.env.VITE_SENSFLOOR_ROTATE_BY;
+    const flipX = import.meta.env.VITE_SENSFLOOR_FLIP_X;
+    const flipY = import.meta.env.VITE_SENSFLOOR_FLIP_Y;
+    const cropLeft = import.meta.env.VITE_APPLICATION_CROP_LEFT;
+    const cropRight = import.meta.env.VITE_APPLICATION_CROP_RIGHT;
+    const cropTop = import.meta.env.VITE_APPLICATION_CROP_TOP;
+    const cropBottom = import.meta.env.VITE_APPLICATION_CROP_BOTTOM;
+    const offsetLeft = import.meta.env.VITE_SENSFLOOR_OFFSET_LEFT;
+    const offsetRight = import.meta.env.VITE_SENSFLOOR_OFFSET_RIGHT;
+    const offsetTop = import.meta.env.VITE_SENSFLOOR_OFFSET_TOP;
+    const offsetBottom = import.meta.env.VITE_SENSFLOOR_OFFSET_BOTTOM;
 
-    return { ip, port, width, height };
+    return {
+        ip,
+        port,
+        width,
+        height,
+        rotateBy,
+        flipX,
+        flipY,
+        cropLeft,
+        cropRight,
+        cropTop,
+        cropBottom,
+        offsetLeft,
+        offsetRight,
+        offsetTop,
+        offsetBottom,
+    };
 }
 
-export async function load(): Promise<ConnectionState> {
+function isConfigComplete(): boolean {
+    if (
+        config.ip &&
+        config.port &&
+        config.width &&
+        config.height &&
+        config.rotateBy &&
+        config.flipX &&
+        config.flipY &&
+        config.cropLeft &&
+        config.cropRight &&
+        config.cropTop &&
+        config.cropBottom &&
+        config.offsetLeft &&
+        config.offsetRight &&
+        config.offsetTop &&
+        config.offsetBottom
+    ) {
+        return true;
+    }
+    return false;
+}
+
+export async function load(): Promise<SensFloorState> {
     if (socket?.connected) {
         console.warn("SensFloor is already loaded");
-        return ConnectionState.ALREADY_CONNECTED;
+        return SensFloorState.ALREADY_CONNECTED;
     }
 
-    const config = getSensFloorConfig();
+    config = loadSensFloorConfig();
 
-    if (!config.ip || !config.port || !config.width || !config.height) {
-        console.warn(
-            `Missing connection information for SensFloor:\nIP: "${config.ip}"\nPort: "${config.port}"\nWidth: "${config.width}"\nHeight: "${config.height}"`,
+    // We know that this is not a beautiful solution,
+    // but we wanted a way to receive the information about the .env file inside of the application,
+    // because the git respository where this is described is going to be deleted at the end of WS 25/26
+    if (!isConfigComplete()) {
+        console.error(
+            "Missing parameters in SensFloor config. Check the '.env' file of your project and make sure that the following parameters are set:",
+            '"VITE_SENSFLOOR_IP"',
+            '"VITE_SENSFLOOR_PORT"',
+            '"VITE_SENSFLOOR_WIDTH"',
+            '"VITE_SENSFLOOR_HEIGHT"',
+            '"VITE_SENSFLOOR_ROTATE_BY"',
+            '"VITE_SENSFLOOR_FLIP_X"',
+            '"VITE_SENSFLOOR_FLIP_Y"',
+            '"VITE_APPLICATION_CROP_LEFT"',
+            '"VITE_APPLICATION_CROP_RIGHT"',
+            '"VITE_APPLICATION_CROP_TOP"',
+            '"VITE_APPLICATION_CROP_BOTTOM"',
+            '"VITE_SENSFLOOR_OFFSET_LEFT"',
+            '"VITE_SENSFLOOR_OFFSET_RIGHT"',
+            '"VITE_SENSFLOOR_OFFSET_TOP"',
+            '"VITE_SENSFLOOR_OFFSET_BOTTOM"',
         );
-        return ConnectionState.NO_CONNECTION_INFORMATION;
+        return SensFloorState.MISSING_CONFIGURATION;
     }
 
-    dimension.x = config.width;
-    dimension.y = config.height;
-
-    for (let x = 1; x <= dimension.x; x++) {
+    for (let x = 1; x <= config.width; x++) {
         const padColumn: Array<PadState> = [];
-        for (let y = 1; y <= dimension.y; y++) {
+        for (let y = 1; y <= config.height; y++) {
             padColumn.push(new PadState(x, y, stepOn, stepOff));
         }
         padStates.push(padColumn);
@@ -80,17 +156,17 @@ export async function load(): Promise<ConnectionState> {
 
         socket.on("connect", () => {
             console.log("Connected to SensFloor");
-            resolve(ConnectionState.CONNECTION_SUCCESSFUL);
+            resolve(SensFloorState.CONNECTION_SUCCESSFUL);
         });
 
         socket.on("connect_error", () => {
             console.log("Connection to SensFloor failed");
-            resolve(ConnectionState.CONNECTION_FAILED);
+            resolve(SensFloorState.CONNECTION_FAILED);
         });
 
         socket.on("connect_timeout", () => {
             console.log("Connection to SensFloor timeouted");
-            resolve(ConnectionState.CONNECTION_TIMEOUT);
+            resolve(SensFloorState.CONNECTION_TIMEOUT);
         });
 
         socket.on("raw", (data: { raw: Uint8Array }) => {
@@ -140,12 +216,12 @@ export function calculateNormalisedCoordinates(
     y: number,
     normalisedCoordinatespadPart: PadPart,
 ): { x: number; y: number } {
-    const halfPadSize = 1 / (dimension.x * 2) / 2;
+    const halfPadSize = 1 / (config.width * 2) / 2;
     let result = { x: 0, y: 0 };
 
     // Caluclate x coordinate
-    result.x = x / dimension.x;
-    result.x -= 1 / (dimension.x * 2); // Move coordinate to the middle of the pad
+    result.x = x / config.width;
+    result.x -= 1 / (config.width * 2); // Move coordinate to the middle of the pad
     if (
         normalisedCoordinatespadPart == PadPart.NNO ||
         normalisedCoordinatespadPart == PadPart.ONO ||
@@ -158,8 +234,8 @@ export function calculateNormalisedCoordinates(
     }
 
     // Caluclate y coordinate
-    result.y = y / dimension.y;
-    result.y -= 1 / (dimension.y * 2); // Move coordinate to the middle of the pad
+    result.y = y / config.height;
+    result.y -= 1 / (config.height * 2); // Move coordinate to the middle of the pad
     if (
         normalisedCoordinatespadPart == PadPart.WNW ||
         normalisedCoordinatespadPart == PadPart.NNW ||
@@ -175,10 +251,10 @@ export function calculateNormalisedCoordinates(
 }
 
 function applyMappingToCoordinates(x: number, y: number): { x: number; y: number } {
-    if (settings.sensFloorConfig.flipX) {
+    if (config.flipX) {
         x = 1.0 - x;
     }
-    if (settings.sensFloorConfig.flipY) {
+    if (config.flipY) {
         y = 1.0 - y;
     }
 
@@ -188,7 +264,7 @@ function applyMappingToCoordinates(x: number, y: number): { x: number; y: number
 
     // Rotate around origin
     const backupX = x;
-    const angle = settings.sensFloorConfig.rotateBy;
+    const angle = config.rotateBy;
     x = x * Math.cos(angle) - y * Math.sin(angle);
     y = backupX * Math.sin(angle) + y * Math.cos(angle);
 
@@ -199,8 +275,12 @@ function applyMappingToCoordinates(x: number, y: number): { x: number; y: number
     return { x, y };
 }
 
+export function getConfig(): SensFloorConfig {
+    return { ...config };
+}
+
 export function getDimension(): { x: number; y: number } {
-    return { x: dimension.x, y: dimension.y };
+    return { x: config.width, y: config.height };
 }
 
 function stepOn(x: number, y: number, padPart: PadPart): void {

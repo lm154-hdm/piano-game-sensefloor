@@ -3,36 +3,23 @@ import { invoke } from "@tauri-apps/api/core";
 
 declare const __APP_VERSION__: string;
 
-type Settings = {
+interface Settings {
     settingsVersion: string;
     speed: number;
     colorSchemeId: string;
     mode: Mode;
     midiConfig: MidiConfig;
-    sensFloorConfig: SensFloorConfig;
-};
+}
 
-type ColorScheme = {
+interface ColorScheme {
     id: string;
     displayText: string;
-};
+}
 
-type MidiConfig = {
+interface MidiConfig {
     path: string;
     trackIndex: number;
-};
-
-type SensFloorConfig = {
-    width: number;
-    height: number;
-    scaleX: number;
-    scaleY: number;
-    flipX: boolean;
-    flipY: boolean;
-    rotateBy: number;
-    cropLeft: number;
-    cropRight: number;
-};
+}
 
 export enum Mode {
     Normal = 0,
@@ -71,17 +58,14 @@ export async function load(): Promise<void> {
             settings.colorSchemeId = json.colorSchemeId;
             settings.mode = json.mode;
             settings.midiConfig = json.midiConfig;
-            settings.sensFloorConfig = json.sensFloorConfig;
         } else {
-            console.error(
+            console.warn(
                 "The version of your settings is different from the current applications settings version, reverting to default settings",
             );
         }
 
         // Apply loaded settings
         document.documentElement.setAttribute("data-colorscheme", settings.colorSchemeId);
-        document.documentElement.style.setProperty("--crop-left", settings.sensFloorConfig.cropLeft + "px");
-        document.documentElement.style.setProperty("--crop-right", settings.sensFloorConfig.cropRight + "px");
     } else {
         await save();
     }
@@ -103,16 +87,5 @@ export const settings: Settings = $state({
     midiConfig: {
         path: "",
         trackIndex: 0,
-    },
-    sensFloorConfig: {
-        width: 8,
-        height: 6,
-        scaleX: 1,
-        scaleY: 1.3333,
-        flipX: false,
-        flipY: true,
-        rotateBy: Math.PI / 2,
-        cropLeft: 0,
-        cropRight: 0,
     },
 });
