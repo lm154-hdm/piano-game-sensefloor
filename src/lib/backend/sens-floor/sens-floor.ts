@@ -125,9 +125,9 @@ export async function load(): Promise<SensFloorState> {
         return SensFloorState.MISSING_CONFIGURATION;
     }
 
-    for (let x = 1; x <= config.width; x++) {
+    for (let x = 1 + config.offsetBottom; x <= config.width - config.offsetTop; x++) {
         const padColumn: Array<PadState> = [];
-        for (let y = 1; y <= config.height; y++) {
+        for (let y = 1 + config.offsetRight; y <= config.height - config.offsetLeft; y++) {
             padColumn.push(new PadState(x, y, stepOn, stepOff));
         }
         padStates.push(padColumn);
@@ -152,8 +152,8 @@ export async function load(): Promise<SensFloorState> {
         });
 
         socket.on("raw", (data: { raw: Uint8Array }) => {
-            const x: number = data.raw[RawDataMapping.POSITION_X] - 1;
-            const y: number = data.raw[RawDataMapping.POSITION_Y] - 1;
+            const x: number = data.raw[RawDataMapping.POSITION_X] - 1 + config.offsetBottom;
+            const y: number = data.raw[RawDataMapping.POSITION_Y] - 1 + config.offsetRight;
 
             // Pad values in default state (no pressure on pad) have slight variations from 125-128
             // Subtract 128 and take the max with 0 to map default state to 0
