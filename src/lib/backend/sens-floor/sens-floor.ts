@@ -3,12 +3,12 @@ import PadState from "./pad-state";
 import { PadPart } from "./pad-part";
 import { RawDataMapping } from "./raw-data-mapping";
 import { settings } from "../settings.svelte";
-import { invoke } from "@tauri-apps/api/core";
-import * as Path from "@tauri-apps/api/path";
 
-interface SensFloorConnectionInfo {
+interface SensFloorConfig {
     ip: string;
-    port: 8000;
+    port: number;
+    width: number;
+    height: number;
 }
 
 export type StepEvent = (x: number, y: number, padPart: PadPart) => void;
@@ -40,10 +40,13 @@ const padStates: Array<Array<PadState>> = [];
 const stepOnListeners: Array<StepEventCallback> = [];
 const stepOffListeners: Array<StepEventCallback> = [];
 
-async function getInfoPath(): Promise<string> {
-    const dataPath = await Path.appDataDir();
-    console.log(dataPath);
-    return await Path.join(dataPath, "config.enc");
+function getSensFloorConfig(): SensFloorConfig {
+    const ip = import.meta.env.VITE_SENSFLOOR_IP;
+    const port = import.meta.env.VITE_SENSFLOOR_PORT;
+    const width = import.meta.env.VITE_SENSFLOOR_WIDTH;
+    const height = import.meta.env.VITE_SENSFLOOR_HEIGHT;
+
+    return { ip, port, width, height };
 }
 
 export async function load(): Promise<ConnectionState> {
@@ -52,23 +55,28 @@ export async function load(): Promise<ConnectionState> {
         return ConnectionState.ALREADY_CONNECTED;
     }
 
-    const path = await getInfoPath();
-    const doesInfoFileExist = await invoke<boolean>("does_file_exist", { path });
-    if (!doesInfoFileExist) {
+    const config = getSensFloorConfig();
+
+    if (!config.ip || !config.port || !config.width || !config.height) {
+        console.warn(
+            `Missing connection information for SensFloor:\nIP: "${config.ip}"\nPort: "${config.port}"\nWidth: "${config.width}"\nHeight: "${config.height}"`,
+        );
         return ConnectionState.NO_CONNECTION_INFORMATION;
     }
 
-    applyDimension();
+    dimension.x = config.width;
+    dimension.y = config.height;
 
-    const { ip, port }: SensFloorConnectionInfo = await invoke<SensFloorConnectionInfo>(
-        "load_sensfloor_connection_info",
-        {
-            path,
-        },
-    );
+    for (let x = 1; x <= dimension.x; x++) {
+        const padColumn: Array<PadState> = [];
+        for (let y = 1; y <= dimension.y; y++) {
+            padColumn.push(new PadState(x, y, stepOn, stepOff));
+        }
+        padStates.push(padColumn);
+    }
 
     return new Promise((resolve, reject) => {
-        socket = io(`http://${ip}:${port}`);
+        socket = io(`http://${config.ip}:${config.port}`);
 
         socket.on("connect", () => {
             console.log("Connected to SensFloor");
@@ -103,19 +111,6 @@ export async function load(): Promise<ConnectionState> {
             padStates[x][y].update(nno, ono, oso, sso, ssw, wsw, wnw, nnw);
         });
     });
-}
-
-function applyDimension(): void {
-    dimension.x = settings.sensFloorConfig.width;
-    dimension.y = settings.sensFloorConfig.height;
-
-    for (let x = 1; x <= dimension.x; x++) {
-        const padColumn: Array<PadState> = [];
-        for (let y = 1; y <= dimension.y; y++) {
-            padColumn.push(new PadState(x, y, stepOn, stepOff));
-        }
-        padStates.push(padColumn);
-    }
 }
 
 export function disconnect(): void {
