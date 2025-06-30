@@ -118,27 +118,9 @@ export async function load(): Promise<SensFloorState> {
 
     config = loadSensFloorConfig();
 
-    // We know that this is not a beautiful solution,
-    // but we wanted a way to receive the information about the .env file inside of the application,
-    // because the git respository where this is described is going to be deleted at the end of WS 25/26
     if (!isConfigComplete()) {
         console.error(
-            "Missing parameters in SensFloor config. Check the '.env' file of your project and make sure that the following parameters are set:",
-            '"VITE_SENSFLOOR_IP"',
-            '"VITE_SENSFLOOR_PORT"',
-            '"VITE_SENSFLOOR_WIDTH"',
-            '"VITE_SENSFLOOR_HEIGHT"',
-            '"VITE_SENSFLOOR_ROTATE_BY"',
-            '"VITE_SENSFLOOR_FLIP_X"',
-            '"VITE_SENSFLOOR_FLIP_Y"',
-            '"VITE_APPLICATION_CROP_LEFT"',
-            '"VITE_APPLICATION_CROP_RIGHT"',
-            '"VITE_APPLICATION_CROP_TOP"',
-            '"VITE_APPLICATION_CROP_BOTTOM"',
-            '"VITE_SENSFLOOR_OFFSET_LEFT"',
-            '"VITE_SENSFLOOR_OFFSET_RIGHT"',
-            '"VITE_SENSFLOOR_OFFSET_TOP"',
-            '"VITE_SENSFLOOR_OFFSET_BOTTOM"',
+            "Missing parameters in SensFloor config. Check the '.env' file of your project and make sure that everything is defined and set",
         );
         return SensFloorState.MISSING_CONFIGURATION;
     }

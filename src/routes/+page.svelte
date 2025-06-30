@@ -9,7 +9,7 @@
     import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
     import * as Settings from "$lib/backend/settings.svelte";
 
-    let connectionState: SensFloorState = $state(SensFloorState.NONE);
+    let sensFloorState: SensFloorState = $state(SensFloorState.NONE);
 
     onMount(async () => {
         await Settings.load();
@@ -26,10 +26,10 @@
     });
 
     async function connect(): Promise<void> {
-        connectionState = SensFloorState.NONE;
+        sensFloorState = SensFloorState.NONE;
 
-        connectionState = await SensFloor.load();
-        switch (connectionState) {
+        sensFloorState = await SensFloor.load();
+        switch (sensFloorState) {
             case SensFloorState.ALREADY_CONNECTED:
                 goto("/menu");
                 break;
@@ -41,26 +41,33 @@
 </script>
 
 <main class="stretch-screen flex-center flex-column">
-    {#if connectionState === SensFloorState.NONE}
+    {#if sensFloorState === SensFloorState.NONE}
         <Loader />
         <p>Verbindung mit SensFloor wird hergestellt</p>
-    {:else if connectionState === SensFloorState.MISSING_CONFIGURATION}
-        <ErrorCard
-            buttonText="Zum Adminpanel"
-            buttonClick={() => {
-                goto("/admin/sensfloor-config");
-            }}
-        >
-            <p><strong>Es sind keine Verbindungsinformationen für den SensFloor vorhanden</strong></p>
-            <p>
-                Die Konfigurations-Datei, in welcher die Verbindungsinformationen für den SensFloor gespeichert werden,
-                konnte nicht gefunden werden.<br />
-                Bitte gehen Sie mit Hilfe des folgenden Buttons zum Admin-Panel und geben Sie dort die Verbindungsinformationen
-                an.
-            </p>
+    {:else if sensFloorState === SensFloorState.MISSING_CONFIGURATION}
+        <ErrorCard>
+            <p><strong>Die Konfigurationdatei für den SensFloor ist unvollständig</strong></p>
+            <p>Bitte überprüfen Sie, ob in der ".env"-Datei des Projektes die folgenden Variablen definiert sind:</p>
+            <ul>
+                <li>VITE_SENSFLOOR_IP</li>
+                <li>VITE_SENSFLOOR_PORT</li>
+                <li>VITE_SENSFLOOR_WIDTH</li>
+                <li>VITE_SENSFLOOR_HEIGHT</li>
+                <li>VITE_SENSFLOOR_ROTATE_BY</li>
+                <li>VITE_SENSFLOOR_FLIP_X</li>
+                <li>VITE_SENSFLOOR_FLIP_Y</li>
+                <li>VITE_APPLICATION_CROP_LEFT</li>
+                <li>VITE_APPLICATION_CROP_RIGHT</li>
+                <li>VITE_APPLICATION_CROP_TOP</li>
+                <li>VITE_APPLICATION_CROP_BOTTOM</li>
+                <li>VITE_SENSFLOOR_OFFSET_LEFT</li>
+                <li>VITE_SENSFLOOR_OFFSET_RIGHT</li>
+                <li>VITE_SENSFLOOR_OFFSET_TOP</li>
+                <li>VITE_SENSFLOOR_OFFSET_BOTTOM</li>
+            </ul>
         </ErrorCard>
-    {:else if connectionState === SensFloorState.CONNECTION_FAILED}
-        <ErrorCard buttonText="Erneut versuchen" buttonClick={connect}>
+    {:else if sensFloorState === SensFloorState.CONNECTION_FAILED}
+        <ErrorCard>
             <p>
                 <strong>Die Verbindung ist aufgrund eines Timeouts fehlgeschlagen.</strong><br />Bitte überprüfen Sie,
                 ob:
@@ -70,15 +77,17 @@
                 <li>der SensFloor eingesteckt ist</li>
                 <li>die korrekte IP-Adresse sowie der korrekte Port in der .env-Datei des Projektes angegeben sind</li>
             </ul>
+            <button class="primary-button" onclick={connect}>Erneut versuchen</button>
         </ErrorCard>
-    {:else if connectionState === SensFloorState.CONNECTION_TIMEOUT}
-        <ErrorCard buttonText="Erneut versuchen" buttonClick={connect}>
+    {:else if sensFloorState === SensFloorState.CONNECTION_TIMEOUT}
+        <ErrorCard>
             <p><strong>Die Verbindung ist fehlgeschlagen.</strong><br />Bitte überprüfen Sie, ob:</p>
             <ul>
                 <li>das Gerät und der SensFloor im selben Netzwerk sind</li>
                 <li>der SensFloor eingesteckt ist</li>
                 <li>die korrekte IP-Adresse sowie der korrekte Port in der .env-Datei des Projektes angegeben sind</li>
             </ul>
+            <button class="primary-button" onclick={connect}>Erneut versuchen</button>
         </ErrorCard>
     {/if}
 </main>
