@@ -26,7 +26,7 @@ pub fn run() {
             does_file_exist,
             read_text_file,
             read_binary_file,
-            write_text_file
+            write_text_file,
         ])
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_process::init())

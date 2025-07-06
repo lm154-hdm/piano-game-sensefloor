@@ -4,7 +4,9 @@
     import Title from "$lib/components/title.svelte";
 </script>
 
-<Title text="Adminpanel - SensFloor zuschneiden" />
-<SensfloorCroppingVerticalHandle isLeftHandle={true} />
-<SensfloorCroppingVerticalHandle isLeftHandle={false} />
-<BackButton text="Zurück" slug="/admin" shouldSave={true} />
+<main class="stretch-screen flex-bottom flex-row">
+    <Title text="Adminpanel - SensFloor zuschneiden" />
+    <SensfloorCroppingVerticalHandle isLeftHandle={true} />
+    <SensfloorCroppingVerticalHandle isLeftHandle={false} />
+    <BackButton text="Zurück" slug="/admin" shouldSave={true} />
+</main>

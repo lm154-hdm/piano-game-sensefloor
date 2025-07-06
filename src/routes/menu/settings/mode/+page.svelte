@@ -9,16 +9,16 @@
 
 <LabelledSettingsContainer text="Aktueller Modus: {Mode[settings.mode]}">
     <button
-            class="menu-button primary-button"
-            onclick={() => {
+        class="menu-button primary-button"
+        onclick={() => {
             settings.mode = Mode.Normal;
         }}
     >
         Normal
     </button>
     <button
-            class="menu-button primary-button"
-            onclick={() => {
+        class="menu-button primary-button"
+        onclick={() => {
             settings.mode = Mode.Pause;
         }}
     >
@@ -34,7 +34,7 @@
     </button>
 </LabelledSettingsContainer>
 
-<BackButton text="Speichern und zurück" slug="/settings" shouldSave={true} />
+<BackButton text="Speichern und zurück" slug="/menu/settings" shouldSave={true} />
 
 <style>
     button {
