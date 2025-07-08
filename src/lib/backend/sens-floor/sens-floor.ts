@@ -2,7 +2,7 @@ import io from "socket.io-client";
 import PadState from "./pad-state";
 import { PadPart } from "./pad-part";
 import { RawDataMapping } from "./raw-data-mapping";
-import { settings } from "../settings.svelte";
+import { values } from "../values.svelte";
 
 interface SensFloorConfig {
     ip: string;
@@ -10,8 +10,8 @@ interface SensFloorConfig {
     width: number;
     height: number;
     rotateBy: number;
-    flipX: number;
-    flipY: number;
+    flipX: boolean;
+    flipY: boolean;
     cropLeft: number;
     cropRight: number;
     cropTop: number;
@@ -47,11 +47,12 @@ export enum SensFloorState {
 let socket: SocketIOClient.Socket | undefined;
 let config: SensFloorConfig;
 
-const padStates: Array<Array<PadState>> = [];
+const padStates: Map<string, PadState> = new Map();
 const stepOnListeners: Array<StepEventCallback> = [];
 const stepOffListeners: Array<StepEventCallback> = [];
 
-function loadSensFloorConfig(): SensFloorConfig {
+// This is on ugly motherfucker, but it works
+function loadSensFloorConfig(): SensFloorConfig | undefined {
     const ip = import.meta.env.VITE_SENSFLOOR_IP;
     const port = import.meta.env.VITE_SENSFLOOR_PORT;
     const width = import.meta.env.VITE_SENSFLOOR_WIDTH;
@@ -68,46 +69,43 @@ function loadSensFloorConfig(): SensFloorConfig {
     const offsetTop = import.meta.env.VITE_SENSFLOOR_OFFSET_TOP;
     const offsetBottom = import.meta.env.VITE_SENSFLOOR_OFFSET_BOTTOM;
 
+    if (
+        !ip ||
+        !port ||
+        !width ||
+        !height ||
+        !rotateBy ||
+        !flipX ||
+        !flipY ||
+        !cropLeft ||
+        !cropRight ||
+        !cropTop ||
+        !cropBottom ||
+        !offsetLeft ||
+        !offsetRight ||
+        !offsetTop ||
+        !offsetBottom
+    ) {
+        return undefined;
+    }
+
     return {
         ip,
-        port,
-        width,
-        height,
-        rotateBy,
-        flipX,
-        flipY,
-        cropLeft,
-        cropRight,
-        cropTop,
-        cropBottom,
-        offsetLeft,
-        offsetRight,
-        offsetTop,
-        offsetBottom,
+        port: parseInt(port),
+        width: parseInt(width),
+        height: parseInt(height),
+        rotateBy: parseFloat(rotateBy),
+        flipX: JSON.parse(flipX),
+        flipY: JSON.parse(flipY),
+        cropLeft: parseInt(cropLeft),
+        cropRight: parseInt(cropRight),
+        cropTop: parseInt(cropTop),
+        cropBottom: parseInt(cropBottom),
+        offsetLeft: parseInt(offsetLeft),
+        offsetRight: parseInt(offsetRight),
+        offsetTop: parseInt(offsetTop),
+        offsetBottom: parseInt(offsetBottom),
     };
-}
-
-function isConfigComplete(): boolean {
-    if (
-        config.ip &&
-        config.port &&
-        config.width &&
-        config.height &&
-        config.rotateBy &&
-        config.flipX &&
-        config.flipY &&
-        config.cropLeft &&
-        config.cropRight &&
-        config.cropTop &&
-        config.cropBottom &&
-        config.offsetLeft &&
-        config.offsetRight &&
-        config.offsetTop &&
-        config.offsetBottom
-    ) {
-        return true;
-    }
-    return false;
 }
 
 export async function load(): Promise<SensFloorState> {
@@ -116,21 +114,20 @@ export async function load(): Promise<SensFloorState> {
         return SensFloorState.ALREADY_CONNECTED;
     }
 
-    config = loadSensFloorConfig();
-
-    if (!isConfigComplete()) {
+    const tempConfig = loadSensFloorConfig();
+    if (!tempConfig) {
         console.error(
             "Missing parameters in SensFloor config. Check the '.env' file of your project and make sure that everything is defined and set",
         );
         return SensFloorState.MISSING_CONFIGURATION;
     }
 
-    for (let x = 1 + config.offsetBottom; x <= config.width - config.offsetTop; x++) {
-        const padColumn: Array<PadState> = [];
-        for (let y = 1 + config.offsetRight; y <= config.height - config.offsetLeft; y++) {
-            padColumn.push(new PadState(x, y, stepOn, stepOff));
+    config = tempConfig;
+
+    for (let x = 1 + config.offsetLeft; x <= config.width - config.offsetRight; x++) {
+        for (let y = 1 + config.offsetBottom; y <= config.height - config.offsetTop; y++) {
+            padStates.set(`${x}${y}`, new PadState(x, y, stepOn, stepOff));
         }
-        padStates.push(padColumn);
     }
 
     return new Promise((resolve, reject) => {
@@ -152,8 +149,8 @@ export async function load(): Promise<SensFloorState> {
         });
 
         socket.on("raw", (data: { raw: Uint8Array }) => {
-            const x: number = data.raw[RawDataMapping.POSITION_X] - 1 + config.offsetBottom;
-            const y: number = data.raw[RawDataMapping.POSITION_Y] - 1 + config.offsetRight;
+            const x: number = data.raw[RawDataMapping.POSITION_X];
+            const y: number = data.raw[RawDataMapping.POSITION_Y];
 
             // Pad values in default state (no pressure on pad) have slight variations from 125-128
             // Subtract 128 and take the max with 0 to map default state to 0
@@ -166,7 +163,10 @@ export async function load(): Promise<SensFloorState> {
             const wnw: number = Math.max(data.raw[RawDataMapping.PAD_WNW] - 128, 0);
             const nnw: number = Math.max(data.raw[RawDataMapping.PAD_NNW] - 128, 0);
 
-            padStates[x][y].update(nno, ono, oso, sso, ssw, wsw, wnw, nnw);
+            const padState = padStates.get(`${x}${y}`);
+            if (padState) {
+                padState.update(nno, ono, oso, sso, ssw, wsw, wnw, nnw);
+            }
         });
     });
 }
@@ -180,17 +180,20 @@ export function disconnect(): void {
     socket = undefined;
 }
 
-export function addStepOnListener(listener: StepEventCallback): void {
-    stepOnListeners.push(listener);
+export function registerStepOnListeners(): void {
+    stepOnListeners.push((event: StepEventData): void => {
+        const x = event.normalisedX * values.playAreaWidth;
+        const y = event.normalisedY * values.playAreaHeight;
+
+        const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
+        if (element) {
+            element.click();
+        }
+    });
 }
 
-export function addStepOffListener(listener: StepEventCallback): void {
-    stepOffListeners.push(listener);
-}
-
-export function removeAllListeners(): void {
+export function unregsiterStepOnListeners(): void {
     stepOnListeners.length = 0;
-    stepOffListeners.length = 0;
 }
 
 export function calculateNormalisedCoordinates(
@@ -198,36 +201,51 @@ export function calculateNormalisedCoordinates(
     y: number,
     normalisedCoordinatespadPart: PadPart,
 ): { x: number; y: number } {
-    const halfPadSize = 1 / (config.width * 2) / 2;
-    let result = { x: 0, y: 0 };
+    const result = { x: 0, y: 0 };
+    
+    // Calculate x coordinate
+    const width = config.width - config.offsetLeft - config.offsetRight;
+    x -= config.offsetLeft;
+    result.x = mapRangeToRange(x, 1, width + 1, 0, 1);
 
-    // Caluclate x coordinate
-    result.x = x / config.width;
-    result.x -= 1 / (config.width * 2); // Move coordinate to the middle of the pad
-    if (
+    // Move x coordinate to middle of pad
+    const padWidth = 1 / width;
+    const padPartWidth = padWidth / 2;
+    result.x += padPartWidth;
+
+    // Move x coordinate to middle of pad part
+    /*if (
         normalisedCoordinatespadPart == PadPart.NNO ||
         normalisedCoordinatespadPart == PadPart.ONO ||
         normalisedCoordinatespadPart == PadPart.OSO ||
         normalisedCoordinatespadPart == PadPart.SSO
     ) {
-        result.x += halfPadSize;
+        result.x += padPartWidth / 2;
     } else {
-        result.x -= halfPadSize;
-    }
+        result.x -= padPartWidth / 2;
+    }*/
+    
+    // Calculate y coordinate
+    const height = config.height - config.offsetTop - config.offsetBottom;
+    y -= config.offsetBottom;
+    result.y = mapRangeToRange(y, 1, height + 1, 0, 1);
 
-    // Caluclate y coordinate
-    result.y = y / config.height;
-    result.y -= 1 / (config.height * 2); // Move coordinate to the middle of the pad
-    if (
+    // Move y coordinate to middle of pad
+    const padHeight = 1 / height;
+    const padPartHeight = padHeight / 2;
+    result.y += padPartHeight;
+
+    // Move y coordinate to middle of pad part
+    /*if (
         normalisedCoordinatespadPart == PadPart.WNW ||
         normalisedCoordinatespadPart == PadPart.NNW ||
         normalisedCoordinatespadPart == PadPart.NNO ||
         normalisedCoordinatespadPart == PadPart.ONO
     ) {
-        result.y += halfPadSize;
+        result.y += padPartHeight / 2;
     } else {
-        result.y -= halfPadSize;
-    }
+        result.y -= padPartHeight / 2;
+    }*/
 
     return applyMappingToCoordinates(result.x, result.y);
 }
@@ -289,4 +307,8 @@ function stepOff(x: number, y: number, padPart: PadPart): void {
             normalisedY: normalisedCoordinates.y,
         });
     }
+}
+
+function mapRangeToRange(value: number, fromOld: number, toOld: number, fromNew: number, toNew: number): number {
+    return (value - fromOld) * (toNew - fromNew) / (toOld - fromOld) + fromNew;
 }

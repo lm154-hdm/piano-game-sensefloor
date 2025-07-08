@@ -34,7 +34,7 @@
     </button>
 </LabelledSettingsContainer>
 
-<BackButton text="Speichern und zurück" slug="/menu/settings" shouldSave={true} />
+<BackButton text="Speichern und zurück" slug="/sensfloor/menu/settings" shouldSave={true} />
 
 <style>
     button {

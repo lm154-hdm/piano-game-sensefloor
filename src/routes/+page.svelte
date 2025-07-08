@@ -31,10 +31,10 @@
         sensFloorState = await SensFloor.load();
         switch (sensFloorState) {
             case SensFloorState.ALREADY_CONNECTED:
-                goto("/menu");
+                goto("/sensfloor/menu");
                 break;
             case SensFloorState.CONNECTION_SUCCESSFUL:
-                goto("/menu");
+                goto("/sensfloor/menu");
                 break;
         }
     }
