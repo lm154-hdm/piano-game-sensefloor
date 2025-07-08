@@ -1,14 +1,14 @@
 <script lang="ts">
-    interface NavigationButtonProps {
+    interface primaryNavigationButtonProps {
         text: string;
         slug: string;
     }
 
-    let { text, slug }: NavigationButtonProps = $props();
+    let { text, slug }: primaryNavigationButtonProps = $props();
 </script>
 
 <a href={slug}>
-    <button class="menu-button secondary-button">{text}</button>
+    <button class="menu-button primary-button">{text}</button>
 </a>
 
 <style>

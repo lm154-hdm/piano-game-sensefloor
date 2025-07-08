@@ -6,13 +6,10 @@
     }
 </script>
 
-<button class="menu-button secondary-button" onclick={exit}>Beenden</button>
+<button class="menu-button error-button bottom-right-button" onclick={exit}>Beenden</button>
 
 <style>
     button {
-        position: absolute;
-        border: 0;
-        right: 0;
         width: var(--button-width);
         height: var(--button-width);
     }
