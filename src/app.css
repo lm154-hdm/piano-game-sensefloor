@@ -12,9 +12,9 @@
     --button-border: 2px solid var(--light-color);
     --text: #ffffff;
     --light-color: #ffeef1;
-    --background-lighter: #444444;
     --text-dark: #000000;
     --background: #000000;
+    --background-lighter: #444444;
     --primary: #ff7d90; /* #b65966 */
     --primary-active: #c55666;
     --secondary: #ffc8d0;
@@ -32,6 +32,7 @@
     --light-color: #fff5ee;
     --text-dark: #000000;
     --background: #000000;
+    --background-lighter: #444444;
     --primary: #5bdbff;
     --primary-active: #56a9c0;
     --secondary: #ffdcad;
