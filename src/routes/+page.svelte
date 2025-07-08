@@ -12,7 +12,7 @@
     let sensFloorState: SensFloorState = $state(SensFloorState.NONE);
 
     onMount(async () => {
-        await Settings.load();
+        /*await Settings.load();
 
         await Tone.loaded();
         Tone.getContext().lookAhead = 0;
@@ -22,7 +22,8 @@
         await window.setFullscreen(true);
         await window.setFocus();
 
-        await connect();
+        await connect();*/
+        goto("/menu"); //for debug, delete before push and uncomment code above.
     });
 
     async function connect(): Promise<void> {

@@ -12,9 +12,10 @@
     --button-border: 2px solid var(--light-color);
     --text: #ffffff;
     --light-color: #ffeef1;
+    --background-lighter: #444444;
     --text-dark: #000000;
     --background: #000000;
-    --primary: #ff7d90;
+    --primary: #ff7d90; /* #b65966 */
     --primary-active: #c55666;
     --secondary: #ffc8d0;
     --secondary-active: #efa4af;
@@ -78,6 +79,12 @@ button {
     height: 100%;
     text-align: center;
 }
+button.admin {
+    width: initial;
+    height: initial;
+    flex-grow: 1;
+    padding: 4px 12px;
+}
 
 .primary-button {
     background-color: var(--primary);
@@ -113,6 +120,30 @@ button {
 /* only for debugging */
 .secondary-button:hover {
     border-color: white;
+}
+
+/* admin page */
+body {
+    display: flex;
+}
+
+h1.admin {
+    text-align: center;
+}
+
+aside.admin {
+    /*position: absolute;
+    height: 100%;*/
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+    background-color: var(--background-lighter);
+    padding: 1em;
+}
+
+a.admin {
+    display: flex;
+    text-decoration: none;
 }
 
 .flex-center {
