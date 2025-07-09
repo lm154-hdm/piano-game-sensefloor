@@ -22,9 +22,16 @@ interface SensFloorConfig {
     offsetBottom: number;
 }
 
+interface SensFloorCoordinateHelper {
+    actualWidth: number;
+    actualHeight: number;
+    padPartWidth: number;
+    padPartHeight: number;
+}
+
 export type StepEvent = (x: number, y: number, padPart: PadPart) => void;
 
-export type StepEventData = {
+export interface StepEventData {
     padX: number;
     padY: number;
     padPart: PadPart;
@@ -48,10 +55,16 @@ let socket: SocketIOClient.Socket | undefined;
 let config: SensFloorConfig;
 
 const padStates: Map<string, PadState> = new Map();
+const dimension: SensFloorCoordinateHelper = {
+    actualWidth: 0,
+    actualHeight: 0,
+    padPartWidth: 0,
+    padPartHeight: 0,
+};
 const stepOnListeners: Array<StepEventCallback> = [];
 const stepOffListeners: Array<StepEventCallback> = [];
 
-// This is on ugly motherfucker, but it works
+// This is one ugly motherfucker, but it works
 function loadSensFloorConfig(): SensFloorConfig | undefined {
     const ip = import.meta.env.VITE_SENSFLOOR_IP;
     const port = import.meta.env.VITE_SENSFLOOR_PORT;
@@ -121,15 +134,22 @@ export async function load(): Promise<SensFloorState> {
         );
         return SensFloorState.MISSING_CONFIGURATION;
     }
-
     config = tempConfig;
 
+    // Create pad states
     for (let x = 1 + config.offsetLeft; x <= config.width - config.offsetRight; x++) {
         for (let y = 1 + config.offsetBottom; y <= config.height - config.offsetTop; y++) {
             padStates.set(`${x}${y}`, new PadState(x, y, stepOn, stepOff));
         }
     }
 
+    // Calculate dimensions
+    dimension.actualWidth = config.width - config.offsetLeft - config.offsetRight;
+    dimension.actualHeight = config.height - config.offsetTop - config.offsetBottom;
+    dimension.padPartWidth = (1 / dimension.actualWidth) / 2;
+    dimension.padPartHeight = (1 / dimension.actualHeight) / 2;
+
+    // Add socket listeners
     return new Promise((resolve, reject) => {
         socket = io(`http://${config.ip}:${config.port}`);
 
@@ -199,55 +219,65 @@ export function unregsiterStepOnListeners(): void {
 export function calculateNormalisedCoordinates(
     x: number,
     y: number,
-    normalisedCoordinatespadPart: PadPart,
+    padPart: PadPart,
 ): { x: number; y: number } {
     const result = { x: 0, y: 0 };
     
     // Calculate x coordinate
-    const width = config.width - config.offsetLeft - config.offsetRight;
     x -= config.offsetLeft;
-    result.x = mapRangeToRange(x, 1, width + 1, 0, 1);
+    result.x = mapRangeToRange(x, 1, dimension.actualWidth + 1, 0, 1);
+    result.x += dimension.padPartWidth; // Move x coordinate to middle of pad
 
-    // Move x coordinate to middle of pad
-    const padWidth = 1 / width;
-    const padPartWidth = padWidth / 2;
-    result.x += padPartWidth;
-
-    // Move x coordinate to middle of pad part
-    /*if (
-        normalisedCoordinatespadPart == PadPart.NNO ||
-        normalisedCoordinatespadPart == PadPart.ONO ||
-        normalisedCoordinatespadPart == PadPart.OSO ||
-        normalisedCoordinatespadPart == PadPart.SSO
-    ) {
-        result.x += padPartWidth / 2;
-    } else {
-        result.x -= padPartWidth / 2;
-    }*/
-    
     // Calculate y coordinate
-    const height = config.height - config.offsetTop - config.offsetBottom;
     y -= config.offsetBottom;
-    result.y = mapRangeToRange(y, 1, height + 1, 0, 1);
+    result.y = mapRangeToRange(y, 1, dimension.actualHeight + 1, 0, 1);
+    result.y += dimension.padPartHeight; // Move y coordinate to middle of pad
 
-    // Move y coordinate to middle of pad
-    const padHeight = 1 / height;
-    const padPartHeight = padHeight / 2;
-    result.y += padPartHeight;
-
-    // Move y coordinate to middle of pad part
-    /*if (
-        normalisedCoordinatespadPart == PadPart.WNW ||
-        normalisedCoordinatespadPart == PadPart.NNW ||
-        normalisedCoordinatespadPart == PadPart.NNO ||
-        normalisedCoordinatespadPart == PadPart.ONO
-    ) {
-        result.y += padPartHeight / 2;
-    } else {
-        result.y -= padPartHeight / 2;
-    }*/
+    // TODO: this part is untested, test it with the SensFloor
+    // Offset to center of pad part (padCenter is in relative coordinates)
+    const { a, b } = getPadCorners(padPart);
+    const padCenter = { x: (1 / 3) * a.x * b.x, y: (1 / 3) * a.y * b.y };
+    result.x += padCenter.x;
+    result.y += padCenter.y;
 
     return applyMappingToCoordinates(result.x, result.y);
+}
+
+function getPadCorners(padPart: PadPart): { a: { x: number, y: number }, b: { x: number, y: number } } {
+    switch (padPart) {
+        case PadPart.NNO:
+            let a = { x: dimension.padPartWidth, y: 0 };
+            let b = { x: dimension.padPartWidth, y: -dimension.padPartHeight };
+            return { a, b };
+        case PadPart.ONO:
+            a = { x: dimension.padPartWidth, y: -dimension.padPartHeight };
+            b = { x: 0, y: -dimension.padPartHeight };
+            return { a, b };
+        case PadPart.OSO:
+            a = { x: 0, y: -dimension.padPartHeight };
+            b = { x: -dimension.padPartWidth, y: -dimension.padPartHeight };
+            return { a, b };
+        case PadPart.SSO:
+            a = { x: -dimension.padPartWidth, y: -dimension.padPartHeight };
+            b = { x: -dimension.padPartWidth, y: 0 };
+            return { a, b };
+        case PadPart.SSW:
+            a = { x: -dimension.padPartWidth, y: 0 };
+            b = { x: -dimension.padPartWidth, y: dimension.padPartHeight };
+            return { a, b };
+        case PadPart.WSW:
+            a = { x: -dimension.padPartWidth, y: dimension.padPartHeight };
+            b = { x: 0, y: dimension.padPartHeight };
+            return { a, b };
+        case PadPart.WNW:
+            a = { x: 0, y: dimension.padPartHeight };
+            b = { x: dimension.padPartWidth, y: dimension.padPartHeight };
+            return { a, b };
+        case PadPart.NNW:
+            a = { x: dimension.padPartWidth, y: dimension.padPartHeight };
+            b = { x: dimension.padPartWidth, y: 0 };
+            return { a, b };
+    }
 }
 
 function applyMappingToCoordinates(x: number, y: number): { x: number; y: number } {
