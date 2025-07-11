@@ -1,36 +1,25 @@
 import * as Path from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
 
-const SETTINGS_VERSION: string = "1.1.0";
+declare const __APP_VERSION__: string;
 
-type Settings = {
+interface Settings {
     settingsVersion: string;
     speed: number;
     colorSchemeId: string;
     mode: Mode;
     midiConfig: MidiConfig;
-    sensFloorConfig: SensFloorConfig;
-};
+}
 
-type ColorScheme = {
+interface ColorScheme {
     id: string;
     displayText: string;
-};
+}
 
-type MidiConfig = {
+interface MidiConfig {
     path: string;
     trackIndex: number;
-};
-
-type SensFloorConfig = {
-    scaleX: number;
-    scaleY: number;
-    flipX: boolean;
-    flipY: boolean;
-    rotateBy: number;
-    cropLeft: number;
-    cropRight: number;
-};
+}
 
 export enum Mode {
     Normal = 0,
@@ -64,22 +53,19 @@ export async function load(): Promise<void> {
         const data = await invoke<string>("read_text_file", { path });
         const json = JSON.parse(data);
 
-        if (json.settingsVersion == SETTINGS_VERSION) {
+        if (json.settingsVersion == __APP_VERSION__) {
             settings.speed = json.speed;
             settings.colorSchemeId = json.colorSchemeId;
             settings.mode = json.mode;
             settings.midiConfig = json.midiConfig;
-            settings.sensFloorConfig = json.sensFloorConfig;
         } else {
-            console.error(
+            console.warn(
                 "The version of your settings is different from the current applications settings version, reverting to default settings",
             );
         }
 
         // Apply loaded settings
         document.documentElement.setAttribute("data-colorscheme", settings.colorSchemeId);
-        document.documentElement.style.setProperty("--crop-left", settings.sensFloorConfig.cropLeft + "px");
-        document.documentElement.style.setProperty("--crop-right", settings.sensFloorConfig.cropRight + "px");
     } else {
         await save();
     }
@@ -94,22 +80,12 @@ export async function save(): Promise<void> {
 }
 
 export const settings: Settings = $state({
-    settingsVersion: SETTINGS_VERSION,
-    midiFilePath: "",
+    settingsVersion: __APP_VERSION__,
     speed: 100,
     mode: Mode.Pause,
     colorSchemeId: "default",
     midiConfig: {
         path: "",
         trackIndex: 0,
-    },
-    sensFloorConfig: {
-        scaleX: 1,
-        scaleY: 1,
-        flipX: false,
-        flipY: false,
-        rotateBy: 0,
-        cropLeft: 0,
-        cropRight: 0,
     },
 });

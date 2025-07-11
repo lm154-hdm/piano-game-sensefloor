@@ -1,7 +1,7 @@
 <script lang="ts">
     import { settings } from "$lib/backend/settings.svelte";
     import { Midi, Track } from "@tonejs/midi";
-    import {onDestroy, onMount} from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
     import BackButton from "$lib/components/back-button.svelte";
     import Title from "$lib/components/title.svelte";
@@ -133,60 +133,64 @@
 
     onDestroy(() => {
         stopPlayback();
-    })
+    });
 
     type DisplayTrack = {
-        track: Track,
-        trackIndex: number,
-        displayIndex: number
-    }
-    const displayTracks: DisplayTrack[] = $derived(midi?.tracks
-        .map((track, i) => ({ track, i })) // i = original track index
-        .filter(({ track }) => track.notes.length > 0)
-        .map(({ track, i }, displayIndex) => ({
-            track,
-            trackIndex: i, // for settings.midiConfig
-            displayIndex: displayIndex + 1
-        }))  ?? []);
+        track: Track;
+        trackIndex: number;
+        displayIndex: number;
+    };
+    const displayTracks: DisplayTrack[] = $derived(
+        midi?.tracks
+            .map((track, i) => ({ track, i })) // i = original track index
+            .filter(({ track }) => track.notes.length > 0)
+            .map(({ track, i }, displayIndex) => ({
+                track,
+                trackIndex: i, // for settings.midiConfig
+                displayIndex: displayIndex + 1,
+            })) ?? [],
+    );
 </script>
 
-<Title text="Adminpanel - Songauswahl" />
+<main class="stretch-screen flex-center flex-row">
+    <Title text="Adminpanel - Songauswahl" />
 
-<div id="song-selection-container">
-    <h2>Wähle die MIDI-Datei, die du spielen möchtest</h2>
-    <button class="menu-button primary-button" onclick={selectMidiFile}>
-        {name || "Datei auswählen"}
-    </button>
-    {#if midi}
-        <hr />
-        <h2>Wähle die MIDI-Spur, die du spielen möchtest</h2>
-        <div id="song-selection-track-container">
-            {#each displayTracks as { track, trackIndex, displayIndex }}
-                <label>
-                    <input
-                        type="radio"
-                        name="track-selection"
-                        value={track.name}
-                        checked={trackIndex === settings.midiConfig.trackIndex}
-                        onchange={() => {
-                            stopPlayback();
-                            settings.midiConfig.trackIndex = trackIndex;
-                        }}
-                    />
-                    {track.name || `Track ${displayIndex}`}
-                </label>
-            {/each}
-        </div>
-        <hr />
-        <div id="song-selection-playback-container">
-            <button class="menu-button primary-button" onclick={playSong}>Gesamten Song abspielen</button>
-            <button class="menu-button primary-button" onclick={playTrack}>Ausgewählte MIDI-Spur abspielen</button>
-            <button class="menu-button primary-button" onclick={stopPlayback}>Abspielen stoppen</button>
-        </div>
-    {/if}
-</div>
+    <div id="song-selection-container">
+        <h2>Wähle die MIDI-Datei, die du spielen möchtest</h2>
+        <button class="menu-button primary-button" onclick={selectMidiFile}>
+            {name || "Datei auswählen"}
+        </button>
+        {#if midi}
+            <hr />
+            <h2>Wähle die MIDI-Spur, die du spielen möchtest</h2>
+            <div id="song-selection-track-container">
+                {#each displayTracks as { track, trackIndex, displayIndex }}
+                    <label>
+                        <input
+                            type="radio"
+                            name="track-selection"
+                            value={track.name}
+                            checked={trackIndex === settings.midiConfig.trackIndex}
+                            onchange={() => {
+                                stopPlayback();
+                                settings.midiConfig.trackIndex = trackIndex;
+                            }}
+                        />
+                        {track.name || `Track ${displayIndex}`}
+                    </label>
+                {/each}
+            </div>
+            <hr />
+            <div id="song-selection-playback-container">
+                <button class="menu-button primary-button" onclick={playSong}>Gesamten Song abspielen</button>
+                <button class="menu-button primary-button" onclick={playTrack}>Ausgewählte MIDI-Spur abspielen</button>
+                <button class="menu-button primary-button" onclick={stopPlayback}>Abspielen stoppen</button>
+            </div>
+        {/if}
+    </div>
 
-<BackButton text="Speichern und zurück" slug="/admin" shouldSave={true} />
+    <BackButton text="Speichern und zurück" slug="/admin" shouldSave={true} />
+</main>
 
 <style>
     button {

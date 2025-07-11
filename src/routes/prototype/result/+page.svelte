@@ -4,23 +4,28 @@
     import Title from "$lib/components/title.svelte";
     import { onDestroy } from "svelte";
 
-    const finalScore = score.totalNotes > 0 ? Math.round((score.correctlyPressed / (score.totalNotes + score.incorrectlyPressed)) * 100) : 0;
+    const finalScore =
+        score.totalNotes > 0
+            ? Math.round((score.correctlyPressed / (score.totalNotes + score.incorrectlyPressed)) * 100)
+            : 0;
     onDestroy(() => {
         score.totalNotes = 0;
         score.incorrectlyPressed = 0;
         score.correctlyPressed = 0;
     });
-
 </script>
 
 <Title text="Game Over" />
 <div class="score-container">
     <p>Korrekt gedrückte Tasten: {score.correctlyPressed} / {score.totalNotes}</p>
     <p>Fehltritte: {score.incorrectlyPressed}</p>
-    <p>Score: <span class="score">{finalScore}%</span> ({score.correctlyPressed} / {score.totalNotes + score.incorrectlyPressed})</p>
+    <p>
+        Score: <span class="score">{finalScore}%</span> ({score.correctlyPressed} / {score.totalNotes +
+            score.incorrectlyPressed})
+    </p>
 </div>
 <NavigationButton text="Neustart" slug="/prototype" />
-<NavigationButton text="Hauptmenü" slug="/" />
+<NavigationButton text="Hauptmenü" slug="/menu" />
 
 <style>
     .score-container {

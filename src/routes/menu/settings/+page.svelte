@@ -5,7 +5,7 @@
 </script>
 
 <Title text="Einstellungen" />
-<NavigationButton text="Geschwindigkeit" slug="/settings/speed" />
-<NavigationButton text="Farbschema" slug="/settings/colourscheme" />
-<NavigationButton text="Modus" slug="/settings/mode" />
-<BackButton text="Zurück" slug="/" />
+<NavigationButton text="Geschwindigkeit" slug="/menu/settings/speed" />
+<NavigationButton text="Farbschema" slug="/menu/settings/colourscheme" />
+<NavigationButton text="Modus" slug="/menu/settings/mode" />
+<BackButton text="Zurück" slug="/menu" />
