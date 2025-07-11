@@ -20,6 +20,7 @@ interface SensFloorConfig {
     offsetRight: number;
     offsetTop: number;
     offsetBottom: number;
+    useEntirePads: boolean;
 }
 
 interface SensFloorCoordinateHelper {
@@ -29,8 +30,6 @@ interface SensFloorCoordinateHelper {
     padPartHeight: number;
 }
 
-export type StepEvent = (x: number, y: number, padPart: PadPart) => void;
-
 export interface StepEventData {
     padX: number;
     padY: number;
@@ -38,6 +37,8 @@ export interface StepEventData {
     normalisedX: number;
     normalisedY: number;
 };
+
+export type StepEvent = (x: number, y: number, padPart: PadPart) => void;
 
 export type StepEventCallback = (event: StepEventData) => void;
 
@@ -81,6 +82,7 @@ function loadSensFloorConfig(): SensFloorConfig | undefined {
     const offsetRight = import.meta.env.VITE_SENSFLOOR_OFFSET_RIGHT;
     const offsetTop = import.meta.env.VITE_SENSFLOOR_OFFSET_TOP;
     const offsetBottom = import.meta.env.VITE_SENSFLOOR_OFFSET_BOTTOM;
+    const useEntirePads = import.meta.env.VITE_SENSFLOOR_USE_ENTIRE_PADS;
 
     if (
         !ip ||
@@ -97,7 +99,8 @@ function loadSensFloorConfig(): SensFloorConfig | undefined {
         !offsetLeft ||
         !offsetRight ||
         !offsetTop ||
-        !offsetBottom
+        !offsetBottom ||
+        !useEntirePads
     ) {
         return undefined;
     }
@@ -118,6 +121,7 @@ function loadSensFloorConfig(): SensFloorConfig | undefined {
         offsetRight: parseInt(offsetRight),
         offsetTop: parseInt(offsetTop),
         offsetBottom: parseInt(offsetBottom),
+        useEntirePads: JSON.parse(useEntirePads),
     };
 }
 
@@ -139,7 +143,7 @@ export async function load(): Promise<SensFloorState> {
     // Create pad states
     for (let x = 1 + config.offsetLeft; x <= config.width - config.offsetRight; x++) {
         for (let y = 1 + config.offsetBottom; y <= config.height - config.offsetTop; y++) {
-            padStates.set(`${x}${y}`, new PadState(x, y, stepOn, stepOff));
+            padStates.set(`${x}${y}`, new PadState(x, y, stepOn, stepOff, config.useEntirePads));
         }
     }
 
@@ -234,11 +238,13 @@ export function calculateNormalisedCoordinates(
     result.y += dimension.padPartHeight; // Move y coordinate to middle of pad
 
     // TODO: this part is untested, test it with the SensFloor
-    // Offset to center of pad part (padCenter is in relative coordinates)
-    const { a, b } = getPadCorners(padPart);
-    const padCenter = { x: (1 / 3) * a.x * b.x, y: (1 / 3) * a.y * b.y };
-    result.x += padCenter.x;
-    result.y += padCenter.y;
+    // Offset to center of pad part (padPartCenter is in relative coordinates)
+    if (!config.useEntirePads) {
+        const { a, b } = getPadCorners(padPart);
+        const padPartCenter = { x: (1 / 3) * a.x * b.x, y: (1 / 3) * a.y * b.y };
+        result.x += padPartCenter.x;
+        result.y += padPartCenter.y;
+    }
 
     return applyMappingToCoordinates(result.x, result.y);
 }
