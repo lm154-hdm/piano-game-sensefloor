@@ -9,12 +9,14 @@
     import piano from "$lib/PianoSampler";
     import { invoke } from "@tauri-apps/api/core";
     import { score } from "$lib/backend/score.svelte";
+    import {goto} from "$app/navigation";
 
     let windowWidth: number = $state(-1);
     let windowHeight: number = $state(-1);
     let animationContainerHeight: number = $state(0);
 
     onMount(async () => {
+        window.addEventListener("keydown", onKeyDown);
         const midi = await loadMidi();
         score.totalNotes = midi.tracks[settings.midiConfig.trackIndex].notes.length;
 
@@ -33,6 +35,7 @@
     });
 
     onDestroy(() => {
+        window.removeEventListener("keydown", onKeyDown);
         Animation.stop();
         Animation.reset(); // doesn't work properly
         Tone.getTransport().stop();
@@ -75,6 +78,13 @@
             }
         }
     }
+
+    function onKeyDown(event: KeyboardEvent): void {
+        if (event.key === "1") {
+            goto("/menu");
+        }
+    }
+
 </script>
 
 <div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
