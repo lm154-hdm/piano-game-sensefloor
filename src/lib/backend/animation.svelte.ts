@@ -11,7 +11,6 @@ export type NoteData = {
     duration: number;
     name: string;
     groupIndex: number;
-    stopped: boolean;
     color: string;
     wasHit: boolean; // if the note was already pressed at the correct time
 };
@@ -43,6 +42,10 @@ export function hitNote(id: string) {
     if (!note) return;
     note.color = "--correct-note";
     note.wasHit = true;
+    const index = activeNoteIds.indexOf(note.id);
+    if (index !== -1) {
+        activeNoteIds.splice(index, 1);
+    }
 }
 export const keyGroups: KeyGroup[] = $state([]);
 let time: number = 0;
@@ -107,11 +110,25 @@ export async function initialise(windowHeight: number, animationContainerHeight:
             duration: note.duration,
             name: note.name,
             groupIndex: groupIndex,
-            stopped: false,
             color: "--secondary",
             wasHit: false,
         });
+        if (groupIndex >= 1) {
+            notes.push({
+                id: crypto.randomUUID(),
+                height: height - 5, // treshold to avoid overlapping / sticking out
+                top: -height,
+                left: groupIndex - 1,
+                startTime: note.time - trackDelay - 0.05, // Subtract start time of first note to make it start immediately
+                duration: note.duration,
+                name: note.name,
+                groupIndex: groupIndex - 1,
+                color: "--secondary",
+                wasHit: false,
+            });
+        }
     }
+
     return true;
 }
 
@@ -147,27 +164,27 @@ function animationLoop(currentTime: number): void {
     for (const note of notes) {
         if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
-            // TODO: check if called at correct time
+
+            if (note.top >= _animationContainerHeight - note.height && !note.wasHit) {
+                if (!activeNoteIds.includes(note.id)) {
+                    activeNoteIds.push(note.id)
+                }
+                if (settings.mode === Mode.Pause) {
+                    const keyGroup = keyGroups.find((key) => key.color !== "--primary");
+                    if (keyGroup) {
+                        keyGroup.color = "--primary";
+                    }
+                    shouldStop = true;
+                }
+                continue;
+            }
+
             if (note.top >= _animationContainerHeight) {
                 const index = activeNoteIds.indexOf(note.id);
                 if (index !== -1) {
                     activeNoteIds.splice(index, 1);
                 }
                 continue;
-            }
-            if (note.top >= _animationContainerHeight - note.height) {
-                if (!activeNoteIds.includes(note.id)) {
-                    activeNoteIds.push(note.id)
-                }
-                if (settings.mode === Mode.Pause && !note.stopped) {
-                    const keyGroup = keyGroups.find((key) => key.color !== "--primary");
-                    if (keyGroup) {
-                        keyGroup.color = "--primary";
-                    }
-                    shouldStop = true;
-                    note.stopped = true;
-                }
-                //continue;
             }
         }
     }

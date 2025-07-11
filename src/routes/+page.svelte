@@ -29,6 +29,7 @@
         sensFloorState = SensFloorState.NONE;
 
         sensFloorState = await SensFloor.load();
+        sensFloorState = SensFloorState.ALREADY_CONNECTED;
         switch (sensFloorState) {
             case SensFloorState.ALREADY_CONNECTED:
                 goto("/menu");
