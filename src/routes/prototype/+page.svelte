@@ -116,6 +116,6 @@
         justify-content: space-evenly;
         z-index: 1;
         background-color: black;
-        border-top: 4px solid var(--accent);
+        border-top: 4px solid var(--error);
     }
 </style>

@@ -21,8 +21,7 @@
 </a>
 
 <style>
-    a {
-        bottom: 0;
+    button {
         width: var(--button-width);
         height: var(--button-width);
     }

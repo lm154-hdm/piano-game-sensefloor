@@ -12,6 +12,16 @@
 
 <Title text="Einstellungen - Farbschema" />
 
+
+<div class="color-scheme-preview-container">
+    <h2>Vorschau:</h2>
+    <div class="color-scheme-preview">
+        <div class="color-scheme-preview-item primary-button"></div>
+        <div class="color-scheme-preview-item secondary-button"></div>
+        <div class="color-scheme-preview-item error-button"></div>
+    </div>
+</div>
+
 <LabelledSettingsContainer text="Aktuelles Farbschema: {getCurrentColorSchemeName()}">
     {#each colorSchemes as { id, displayText }}
         <ColorSchemeButton {id} text={displayText} />

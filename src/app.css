@@ -8,14 +8,13 @@
     --correct-note: orange;
     --false-note: var(--error);
 
-    --background-color: #000000;
     --button-border: 2px solid var(--light-color);
     --text: #ffffff;
     --light-color: #ffeef1;
     --text-dark: #000000;
-    --background: #000000;
+    --background-color: #000000;
     --background-lighter: #444444;
-    --primary: #ff7d90; /* #b65966 */
+    --primary: #f46278; /* #b65966 */
     --primary-active: #c55666;
     --secondary: #ffc8d0;
     --secondary-active: #efa4af;
@@ -26,23 +25,20 @@
 }
 
 [data-colorscheme="blueYellow"] {
-    --background-color: #000000;
     --button-border: 2px solid var(--light-color);
     --text: #ffffff;
     --light-color: #fff5ee;
     --text-dark: #000000;
-    --background: #000000;
+    --background-color: #000000;
     --background-lighter: #444444;
-    --primary: #5bdbff;
+    --primary: #5bdbff; /* 0f9fc7 */
     --primary-active: #56a9c0;
     --secondary: #ffdcad;
-    --secondary-active: #ccab7d;
+    --secondary-active: #d3ac75;
     --error: #803913;
+    --error-active: #4d220b;
     --button-border-error: 2px solid var(--on-error);
     --on-error: #ffffff;
-
-    --correct-note: yellow;
-    --false-note: blue;
 }
 
 body {
@@ -52,13 +48,15 @@ body {
     overflow: hidden;
     user-select: none;
     color: var(--light-color);
+    hyphens: auto;
 
     /* Needed for linux */
     -webkit-user-select: none;
 }
 
 button {
-    font-size: 1.2em;
+    font-size: 1.5em;
+    font-weight: bold;
     border-radius: var(--button-border-radius);
     border: var(--button-border);
 }
@@ -90,6 +88,8 @@ button.admin {
 .primary-button {
     background-color: var(--primary);
     color: var(--text);
+    border-radius: var(--button-border-radius);
+    border: var(--button-border);
 }
 .primary-button:active {
     background-color: var(--primary-active);
@@ -103,6 +103,8 @@ button.admin {
 .secondary-button {
     background-color: var(--secondary);
     color: var(--text-dark);
+    border-radius: var(--button-border-radius);
+    border: var(--button-border);
 }
 .secondary-button:active {
     background-color: var(--secondary-active);
@@ -123,12 +125,31 @@ button.admin {
     border-color: white;
 }
 
+/* color scheme preview */
+.color-scheme-preview-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    top: 15%;
+    width: 25%;
+    height: 30%;
+}
+.color-scheme-preview {
+    display: flex;
+    flex-grow: 1;
+}
+.color-scheme-preview-item  {
+    border-radius: var(--button-border-radius);
+    flex-grow: 1;
+}
+
 /* admin page */
 body {
     display: flex;
 }
 
-h1.admin {
+h1.admin, h1, h2 {
     text-align: center;
 }
 

@@ -9,7 +9,7 @@
 
 <LabelledSettingsContainer text="Aktueller Modus: {Mode[settings.mode]}">
     <button
-        class="menu-button primary-button"
+        class="menu-button secondary-button"
         onclick={() => {
             settings.mode = Mode.Normal;
         }}
@@ -17,7 +17,7 @@
         Normal
     </button>
     <button
-        class="menu-button primary-button"
+        class="menu-button secondary-button"
         onclick={() => {
             settings.mode = Mode.Pause;
         }}
@@ -25,7 +25,7 @@
         Stop / Pause
     </button>
     <button
-        class="menu-button primary-button"
+        class="menu-button secondary-button"
         onclick={() => {
             settings.mode = Mode.Playback;
         }}
