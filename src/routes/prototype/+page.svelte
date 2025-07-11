@@ -34,10 +34,6 @@
         }
     });
 
-    onMount(() => {
-        window.addEventListener("keydown", onKeyDown);
-    });
-
     onDestroy(() => {
         window.removeEventListener("keydown", onKeyDown);
         Animation.stop();
