@@ -43,9 +43,10 @@ export function hitNote(id: string) {
     note.color = "--correct-note";
     note.wasHit = true;
     const index = activeNoteIds.indexOf(note.id);
-    if (index !== -1) {
+    /* AAAAAAAAAAAAAAAAAAAAAAAA */
+    /*if (index !== -1) {
         activeNoteIds.splice(index, 1);
-    }
+    }*/
 }
 export const keyGroups: KeyGroup[] = $state([]);
 let time: number = 0;
@@ -113,20 +114,6 @@ export async function initialise(windowHeight: number, animationContainerHeight:
             color: "--secondary",
             wasHit: false,
         });
-        if (groupIndex >= 1) {
-            notes.push({
-                id: crypto.randomUUID(),
-                height: height - 5, // treshold to avoid overlapping / sticking out
-                top: -height,
-                left: groupIndex - 1,
-                startTime: note.time - trackDelay - 0.05, // Subtract start time of first note to make it start immediately
-                duration: note.duration,
-                name: note.name,
-                groupIndex: groupIndex - 1,
-                color: "--secondary",
-                wasHit: false,
-            });
-        }
     }
 
     return true;
@@ -167,6 +154,15 @@ function animationLoop(currentTime: number): void {
 
             if (note.top >= _animationContainerHeight - note.height && !note.wasHit) {
                 if (!activeNoteIds.includes(note.id)) {
+                    if (activeNoteIds.length >= 1) {
+                        const previousActiveId = getActiveNotes().find(n => n.groupIndex === note.groupIndex)?.id;
+                        if (previousActiveId) {
+                            const index = activeNoteIds.indexOf(previousActiveId);
+                            if (index !== -1) {
+                                activeNoteIds.splice(index, 1);
+                            }
+                        }
+                    }
                     activeNoteIds.push(note.id)
                 }
                 if (settings.mode === Mode.Pause) {

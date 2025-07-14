@@ -9,7 +9,7 @@
     import piano from "$lib/PianoSampler";
 
     let { index, text, color }: { index: number; text: string; color: string } = $props();
-
+    let _pressedKey: NoteData | undefined = undefined;
     let synth: Tone.Synth;
 
     onMount(() => {
@@ -17,32 +17,40 @@
     });
 
     function play(): void {
-        const activeNotes: NoteData[] = Animation.getActiveNotes();
-        const activeNote = activeNotes.find(n => n.groupIndex === index);
-        // Reset color of previous clicked key
-        const previousColoredPianoKey = Animation.keyGroups.find((keyGroup) => keyGroup.color !== "--primary"); // default key color
-        if (previousColoredPianoKey && Animation.keyGroups.indexOf(previousColoredPianoKey) !== index) {
-            previousColoredPianoKey.color = "--primary";
-        }
-        // Set color of key & note
-        const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
-        if (activeNote && !activeNote.wasHit) {
-            Animation.hitNote(activeNote.id)
-            keyGroup.color = "--correct-note";
-            score.correctlyPressed++;
-            if (settings.mode !== Mode.Playback) {
-                piano.triggerAttackRelease(activeNote.name, activeNote.duration == 0 ? "4n" : activeNote.duration);
+            const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
+            const activeNotes: NoteData[] = Animation.getActiveNotes();
+            const activeNotesOfGroupIndex = activeNotes.filter(n => n.groupIndex === index);
+        console.log(activeNotesOfGroupIndex)
+            const activeNoteOfKey = activeNotes.find(n => n.groupIndex == index);
+            if (activeNoteOfKey) {
+                if (!activeNoteOfKey.wasHit) {
+                    Animation.hitNote(activeNoteOfKey.id)
+                    keyGroup.color = "--correct-note";
+                    score.correctlyPressed++;
+                    const duration = activeNoteOfKey.duration == 0 ? "4n" : activeNoteOfKey.duration;
+                    const durationInSeconds = Tone.Time(duration).toSeconds();
+                    if (settings.mode !== Mode.Playback) {
+                        piano.triggerAttackRelease(activeNoteOfKey.name, duration);
+                    }
+                    if (settings.mode === Mode.Pause && !animationIsRunning) {
+                        Animation.start();
+                    }
+                    Tone.getDraw().schedule(() => {
+                        keyGroup.color = "--primary";
+                    }, Tone.now() + durationInSeconds);
+                }
+            } else {
+                keyGroup.color = "--false-note";
+                score.incorrectlyPressed++;
+                const duration = "4n";
+                const durationInSeconds = Tone.Time(duration).toSeconds();
+                if (settings.mode !== Mode.Playback) {
+                    piano.triggerAttackRelease("C2", duration, Tone.now(), 2);
+                }
+                Tone.getDraw().schedule(() => {
+                    keyGroup.color = "--primary";
+                }, Tone.now() + durationInSeconds);
             }
-            if (settings.mode === Mode.Pause && !animationIsRunning) {
-                Animation.start();
-            }
-        } else {
-            keyGroup.color = "--false-note";
-            score.incorrectlyPressed++;
-            if (settings.mode !== Mode.Playback) {
-                piano.triggerAttackRelease("C2", "4n", Tone.now(), 2);
-            }
-        }
     }
 </script>
 
