@@ -1,5 +1,6 @@
 <script lang="ts">
     import BackButton from "$lib/components/back-button.svelte";
+  import GhostButton from "$lib/components/ghost-button.svelte";
     import NavigationButton from "$lib/components/navigation-button.svelte";
     import Title from "$lib/components/title.svelte";
 </script>
@@ -8,4 +9,5 @@
 <NavigationButton text="Geschwindigkeit" slug="/sensfloor/menu/settings/speed" />
 <NavigationButton text="Farbschema" slug="/sensfloor/menu/settings/colourscheme" />
 <NavigationButton text="Modus" slug="/sensfloor/menu/settings/mode" />
+<GhostButton />
 <BackButton text="Zurück" slug="/sensfloor/menu" />
