@@ -24,8 +24,8 @@
             score.incorrectlyPressed})
     </p>
 </div>
-<NavigationButton text="Neustart" slug="/prototype" />
-<NavigationButton text="Hauptmenü" slug="/menu" />
+<NavigationButton text="Neustart" slug="/sensfloor/prototype" />
+<NavigationButton text="Hauptmenü" slug="/sensfloor/menu" />
 
 <style>
     .score-container {
