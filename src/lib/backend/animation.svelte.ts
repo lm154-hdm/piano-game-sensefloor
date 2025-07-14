@@ -178,7 +178,7 @@ function animationLoop(currentTime: number): void {
     const animationFinished = time > lastNote.startTime + lastNote.duration + _windowHeight / animationSpeed;
     if (animationFinished) {
         stop();
-        goto("/prototype/result");
+        goto("/sensfloor/prototype/result");
     } else {
         frameId = requestAnimationFrame(animationLoop);
     }
