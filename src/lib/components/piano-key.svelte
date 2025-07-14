@@ -7,10 +7,14 @@
     import {animationIsRunning, type NoteData} from "$lib/backend/animation.svelte";
     import { score } from "$lib/backend/score.svelte";
     import piano from "$lib/PianoSampler";
+    import type {DrawClass} from "tone/build/esm/core/util/Draw";
 
     let { index, text, color }: { index: number; text: string; color: string } = $props();
     let _pressedKey: NoteData | undefined = undefined;
     let synth: Tone.Synth;
+
+    let correctColorResetEvent: DrawClass | undefined = undefined;
+    let incorrectColorResetEvent: DrawClass | undefined = undefined;
 
     onMount(() => {
         synth = new Tone.Synth().toDestination();
@@ -20,23 +24,24 @@
         const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
         const activeNotes: NoteData[] = Animation.getActiveNotes();
         const activeNoteOfKey = activeNotes.filter((n) => n.groupIndex === index).sort((a,b) => b.startTime - a.startTime)?.[0];
-        if (activeNoteOfKey) {
-            if (!activeNoteOfKey.wasHit) {
-                Animation.hitNote(activeNoteOfKey.id)
-                keyGroup.color = "--correct-note";
-                score.correctlyPressed++;
-                const duration = activeNoteOfKey.duration == 0 ? "4n" : activeNoteOfKey.duration;
-                const durationInSeconds = Tone.Time(duration).toSeconds();
-                if (settings.mode !== Mode.Playback) {
-                    piano.triggerAttackRelease(activeNoteOfKey.name, duration);
-                }
-                if (settings.mode === Mode.Pause && !animationIsRunning) {
-                    Animation.start();
-                }
-                Tone.getDraw().schedule(() => {
-                    keyGroup.color = "--primary";
-                }, Tone.now() + durationInSeconds);
+        if (activeNoteOfKey && !activeNoteOfKey.wasHit) {
+            Animation.hitNote(activeNoteOfKey.id)
+            keyGroup.color = "--correct-note";
+            score.correctlyPressed++;
+            const duration = activeNoteOfKey.duration == 0 ? "4n" : activeNoteOfKey.duration;
+            const durationInSeconds = Tone.Time(duration).toSeconds();
+            if (settings.mode !== Mode.Playback) {
+                piano.triggerAttackRelease(activeNoteOfKey.name, duration);
             }
+            if (settings.mode === Mode.Pause && !animationIsRunning) {
+                Animation.start();
+            }
+            if (correctColorResetEvent !== undefined) {
+                correctColorResetEvent.cancel();
+            }
+            correctColorResetEvent = Tone.getDraw().schedule(() => {
+                keyGroup.color = "--primary";
+            }, Tone.now() + durationInSeconds);
         } else {
             keyGroup.color = "--false-note";
             score.incorrectlyPressed++;
@@ -45,7 +50,10 @@
             if (settings.mode !== Mode.Playback) {
                 piano.triggerAttackRelease("C2", duration, Tone.now(), 2);
             }
-            Tone.getDraw().schedule(() => {
+            if (incorrectColorResetEvent !== undefined) {
+                incorrectColorResetEvent.cancel();
+            }
+            incorrectColorResetEvent = Tone.getDraw().schedule(() => {
                 keyGroup.color = "--primary";
             }, Tone.now() + durationInSeconds);
         }
