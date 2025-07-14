@@ -17,38 +17,38 @@
     });
 
     function play(): void {
-            const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
-            const activeNotes: NoteData[] = Animation.getActiveNotes();
-            const activeNoteOfKey = activeNotes.filter((n) => n.groupIndex === index).sort((a,b) => b.startTime - a.startTime)?.[0];
-            if (activeNoteOfKey) {
-                if (!activeNoteOfKey.wasHit) {
-                    Animation.hitNote(activeNoteOfKey.id)
-                    keyGroup.color = "--correct-note";
-                    score.correctlyPressed++;
-                    const duration = activeNoteOfKey.duration == 0 ? "4n" : activeNoteOfKey.duration;
-                    const durationInSeconds = Tone.Time(duration).toSeconds();
-                    if (settings.mode !== Mode.Playback) {
-                        piano.triggerAttackRelease(activeNoteOfKey.name, duration);
-                    }
-                    if (settings.mode === Mode.Pause && !animationIsRunning) {
-                        Animation.start();
-                    }
-                    Tone.getDraw().schedule(() => {
-                        keyGroup.color = "--primary";
-                    }, Tone.now() + durationInSeconds);
-                }
-            } else {
-                keyGroup.color = "--false-note";
-                score.incorrectlyPressed++;
-                const duration = "4n";
+        const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
+        const activeNotes: NoteData[] = Animation.getActiveNotes();
+        const activeNoteOfKey = activeNotes.filter((n) => n.groupIndex === index).sort((a,b) => b.startTime - a.startTime)?.[0];
+        if (activeNoteOfKey) {
+            if (!activeNoteOfKey.wasHit) {
+                Animation.hitNote(activeNoteOfKey.id)
+                keyGroup.color = "--correct-note";
+                score.correctlyPressed++;
+                const duration = activeNoteOfKey.duration == 0 ? "4n" : activeNoteOfKey.duration;
                 const durationInSeconds = Tone.Time(duration).toSeconds();
                 if (settings.mode !== Mode.Playback) {
-                    piano.triggerAttackRelease("C2", duration, Tone.now(), 2);
+                    piano.triggerAttackRelease(activeNoteOfKey.name, duration);
+                }
+                if (settings.mode === Mode.Pause && !animationIsRunning) {
+                    Animation.start();
                 }
                 Tone.getDraw().schedule(() => {
                     keyGroup.color = "--primary";
                 }, Tone.now() + durationInSeconds);
             }
+        } else {
+            keyGroup.color = "--false-note";
+            score.incorrectlyPressed++;
+            const duration = "4n";
+            const durationInSeconds = Tone.Time(duration).toSeconds();
+            if (settings.mode !== Mode.Playback) {
+                piano.triggerAttackRelease("C2", duration, Tone.now(), 2);
+            }
+            Tone.getDraw().schedule(() => {
+                keyGroup.color = "--primary";
+            }, Tone.now() + durationInSeconds);
+        }
     }
 </script>
 

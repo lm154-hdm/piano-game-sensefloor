@@ -21,19 +21,19 @@ type KeyGroup = {
     keyNames: string[];
 };
 
-let _windowHeight: number = 0;
-let _animationContainerHeight: number = 0;
+let windowHeight: number = 0;
+let animationContainerHeight: number = 0;
 let previousTime: number = 0;
 let animationSpeed: number = 0;
 export function getAnimationSpeed(): number {
     return animationSpeed;
 }
 let frameId: number = 0;
-const activeNoteIds: string[] = [];  // stores only note.id
+const activeNoteIds: Map<string, NoteData> = new Map();  // stores only note.id
 export const notes: NoteData[] = $state([]);
 export function getActiveNotes(): NoteData[] {
     return notes?.filter(n => activeNoteIds
-        .includes(n.id))
+        .has(n.id))
         .sort((a, b) => a.startTime - b.startTime)
         .map(n => ({ ...n })) ?? [];  // return copies, not references
 }
@@ -47,14 +47,14 @@ export const keyGroups: KeyGroup[] = $state([]);
 let time: number = 0;
 export let animationIsRunning: boolean = false;
 
-export async function initialise(windowHeight: number, animationContainerHeight: number, midi: Midi): Promise<boolean> {
-    _windowHeight = windowHeight;
-    _animationContainerHeight = animationContainerHeight;
+export async function initialise(windowHeightParam: number, animationContainerHeightParam: number, midi: Midi): Promise<boolean> {
+    windowHeight = windowHeightParam;
+    animationContainerHeight = animationContainerHeightParam;
 
     const beatsPerBar = midi.header.timeSignatures[0]?.timeSignature?.[0] ?? 4;
     const secondsPerBeat = 60 / midi.header.tempos[0].bpm;
     const secondsPerBar = beatsPerBar * secondsPerBeat;
-    animationSpeed = animationContainerHeight / secondsPerBar;
+    animationSpeed = animationContainerHeightParam / secondsPerBar;
 
     const track = midi.tracks[settings.midiConfig.trackIndex];
 
@@ -143,12 +143,20 @@ function animationLoop(currentTime: number): void {
     previousTime = currentTime;
     time += deltaTime;
     let shouldStop = false;
-    for (const note of notes) {
+
+    for (let i = notes.length - 1; i >= 0; i--) {
+        const note = notes[i];
+
         if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
-            if (note.top >= _animationContainerHeight - note.height - (_animationContainerHeight / 25) && !note.wasHit) {
-                if (!activeNoteIds.includes(note.id)) {
-                    if (activeNoteIds.length >= 1) {
+            if (note.top >= animationContainerHeight) {
+                activeNoteIds.delete(note.id);
+                notes.splice(i, 1);
+                continue;
+            }
+            else if (note.top >= animationContainerHeight - note.height - (animationContainerHeight / 25) && !note.wasHit) {
+                if (!activeNoteIds.has(note.id)) {
+                    /*if (activeNoteIds.length >= 1) {
                         const previousActiveId = getActiveNotes().find(n => n.groupIndex === note.groupIndex)?.id;
                         if (previousActiveId) {
                             const index = activeNoteIds.indexOf(previousActiveId);
@@ -156,26 +164,20 @@ function animationLoop(currentTime: number): void {
                                 activeNoteIds.splice(index, 1);
                             }
                         }
-                    }
-                    activeNoteIds.push(note.id)
+                    }*/
+                    activeNoteIds.set(note.id, note)
                 }
             }
-            if (note.top >= _animationContainerHeight - note.height && !note.wasHit) {
-                if (settings.mode === Mode.Pause) {
+            
+            if (settings.mode === Mode.Pause) {
+                if (note.top >= animationContainerHeight - note.height && !note.wasHit) {
                     shouldStop = true;
-                }
-                continue;
-            }
-            if (note.top >= _animationContainerHeight) {
-                const index = activeNoteIds.indexOf(note.id);
-                if (index !== -1) {
-                    activeNoteIds.splice(index, 1);
                 }
             }
         }
     }
     const lastNote = notes[notes.length - 1];
-    const animationFinished = time > lastNote.startTime + lastNote.duration + _windowHeight / animationSpeed;
+    const animationFinished = time > lastNote.startTime + lastNote.duration + windowHeight / animationSpeed;
     if (animationFinished) {
         stop();
         goto("/sensfloor/prototype/result");
