@@ -19,9 +19,7 @@
     function play(): void {
             const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
             const activeNotes: NoteData[] = Animation.getActiveNotes();
-            const activeNotesOfGroupIndex = activeNotes.filter(n => n.groupIndex === index);
-        console.log(activeNotesOfGroupIndex)
-            const activeNoteOfKey = activeNotes.find(n => n.groupIndex == index);
+            const activeNoteOfKey = activeNotes.filter((n) => n.groupIndex === index).sort((a,b) => b.startTime - a.startTime)?.[0];
             if (activeNoteOfKey) {
                 if (!activeNoteOfKey.wasHit) {
                     Animation.hitNote(activeNoteOfKey.id)

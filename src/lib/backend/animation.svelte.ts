@@ -42,11 +42,6 @@ export function hitNote(id: string) {
     if (!note) return;
     note.color = "--correct-note";
     note.wasHit = true;
-    const index = activeNoteIds.indexOf(note.id);
-    /* AAAAAAAAAAAAAAAAAAAAAAAA */
-    /*if (index !== -1) {
-        activeNoteIds.splice(index, 1);
-    }*/
 }
 export const keyGroups: KeyGroup[] = $state([]);
 let time: number = 0;
@@ -166,10 +161,6 @@ function animationLoop(currentTime: number): void {
                     activeNoteIds.push(note.id)
                 }
                 if (settings.mode === Mode.Pause) {
-                    const keyGroup = keyGroups.find((key) => key.color !== "--primary");
-                    if (keyGroup) {
-                        keyGroup.color = "--primary";
-                    }
                     shouldStop = true;
                 }
                 continue;
@@ -180,7 +171,6 @@ function animationLoop(currentTime: number): void {
                 if (index !== -1) {
                     activeNoteIds.splice(index, 1);
                 }
-                continue;
             }
         }
     }
