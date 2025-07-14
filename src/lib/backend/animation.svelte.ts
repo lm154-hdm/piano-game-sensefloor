@@ -146,8 +146,7 @@ function animationLoop(currentTime: number): void {
     for (const note of notes) {
         if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
-
-            if (note.top >= _animationContainerHeight - note.height && !note.wasHit) {
+            if (note.top >= _animationContainerHeight - note.height - (_animationContainerHeight / 25) && !note.wasHit) {
                 if (!activeNoteIds.includes(note.id)) {
                     if (activeNoteIds.length >= 1) {
                         const previousActiveId = getActiveNotes().find(n => n.groupIndex === note.groupIndex)?.id;
@@ -160,12 +159,13 @@ function animationLoop(currentTime: number): void {
                     }
                     activeNoteIds.push(note.id)
                 }
+            }
+            if (note.top >= _animationContainerHeight - note.height && !note.wasHit) {
                 if (settings.mode === Mode.Pause) {
                     shouldStop = true;
                 }
                 continue;
             }
-
             if (note.top >= _animationContainerHeight) {
                 const index = activeNoteIds.indexOf(note.id);
                 if (index !== -1) {
