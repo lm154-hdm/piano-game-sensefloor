@@ -10,10 +10,12 @@
     import { invoke } from "@tauri-apps/api/core";
     import { score } from "$lib/backend/score.svelte";
     import { values } from "$lib/backend/values.svelte";
+    import {goto} from "$app/navigation";
 
     let animationContainerHeight: number = $state(0);
 
     onMount(async () => {
+        window.addEventListener("keydown", onKeyDown);
         const midi = await loadMidi();
         score.totalNotes = midi.tracks[settings.midiConfig.trackIndex].notes.length;
 
@@ -32,6 +34,7 @@
     });
 
     onDestroy(() => {
+        window.removeEventListener("keydown", onKeyDown);
         Animation.stop();
         Animation.reset(); // doesn't work properly
         Tone.getTransport().stop();
@@ -74,6 +77,13 @@
             }
         }
     }
+
+    function onKeyDown(event: KeyboardEvent): void {
+        if (event.key === "1") {
+            goto("/menu");
+        }
+    }
+
 </script>
 
 <div class="prototype-container stretch-playarea">
