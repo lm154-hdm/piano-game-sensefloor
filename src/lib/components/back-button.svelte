@@ -16,12 +16,10 @@
     }
 </script>
 
-<a href={slug}>
-    <button class="menu-button primary-button bottom-right-button" onclick={onClick}>{text}</button>
-</a>
+<a class="menu-button primary-button bottom-right-button" href={slug}>{text}</a>
 
 <style>
-    button {
+    .bottom-right-button {
         width: var(--button-width);
         height: var(--button-width);
     }

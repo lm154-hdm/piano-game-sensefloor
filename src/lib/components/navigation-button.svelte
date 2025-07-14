@@ -7,9 +7,7 @@
     let { text, slug }: NavigationButtonProps = $props();
 </script>
 
-<a href={slug}>
-    <button class="menu-button secondary-button">{text}</button>
-</a>
+<a class="menu-button secondary-button" href={slug}>{text}</a>
 
 <style>
     a {
