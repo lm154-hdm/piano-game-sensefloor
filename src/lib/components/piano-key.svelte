@@ -7,14 +7,11 @@
     import {animationIsRunning, type NoteData} from "$lib/backend/animation.svelte";
     import { score } from "$lib/backend/score.svelte";
     import piano from "$lib/PianoSampler";
-    import type {DrawClass} from "tone/build/esm/core/util/Draw";
 
     let { index, text, color }: { index: number; text: string; color: string } = $props();
-    let _pressedKey: NoteData | undefined = undefined;
-    let synth: Tone.Synth;
 
-    let correctColorResetEvent: DrawClass | undefined = undefined;
-    let incorrectColorResetEvent: DrawClass | undefined = undefined;
+    let resetCorrectColorTimeout: number | undefined = undefined;
+    let resetIncorrectColourTimeout: number | undefined = undefined;
 
     onMount(() => {
         synth = new Tone.Synth().toDestination();
@@ -36,12 +33,12 @@
             if (settings.mode === Mode.Pause && !animationIsRunning) {
                 Animation.start();
             }
-            if (correctColorResetEvent !== undefined) {
-                correctColorResetEvent.cancel();
+            if (resetCorrectColorTimeout !== undefined) {
+                clearTimeout(resetCorrectColorTimeout);
             }
-            correctColorResetEvent = Tone.getDraw().schedule(() => {
+            resetCorrectColorTimeout = setTimeout(() => {
                 keyGroup.color = "--primary";
-            }, Tone.now() + durationInSeconds);
+            }, durationInSeconds * 1000);
         } else {
             keyGroup.color = "--false-note";
             score.incorrectlyPressed++;
@@ -50,12 +47,12 @@
             if (settings.mode !== Mode.Playback) {
                 piano.triggerAttackRelease("C2", duration, Tone.now(), 2);
             }
-            if (incorrectColorResetEvent !== undefined) {
-                incorrectColorResetEvent.cancel();
+            if (resetIncorrectColourTimeout !== undefined) {
+                clearTimeout(resetIncorrectColourTimeout);
             }
-            incorrectColorResetEvent = Tone.getDraw().schedule(() => {
+            resetIncorrectColourTimeout = setTimeout(() => {
                 keyGroup.color = "--primary";
-            }, Tone.now() + durationInSeconds);
+            }, durationInSeconds * 1000);
         }
     }
 </script>

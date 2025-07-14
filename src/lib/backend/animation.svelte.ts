@@ -176,11 +176,12 @@ function animationLoop(currentTime: number): void {
             }
         }
     }
-    const lastNote = notes[notes.length - 1];
-    const animationFinished = time > lastNote.startTime + lastNote.duration + windowHeight / animationSpeed;
+    const animationFinished = notes.length <= 0;
     if (animationFinished) {
-        stop();
-        goto("/sensfloor/prototype/result");
+        setTimeout(() => {
+            stop();
+            goto("/sensfloor/prototype/result");
+        }, 1000);
     } else {
         frameId = requestAnimationFrame(animationLoop);
     }
