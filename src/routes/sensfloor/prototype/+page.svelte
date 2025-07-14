@@ -80,7 +80,7 @@
 
     function onKeyDown(event: KeyboardEvent): void {
         if (event.key === "1") {
-            goto("/menu");
+            goto("/sensfloor/menu");
         }
     }
 
