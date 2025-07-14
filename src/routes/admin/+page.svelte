@@ -9,5 +9,5 @@
     <NavigationButton text="Songauswahl" slug="/admin/songselection" />
     <NavigationButton text="SensFloor ausrichten" slug="/admin/sensfloor-alignment" />
     <NavigationButton text="SensFloor zuschneiden" slug="/admin/sensfloor-cropping" />
-    <BackButton text="Hauptmenü" slug="/menu" />
+    <BackButton text="Hauptmenü" slug="sensfloor/menu" />
 </main>
