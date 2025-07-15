@@ -25,6 +25,8 @@ let windowHeight: number = 0;
 let animationContainerHeight: number = 0;
 let previousTime: number = 0;
 let animationSpeed: number = 0;
+const bufferTime = 0.1; // how many seconds in advance a player can press a key correctly
+let bufferHeight: number = 0;
 export function getAnimationSpeed(): number {
     return animationSpeed;
 }
@@ -55,7 +57,7 @@ export async function initialise(windowHeightParam: number, animationContainerHe
     const secondsPerBeat = 60 / midi.header.tempos[0].bpm;
     const secondsPerBar = beatsPerBar * secondsPerBeat;
     animationSpeed = animationContainerHeightParam / secondsPerBar;
-
+    bufferHeight = animationSpeed * bufferTime;
     const track = midi.tracks[settings.midiConfig.trackIndex];
 
     // Find all used keys in the selected track and sort them in the piano scale
@@ -154,21 +156,11 @@ function animationLoop(currentTime: number): void {
                 notes.splice(i, 1);
                 continue;
             }
-            else if (note.top >= animationContainerHeight - note.height - (animationContainerHeight / 25) && !note.wasHit) {
+            else if (note.top >= animationContainerHeight - note.height - bufferHeight && !note.wasHit) {
                 if (!activeNoteIds.has(note.id)) {
-                    /*if (activeNoteIds.length >= 1) {
-                        const previousActiveId = getActiveNotes().find(n => n.groupIndex === note.groupIndex)?.id;
-                        if (previousActiveId) {
-                            const index = activeNoteIds.indexOf(previousActiveId);
-                            if (index !== -1) {
-                                activeNoteIds.splice(index, 1);
-                            }
-                        }
-                    }*/
                     activeNoteIds.set(note.id, note)
                 }
             }
-            
             if (settings.mode === Mode.Pause) {
                 if (note.top >= animationContainerHeight - note.height && !note.wasHit) {
                     shouldStop = true;
