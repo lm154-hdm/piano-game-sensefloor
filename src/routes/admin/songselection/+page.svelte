@@ -152,11 +152,11 @@
     );
 </script>
 
-<Title text="Adminpanel - Songauswahl" />
+<h1>Songauswahl</h1>
 
 <div id="song-selection-container">
     <h2>Wähle die MIDI-Datei, die du spielen möchtest</h2>
-    <button class="menu-button primary-button" onclick={selectMidiFile}>
+    <button class="menu-button primary-button song-select-button" onclick={selectMidiFile}>
         {name || "Datei auswählen"}
     </button>
     {#if midi}
@@ -196,6 +196,10 @@
 
     hr {
         width: 80%;
+    }
+
+    .song-select-button {
+        max-width: 90%;
     }
 
     #song-selection-container {

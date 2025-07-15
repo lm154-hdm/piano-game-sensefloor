@@ -70,6 +70,15 @@ a:hover, button:hover {
     outline: 5px solid var(--light-color);
 }
 
+main.admin-main {
+    position: relative;
+    width: calc(100vw - 20%);
+    left: 20%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
 .menu-button {
     width: var(--button-width);
     height: var(--button-width);

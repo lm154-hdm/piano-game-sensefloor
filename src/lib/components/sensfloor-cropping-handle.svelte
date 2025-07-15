@@ -112,36 +112,43 @@
 </div>
 
 <style>
+    span {
+        color: var(--text);
+        background-color: var(--background-color);
+    }
+
     .sensfloor-cropping-handle {
         position: absolute;
-        background-color: var(--primary);
+        background-color: var(--secondary);
+        border: 4px solid var(--primary);
+        z-index: 1;
     }
 
     .sensfloor-cropping-handle-left {
         top: 0;
         left: var(--position);
         height: 100vh;
-        width: 10px;
+        width: 2px;
     }
 
     .sensfloor-cropping-handle-right {
         top: 0;
         right: var(--position);
         height: 100vh;
-        width: 10px;
+        width: 2px;
     }
 
     .sensfloor-cropping-handle-top {
         left: 0;
         top: var(--position);
-        height: 10px;
+        height: 2px;
         width: 100vw;
     }
 
     .sensfloor-cropping-handle-bottom {
         left: 0;
         bottom: var(--position);
-        height: 10px;
+        height: 2px;
         width: 100vw;
     }
 
@@ -162,8 +169,6 @@
     }
 
     .sensfloor-cropping-handle-text-container {
-        position: relative;
         height: 100%;
-        padding: 10px;
     }
 </style>
