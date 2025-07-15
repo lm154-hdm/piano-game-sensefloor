@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import * as Tone from "tone";
 
     import * as Animation from "$lib/backend/animation.svelte";
@@ -13,9 +12,6 @@
     let resetCorrectColorTimeout: number | undefined = undefined;
     let resetIncorrectColourTimeout: number | undefined = undefined;
 
-    onMount(() => {
-        synth = new Tone.Synth().toDestination();
-    });
 
     function play(): void {
         const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
