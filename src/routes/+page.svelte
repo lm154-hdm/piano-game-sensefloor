@@ -12,7 +12,7 @@
     let sensFloorState: SensFloorState = $state(SensFloorState.NONE);
 
     onMount(async () => {
-        /*await Settings.load();
+        await Settings.load();
 
         await Tone.loaded();
         Tone.getContext().lookAhead = 0;
@@ -22,8 +22,8 @@
         await window.setFullscreen(true);
         await window.setFocus();
 
-        await connect();*/
-        goto("/menu"); //for debug, delete before push and uncomment code above.
+        //await connect();
+        goto("/sensfloor/menu");
     });
 
     async function connect(): Promise<void> {
@@ -32,10 +32,10 @@
         sensFloorState = await SensFloor.load();
         switch (sensFloorState) {
             case SensFloorState.ALREADY_CONNECTED:
-                goto("/menu");
+                goto("/sensfloor/menu");
                 break;
             case SensFloorState.CONNECTION_SUCCESSFUL:
-                goto("/menu");
+                goto("/sensfloor/menu");
                 break;
         }
     }

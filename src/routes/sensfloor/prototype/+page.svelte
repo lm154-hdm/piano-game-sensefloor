@@ -9,16 +9,17 @@
     import piano from "$lib/PianoSampler";
     import { invoke } from "@tauri-apps/api/core";
     import { score } from "$lib/backend/score.svelte";
+    import { values } from "$lib/backend/values.svelte";
+    import {goto} from "$app/navigation";
 
-    let windowWidth: number = $state(-1);
-    let windowHeight: number = $state(-1);
     let animationContainerHeight: number = $state(0);
 
     onMount(async () => {
+        window.addEventListener("keydown", onKeyDown);
         const midi = await loadMidi();
         score.totalNotes = midi.tracks[settings.midiConfig.trackIndex].notes.length;
 
-        if (!(await Animation.initialise(windowHeight, animationContainerHeight, midi))) {
+        if (!(await Animation.initialise(values.playAreaHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
@@ -33,6 +34,7 @@
     });
 
     onDestroy(() => {
+        window.removeEventListener("keydown", onKeyDown);
         Animation.stop();
         Animation.reset(); // doesn't work properly
         Tone.getTransport().stop();
@@ -75,9 +77,16 @@
             }
         }
     }
+
+    function onKeyDown(event: KeyboardEvent): void {
+        if (event.key === "1") {
+            goto("/sensfloor/menu");
+        }
+    }
+
 </script>
 
-<div bind:clientWidth={windowWidth} bind:clientHeight={windowHeight} class="prototype-container">
+<div class="prototype-container stretch-playarea">
     <div bind:offsetHeight={animationContainerHeight} class="animated-container">
         {#each Animation.notes as note}
             <AnimatedKey height={note.height} top={note.top} left={note.left} color={note.color} />
@@ -92,8 +101,6 @@
 
 <style>
     .prototype-container {
-        width: 100vw;
-        height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -116,6 +123,6 @@
         justify-content: space-evenly;
         z-index: 1;
         background-color: black;
-        border-top: 4px solid var(--error);
+        border-top: 4px solid var(--accent);
     }
 </style>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Mode, settings } from "$lib/backend/settings.svelte";
     import BackButton from "$lib/components/back-button.svelte";
+  import GhostButton from "$lib/components/ghost-button.svelte";
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container.svelte";
     import Title from "$lib/components/title.svelte";
 </script>
@@ -32,14 +33,6 @@
     >
         Playback
     </button>
+    <GhostButton />
 </LabelledSettingsContainer>
-
-<BackButton text="Speichern und zurück" slug="/menu/settings" shouldSave={true} />
-
-<style>
-    button {
-        width: var(--button-width);
-        aspect-ratio: 1 / 1;
-        text-align: center;
-    }
-</style>
+<BackButton text="Speichern und zurück" slug="/sensfloor/menu/settings" shouldSave={true} />

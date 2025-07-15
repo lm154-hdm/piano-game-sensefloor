@@ -1,25 +1,33 @@
 <script lang="ts">
-    import BackButton from "$lib/components/back-button.svelte";
-    import SensfloorCroppingVerticalHandle from "$lib/components/sensfloor-cropping-vertical-handle.svelte";
+    import SensfloorCroppingHandle, { Direction } from "$lib/components/sensfloor-cropping-handle.svelte";
     import Title from "$lib/components/title.svelte";
 </script>
 
-<aside class="admin">
-    <h1>Adminpanel</h1>
-    <a class="admin" href="/admin/songselection">
-        <button class="admin menu-button secondary-button">Songauswahl</button>
-    </a>
-    <a class="admin" href="/admin/sensfloor-cropping">
-        <button class="admin menu-button secondary-button">SensFloor zuschneiden</button>
-    </a>
-    <a class="admin" href="/menu">
-        <button class="admin menu-button primary-button">Hauptmenü</button>
-    </a>
-</aside>
+<Title text="Adminpanel - SensFloor zuschneiden" />
 
-<main class="stretch-screen flex-bottom flex-row">
-    <Title text="Adminpanel - SensFloor zuschneiden" />
-    <SensfloorCroppingVerticalHandle isLeftHandle={true} />
-    <SensfloorCroppingVerticalHandle isLeftHandle={false} />
-    <!-- <BackButton text="Zurück" slug="/admin" shouldSave={true} /> -->
-</main>
+<div>
+    <p>
+        Sollte der Beamer über den SensFloor hinaus strahlen, muss die Applikation zugeschnitten werden.
+        Dafür sind die vier <strong>.env</strong>-Variablen "VITE_APPLICATION_CROP_LEFT", etc. verantwortlich.
+    </p>
+    <p>
+        Bewege die angezeigten Balken mit der Maus und richte sie auf die Kanten des SensFloors aus.<br />
+        Übertrage anschließend die Werte, welche neben den Balken stehen, in die entsprechenden Variablen in der <strong>.env</strong>-Datei und starte das Spiel neu.
+    </p>
+    <p>
+        Dieses Feature, so wie andere Dev-Features, sind leider nicht Barrierefrei gestaltet.
+    </p>
+</div>
+
+<SensfloorCroppingHandle direction={Direction.LEFT} />
+<SensfloorCroppingHandle direction={Direction.RIGHT} />
+<SensfloorCroppingHandle direction={Direction.TOP} />
+<SensfloorCroppingHandle direction={Direction.BOTTOM} />
+
+<style>
+    div {
+        width: 50%;
+        pointer-events: none;
+        z-index: 1;
+    }
+</style>

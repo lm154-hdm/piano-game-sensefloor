@@ -6,11 +6,6 @@
     }
 </script>
 
-<button class="menu-button error-button bottom-right-button" onclick={exit}>Beenden</button>
-
-<style>
-    button {
-        width: var(--button-width);
-        height: var(--button-width);
-    }
-</style>
+<button class="menu-button error-button bottom-right-corner" onclick={exit}>
+    Beenden
+</button>

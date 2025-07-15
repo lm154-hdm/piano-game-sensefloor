@@ -1,10 +1,11 @@
 :root {
     --crop-left: 0px;
     --crop-right: 0px;
+    --crop-top: 0px;
+    --crop-bottom: 0px;
     --button-width: calc((100vw - var(--crop-left) - var(--crop-right)) / 6);
     --button-border-radius: 10px;
 
-    /*--correct-note: var(--primary);*/
     --correct-note: orange;
     --false-note: var(--error);
 
@@ -22,6 +23,7 @@
     --error-active: #6c0824;
     --button-border-error: 2px solid var(--on-error);
     --on-error: #ffffff;
+
 }
 
 [data-colorscheme="blueYellow"] {
@@ -54,41 +56,29 @@ body {
     -webkit-user-select: none;
 }
 
-.menu-button, button {
+a, button {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 1.5em;
     font-weight: bold;
-    padding: 6px 12px;
     border-radius: var(--button-border-radius);
     border: var(--button-border);
+    margin: 0;
+    padding: 0;
 }
 
-#application-container.align-center {
-    background-color: var(--background-color);
-    align-items: center !important;
-}
-
-/* Buttons */
-.bottom-right-button {
-    position: absolute;
-    right: 0;
-    bottom: 0;
+a:hover, button:hover {
+    outline: 5px solid var(--light-color);
 }
 
 .menu-button {
-    width: 100%;
-    height: 100%;
+    width: var(--button-width);
+    height: var(--button-width);
     display: flex;
     text-align: center;
     justify-content: center;
     align-items: center;
     text-decoration: none;
-}
-.menu-button.admin, button.admin {
-    width: initial;
-    height: initial;
-    flex-grow: 1;
-    padding: 6px 12px;
+    box-sizing: border-box;
 }
 
 .primary-button {
@@ -97,13 +87,9 @@ body {
     border-radius: var(--button-border-radius);
     border: var(--button-border);
 }
+
 .primary-button:active {
     background-color: var(--primary-active);
-}
-
-/* only for debugging */
-.primary-button:hover {
-    border-color: white;
 }
 
 .secondary-button {
@@ -112,6 +98,7 @@ body {
     border-radius: var(--button-border-radius);
     border: var(--button-border);
 }
+
 .secondary-button:active {
     background-color: var(--secondary-active);
 }
@@ -126,52 +113,10 @@ body {
     background-color: var(--error-active);
 }
 
-/* only for debugging */
-.secondary-button:hover {
-    border-color: white;
-}
-
-/* color scheme preview */
-.color-scheme-preview-container {
+.bottom-right-corner {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    top: 15%;
-    width: 25%;
-    height: 30%;
-}
-.color-scheme-preview {
-    display: flex;
-    flex-grow: 1;
-}
-.color-scheme-preview-item  {
-    border-radius: var(--button-border-radius);
-    flex-grow: 1;
-}
-
-/* admin page */
-body {
-    display: flex;
-}
-
-h1.admin, h1, h2 {
-    text-align: center;
-}
-
-aside.admin {
-    /*position: absolute;
-    height: 100%;*/
-    display: flex;
-    flex-direction: column;
-    row-gap: 1em;
-    background-color: var(--background-lighter);
-    padding: 1em;
-}
-
-a.admin {
-    display: flex;
-    text-decoration: none;
+    bottom: 0;
+    right: 0;
 }
 
 .flex-center {
@@ -199,10 +144,7 @@ a.admin {
     height: 100vh;
 }
 
-/*
-game colors currently (2025-07-14):
-piano buttons: primary,
-incoming buttons: secondary,
-wrong: error,
-correct: yellow
-*/
+.stretch-playarea {
+    width: 100%;
+    height: 100%;
+}

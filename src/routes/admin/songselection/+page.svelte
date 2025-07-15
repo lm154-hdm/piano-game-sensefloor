@@ -152,63 +152,47 @@
     );
 </script>
 
-<aside class="admin">
-    <h1>Adminpanel</h1>
-    <a class="admin" href="/admin/songselection">
-        <button class="admin menu-button secondary-button">Songauswahl</button>
-    </a>
-    <a class="admin" href="/admin/sensfloor-cropping">
-        <button class="admin menu-button secondary-button">SensFloor zuschneiden</button>
-    </a>
-    <a class="admin" href="/menu">
-        <button class="admin menu-button primary-button">Hauptmenü</button>
-    </a>
-</aside>
+<Title text="Adminpanel - Songauswahl" />
 
-
-<main class="stretch-screen flex-center flex-row">
-    <Title text="Adminpanel - Songauswahl" />
-
-    <div id="song-selection-container">
-        <h2>Wähle die MIDI-Datei, die du spielen möchtest</h2>
-        <button class="admin menu-button secondary-button" onclick={selectMidiFile}>
-            {name || "Datei auswählen"}
-        </button>
-        {#if midi}
-            <hr />
-            <h2>Wähle die MIDI-Spur, die du spielen möchtest</h2>
-            <div id="song-selection-track-container">
-                {#each displayTracks as { track, trackIndex, displayIndex }}
-                    <label>
-                        <input
-                            type="radio"
-                            name="track-selection"
-                            value={track.name}
-                            checked={trackIndex === settings.midiConfig.trackIndex}
-                            onchange={() => {
-                                stopPlayback();
-                                settings.midiConfig.trackIndex = trackIndex;
-                            }}
-                        />
-                        {track.name || `Track ${displayIndex}`}
-                    </label>
-                {/each}
-            </div>
-            <hr />
-            <div id="song-selection-playback-container">
-                <button class="admin menu-button secondary-button" onclick={playSong}>Gesamten Song abspielen</button>
-                <button class="admin menu-button secondary-button" onclick={playTrack}>Ausgewählte MIDI-Spur abspielen</button>
-                <button class="admin menu-button secondary-button" onclick={stopPlayback}>Abspielen stoppen</button>
-            </div>
-        {/if}
-
-        <button shouldSave={true} class="admin menu-button primary-button">Speichern</button>
-    </div>
-
-    <!-- <BackButton text="Speichern und zurück" slug="/admin" shouldSave={true} /> -->
-</main>
+<div id="song-selection-container">
+    <h2>Wähle die MIDI-Datei, die du spielen möchtest</h2>
+    <button class="menu-button primary-button" onclick={selectMidiFile}>
+        {name || "Datei auswählen"}
+    </button>
+    {#if midi}
+        <hr />
+        <h2>Wähle die MIDI-Spur, die du spielen möchtest</h2>
+        <div id="song-selection-track-container">
+            {#each displayTracks as { track, trackIndex, displayIndex }}
+                <label>
+                    <input
+                        type="radio"
+                        name="track-selection"
+                        value={track.name}
+                        checked={trackIndex === settings.midiConfig.trackIndex}
+                        onchange={() => {
+                            stopPlayback();
+                            settings.midiConfig.trackIndex = trackIndex;
+                        }}
+                    />
+                    {track.name || `Track ${displayIndex}`}
+                </label>
+            {/each}
+        </div>
+        <hr />
+        <div id="song-selection-playback-container">
+            <button class="menu-button secondary-button" onclick={playSong}>Gesamten Song abspielen</button>
+            <button class="menu-button secondary-button" onclick={playTrack}>Ausgewählte MIDI-Spur abspielen</button>
+            <button class="menu-button secondary-button" onclick={stopPlayback}>Abspielen stoppen</button>
+        </div>
+    {/if}
+</div>
 
 <style>
+    button {
+        height: auto;
+        width: auto;
+    }
 
     hr {
         width: 80%;
@@ -216,6 +200,7 @@
 
     #song-selection-container {
         width: 100%;
+        height: 80%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -227,8 +212,6 @@
     #song-selection-track-container {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
         overflow-y: scroll;
         padding-right: 20px;
     }
@@ -238,5 +221,6 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        gap: 10px;
     }
 </style>
