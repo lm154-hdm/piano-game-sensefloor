@@ -29,6 +29,10 @@
         sensFloorState = SensFloorState.NONE;
 
         sensFloorState = await SensFloor.load();
+        const workingRemotely = import.meta.env.VITE_REMOTE;
+        if (workingRemotely) {
+            sensFloorState = SensFloorState.ALREADY_CONNECTED;
+        }
         switch (sensFloorState) {
             case SensFloorState.ALREADY_CONNECTED:
                 goto("/sensfloor/menu");

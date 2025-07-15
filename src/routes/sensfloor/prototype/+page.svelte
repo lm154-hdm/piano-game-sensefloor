@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { onMount, onDestroy } from "svelte";
+    import {onDestroy, onMount} from "svelte";
     import * as Tone from "tone";
     import * as Animation from "$lib/backend/animation.svelte";
     import AnimatedKey from "$lib/components/animated-key.svelte";
     import PianoKey from "$lib/components/piano-key.svelte";
-    import { Mode, settings } from "$lib/backend/settings.svelte";
-    import { Midi } from "@tonejs/midi";
+    import {Mode, settings} from "$lib/backend/settings.svelte";
+    import {Midi} from "@tonejs/midi";
     import piano from "$lib/PianoSampler";
-    import { invoke } from "@tauri-apps/api/core";
-    import { score } from "$lib/backend/score.svelte";
-    import { values } from "$lib/backend/values.svelte";
+    import {invoke} from "@tauri-apps/api/core";
+    import {score} from "$lib/backend/score.svelte";
+    import {values} from "$lib/backend/values.svelte";
     import {goto} from "$app/navigation";
 
     let animationContainerHeight: number = $state(0);
@@ -17,18 +17,22 @@
     onMount(async () => {
         window.addEventListener("keydown", onKeyDown);
         const midi = await loadMidi();
+        // Reset Score
         score.totalNotes = midi.tracks[settings.midiConfig.trackIndex].notes.length;
-
+        score.incorrectlyPressed = 0;
+        score.correctlyPressed = 0;
         if (!(await Animation.initialise(values.playAreaHeight, animationContainerHeight, midi))) {
             console.error("Failed to initialise game because failed to load midi file");
             return;
         }
-
+        const delay = animationContainerHeight / Animation.getAnimationSpeed();
         if (settings.mode === Mode.Playback) {
-            schedulePlaybackSong(midi);
+            scheduleSong(midi, delay, true);
+        } else if (settings.mode === Mode.Normal) {
+            scheduleSong(midi, delay, false);
         }
         Animation.start();
-        if (settings.mode === Mode.Playback) {
+        if (settings.mode === Mode.Playback || settings.mode === Mode.Normal) {
             Tone.getTransport().start();
         }
     });
@@ -41,13 +45,6 @@
         Tone.getTransport().cancel(); // works
     });
 
-    function clickAtPosition(x: number, y: number): void {
-        const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
-        if (element) {
-            element.click();
-        }
-    }
-
     async function loadMidi(): Promise<Midi> {
         const data = await invoke<Uint8Array>("read_binary_file", { path: settings.midiConfig.path });
         const midi = new Midi(data);
@@ -56,24 +53,19 @@
         return midi;
     }
 
-    function schedulePlaybackSong(midi: Midi) {
-        // TD: use trackNumber of chose track
-        for (const track of midi.tracks) {
-            if (track.notes.length <= 0) {
-                continue;
-            }
-
-            const scheduleDelay = animationContainerHeight / Animation.getAnimationSpeed(); // time, that animated note needs to move down to key (set in Animation)
-            for (const note of track.notes) {
-                Tone.getTransport().schedule((time) => {
-                    // time = When your scheduled event fires
-                    piano.triggerAttackRelease(
-                        note.name,
-                        note.duration,
-                        time + scheduleDelay, // + now ?
-                        note.velocity - 0.3,
-                    );
-                }, note.time);
+    function scheduleSong(midi: Midi, delay: number, scheduleActiveTrack: boolean) {
+        for(let i = 0; i < midi.tracks.length; i++) {
+            if (scheduleActiveTrack || i != settings.midiConfig.trackIndex) {
+                for (const note of midi.tracks[i].notes) {
+                    Tone.getTransport().schedule((time) => {
+                        piano.triggerAttackRelease(
+                            note.name,
+                            note.duration,
+                            time + delay,
+                            note.velocity - 0.3,
+                        );
+                    }, note.time);
+                }
             }
         }
     }
