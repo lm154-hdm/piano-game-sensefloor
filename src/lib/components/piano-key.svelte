@@ -17,6 +17,7 @@
         const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
         const activeNotes: NoteData[] = Animation.getActiveNotes(); // sorted asc. by startTime
         const activeNoteOfKey = activeNotes.find((n) => n.groupIndex === index && !n.wasHit);
+
         if (activeNoteOfKey) {
             Animation.hitNote(activeNoteOfKey.id)
             keyGroup.color = "--correct-note";

@@ -210,8 +210,9 @@ export function registerStepOnListeners(): void {
         const x = event.normalisedX * values.playAreaWidth + config.cropLeft;
         const y = event.normalisedY * values.playAreaHeight + config.cropBottom;
 
-        const element: Element | null = document.elementFromPoint(x, y);
-        if (element instanceof HTMLButtonElement) {
+        const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
+
+        if (element) {
             element.click();
         }
     });

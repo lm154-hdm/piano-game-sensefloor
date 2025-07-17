@@ -13,7 +13,7 @@
         <button
             class="menu-button secondary-button"
             onclick={() => {
-                settings.speed -= 10;
+                settings.speed = Math.max(settings.speed - 10, 10);
             }}
         >
             Langsamer (-10%)
