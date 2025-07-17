@@ -83,7 +83,7 @@ export async function save(): Promise<void> {
 export const settings: Settings = $state({
     settingsVersion: __APP_VERSION__,
     speed: 100,
-    buffer: 0.1,
+    buffer: 0.2,
     mode: Mode.Pause,
     colorSchemeId: "default",
     midiConfig: {
