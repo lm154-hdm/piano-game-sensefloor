@@ -192,6 +192,7 @@
     button {
         height: auto;
         width: auto;
+        padding: 6px 12px;
     }
 
     hr {

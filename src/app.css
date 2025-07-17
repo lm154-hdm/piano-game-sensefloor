@@ -16,11 +16,11 @@
     --background-color: #000000;
     --background-lighter: #444444;
     --primary: #f46278; /* #b65966 */
-    --primary-active: #c55666;
+    --primary-active: #ab3143;
     --secondary: #ffc8d0;
-    --secondary-active: #efa4af;
+    --secondary-active: #d96979;
     --error: #8d0d31;
-    --error-active: #6c0824;
+    --error-active: #440013;
     --button-border-error: 2px solid var(--on-error);
     --on-error: #ffffff;
 

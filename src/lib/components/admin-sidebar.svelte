@@ -1,8 +1,8 @@
 <aside>
     <div class="aside-container">
         <h1>Adminpanel</h1>
-        <div class="button-container">
-            <div>
+        <div class="content-container">
+            <div class="button-container">
                 <a class="secondary-button" href="/admin/songselection">Songauswahl</a>
                 {#if import.meta.env.DEV}
                     <a class="secondary-button" href="/admin/sensfloor-cropping">Sensfloor<br />zuschneiden</a>
@@ -36,7 +36,7 @@
         justify-content: center;
         text-align: center;
         text-decoration: none;
-        margin: 0 10px 10px 0;
+        padding: 6px 12px;
     }
 
     .aside-container {
@@ -46,10 +46,16 @@
         flex-direction: column;
     }
 
-    .button-container {
+    .content-container {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         flex-grow: 1;
+    }
+
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 </style>

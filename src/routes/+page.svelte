@@ -22,8 +22,7 @@
         await window.setFullscreen(true);
         await window.setFocus();
 
-        //await connect();
-        goto("/sensfloor/menu");
+        await connect();
     });
 
     async function connect(): Promise<void> {
