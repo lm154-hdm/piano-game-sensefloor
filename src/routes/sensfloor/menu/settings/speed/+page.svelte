@@ -16,7 +16,7 @@
                 settings.speed = Math.max(settings.speed - 10, 10);
             }}
         >
-            Langsamer (-10%)
+            Langsamer<br/>-10%
         </button>
         <button
             class="menu-button secondary-button"
@@ -24,7 +24,7 @@
                 settings.speed += 10;
             }}
         >
-            Schneller (+10%)
+            Schneller<br/>+10%
         </button>
     </LabelledSettingsRow>
 </LabelledSettingsContainer>

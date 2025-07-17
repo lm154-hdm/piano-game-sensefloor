@@ -54,8 +54,7 @@
     }
 </script>
 
-<button class="menu-button piano-key" style="--color: var({color})" onclick={play}>
-    {text}
+<button class="menu-button piano-key" style="--color: var({color})" onclick={play} aria-label="Key">
 </button>
 
 <style>

@@ -6,6 +6,7 @@ declare const __APP_VERSION__: string;
 interface Settings {
     settingsVersion: string;
     speed: number;
+    buffer: number;
     colorSchemeId: string;
     mode: Mode;
     midiConfig: MidiConfig;
@@ -82,6 +83,7 @@ export async function save(): Promise<void> {
 export const settings: Settings = $state({
     settingsVersion: __APP_VERSION__,
     speed: 100,
+    buffer: 0.1,
     mode: Mode.Pause,
     colorSchemeId: "default",
     midiConfig: {

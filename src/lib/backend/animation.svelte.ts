@@ -25,7 +25,7 @@ let windowHeight: number = 0;
 let animationContainerHeight: number = 0;
 let previousTime: number = 0;
 let animationSpeed: number = 0;
-const bufferTime = 0.1; // how many seconds in advance a player can press a key correctly
+const bufferTime = settings.buffer; // how many seconds in advance a player can press a key correctly
 let bufferHeight: number = 0;
 export function getAnimationSpeed(): number {
     return animationSpeed;
