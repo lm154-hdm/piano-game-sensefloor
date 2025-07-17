@@ -9,7 +9,6 @@
             ? Math.round((score.correctlyPressed / (score.totalNotes + score.incorrectlyPressed)) * 100)
             : 0;
     onDestroy(() => {
-        score.totalNotes = 0;
         score.incorrectlyPressed = 0;
         score.correctlyPressed = 0;
     });
