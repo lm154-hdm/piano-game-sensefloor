@@ -12,7 +12,6 @@
 
 <style>
     .title-container {
-        color: var(--text);
         position: absolute;
         top: 20px;
         left: 0px;

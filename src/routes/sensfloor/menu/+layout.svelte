@@ -14,7 +14,10 @@
 
     function onKeyDown(event: KeyboardEvent): void {
         if (event.key === "1") {
-            goto("/admin");
+            goto("/admin/songselection");
+        }
+        if (event.key === "2" && import.meta.env.DEV) {
+            goto("/admin/sensfloor-cropping");
         }
     }
 </script>

@@ -152,54 +152,55 @@
     );
 </script>
 
-<main class="stretch-screen flex-center flex-row">
-    <Title text="Adminpanel - Songauswahl" />
+<h1>Songauswahl</h1>
 
-    <div id="song-selection-container">
-        <h2>Wähle die MIDI-Datei, die du spielen möchtest</h2>
-        <button class="menu-button primary-button" onclick={selectMidiFile}>
-            {name || "Datei auswählen"}
-        </button>
-        {#if midi}
-            <hr />
-            <h2>Wähle die MIDI-Spur, die du spielen möchtest</h2>
-            <div id="song-selection-track-container">
-                {#each displayTracks as { track, trackIndex, displayIndex }}
-                    <label>
-                        <input
-                            type="radio"
-                            name="track-selection"
-                            value={track.name}
-                            checked={trackIndex === settings.midiConfig.trackIndex}
-                            onchange={() => {
-                                stopPlayback();
-                                settings.midiConfig.trackIndex = trackIndex;
-                            }}
-                        />
-                        {track.name || `Track ${displayIndex}`}
-                    </label>
-                {/each}
-            </div>
-            <hr />
-            <div id="song-selection-playback-container">
-                <button class="menu-button primary-button" onclick={playSong}>Gesamten Song abspielen</button>
-                <button class="menu-button primary-button" onclick={playTrack}>Ausgewählte MIDI-Spur abspielen</button>
-                <button class="menu-button primary-button" onclick={stopPlayback}>Abspielen stoppen</button>
-            </div>
-        {/if}
-    </div>
-
-    <BackButton text="Speichern und zurück" slug="/admin" shouldSave={true} />
-</main>
+<div id="song-selection-container">
+    <h2>Wähle die MIDI-Datei, die du spielen möchtest</h2>
+    <button class="menu-button primary-button song-select-button" onclick={selectMidiFile}>
+        {name || "Datei auswählen"}
+    </button>
+    {#if midi}
+        <hr />
+        <h2>Wähle die MIDI-Spur, die du spielen möchtest</h2>
+        <div id="song-selection-track-container">
+            {#each displayTracks as { track, trackIndex, displayIndex }}
+                <label>
+                    <input
+                        type="radio"
+                        name="track-selection"
+                        value={track.name}
+                        checked={trackIndex === settings.midiConfig.trackIndex}
+                        onchange={() => {
+                            stopPlayback();
+                            settings.midiConfig.trackIndex = trackIndex;
+                        }}
+                    />
+                    {track.name || `Track ${displayIndex}`}
+                </label>
+            {/each}
+        </div>
+        <hr />
+        <div id="song-selection-playback-container">
+            <button class="menu-button secondary-button" onclick={playSong}>Gesamten Song abspielen</button>
+            <button class="menu-button secondary-button" onclick={playTrack}>Ausgewählte MIDI-Spur abspielen</button>
+            <button class="menu-button secondary-button" onclick={stopPlayback}>Abspielen stoppen</button>
+        </div>
+    {/if}
+</div>
 
 <style>
     button {
-        width: auto;
         height: auto;
+        width: auto;
+        padding: 6px 12px;
     }
 
     hr {
         width: 80%;
+    }
+
+    .song-select-button {
+        max-width: 90%;
     }
 
     #song-selection-container {
@@ -216,8 +217,6 @@
     #song-selection-track-container {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
         overflow-y: scroll;
         padding-right: 20px;
     }
@@ -227,5 +226,6 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        gap: 10px;
     }
 </style>

@@ -2,18 +2,12 @@
     interface NavigationButtonProps {
         text: string;
         slug: string;
+        classNames?: string;
     }
 
-    let { text, slug }: NavigationButtonProps = $props();
+    let { text, slug, classNames = "secondary-button" }: NavigationButtonProps = $props();
 </script>
 
-<a href={slug}>
-    <button class="menu-button primary-button">{text}</button>
+<a class="menu-button {classNames}" href={slug}>
+    {text}
 </a>
-
-<style>
-    a {
-        width: var(--button-width);
-        height: var(--button-width);
-    }
-</style>
