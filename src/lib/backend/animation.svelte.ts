@@ -72,7 +72,7 @@ export async function initialise(windowHeightParam: number, animationContainerHe
     // Create empty key groups
     keyGroups.length = 0;
     for (let i = 0; i < 6; i++) {
-        keyGroups.push({ color: "--primary", displayName: "", keyNames: [] });
+        keyGroups.push({ color: "--secondary", displayName: "", keyNames: [] });
     }
 
     // Group the keys into 6 groups after the round-robin principle
@@ -108,7 +108,7 @@ export async function initialise(windowHeightParam: number, animationContainerHe
             duration: note.duration,
             name: note.name,
             groupIndex: groupIndex,
-            color: "--secondary",
+            color: "--light-color",
             wasHit: false,
         });
     }

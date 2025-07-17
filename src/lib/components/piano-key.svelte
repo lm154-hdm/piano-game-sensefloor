@@ -34,7 +34,7 @@
                 clearTimeout(resetCorrectColorTimeout);
             }
             resetCorrectColorTimeout = setTimeout(() => {
-                keyGroup.color = "--primary";
+                keyGroup.color = "--secondary";
             }, durationInSeconds * 1000);
         } else {
             keyGroup.color = "--false-note";
@@ -48,7 +48,7 @@
                 clearTimeout(resetIncorrectColourTimeout);
             }
             resetIncorrectColourTimeout = setTimeout(() => {
-                keyGroup.color = "--primary";
+                keyGroup.color = "--secondary";
             }, durationInSeconds * 1000);
         }
     }
