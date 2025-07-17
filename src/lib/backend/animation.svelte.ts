@@ -2,7 +2,8 @@ import { Midi } from "@tonejs/midi";
 import { Mode, settings } from "$lib/backend/settings.svelte";
 import { goto } from "$app/navigation";
 
-type NoteData = {
+export type NoteData = {
+    id: string,
     height: number;
     top: number;
     left: number;
@@ -10,7 +11,6 @@ type NoteData = {
     duration: number;
     name: string;
     groupIndex: number;
-    stopped: boolean;
     color: string;
     wasHit: boolean; // if the note was already pressed at the correct time
 };
@@ -21,32 +21,43 @@ type KeyGroup = {
     keyNames: string[];
 };
 
-let _windowHeight: number = 0;
-let _animationContainerHeight: number = 0;
+let windowHeight: number = 0;
+let animationContainerHeight: number = 0;
 let previousTime: number = 0;
 let animationSpeed: number = 0;
+const bufferTime = 0.1; // how many seconds in advance a player can press a key correctly
+let bufferHeight: number = 0;
 export function getAnimationSpeed(): number {
     return animationSpeed;
 }
 let frameId: number = 0;
+const activeNoteIds: Map<string, NoteData> = new Map();  // stores only note.id
 export const notes: NoteData[] = $state([]);
+export function getActiveNotes(): NoteData[] {
+    return notes?.filter(n => activeNoteIds
+        .has(n.id))
+        .sort((a, b) => a.startTime - b.startTime)
+        .map(n => ({ ...n })) ?? [];  // return copies, not references
+}
+export function hitNote(id: string) {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    note.color = "--correct-note";
+    note.wasHit = true;
+}
 export const keyGroups: KeyGroup[] = $state([]);
 let time: number = 0;
-let nextNote = $state<NoteData | undefined>(undefined);
-export function getNextNote() {
-    return nextNote;
-}
 export let animationIsRunning: boolean = false;
 
-export async function initialise(windowHeight: number, animationContainerHeight: number, midi: Midi): Promise<boolean> {
-    _windowHeight = windowHeight;
-    _animationContainerHeight = animationContainerHeight;
+export async function initialise(windowHeightParam: number, animationContainerHeightParam: number, midi: Midi): Promise<boolean> {
+    windowHeight = windowHeightParam;
+    animationContainerHeight = animationContainerHeightParam;
 
     const beatsPerBar = midi.header.timeSignatures[0]?.timeSignature?.[0] ?? 4;
     const secondsPerBeat = 60 / midi.header.tempos[0].bpm;
     const secondsPerBar = beatsPerBar * secondsPerBeat;
-    animationSpeed = animationContainerHeight / secondsPerBar;
-
+    animationSpeed = animationContainerHeightParam / secondsPerBar;
+    bufferHeight = animationSpeed * bufferTime;
     const track = midi.tracks[settings.midiConfig.trackIndex];
 
     // Find all used keys in the selected track and sort them in the piano scale
@@ -89,6 +100,7 @@ export async function initialise(windowHeight: number, animationContainerHeight:
         const height = note.duration * animationSpeed;
         const groupIndex = keyGroups.findIndex((group) => group.keyNames.includes(note.name));
         notes.push({
+            id: crypto.randomUUID(),
             height: height - 5, // treshold to avoid overlapping / sticking out
             top: -height,
             left: groupIndex,
@@ -96,11 +108,11 @@ export async function initialise(windowHeight: number, animationContainerHeight:
             duration: note.duration,
             name: note.name,
             groupIndex: groupIndex,
-            stopped: false,
             color: "--secondary",
             wasHit: false,
         });
     }
+
     return true;
 }
 
@@ -133,29 +145,35 @@ function animationLoop(currentTime: number): void {
     previousTime = currentTime;
     time += deltaTime;
     let shouldStop = false;
-    for (const note of notes) {
+
+    for (let i = notes.length - 1; i >= 0; i--) {
+        const note = notes[i];
+
         if (time >= note.startTime) {
             note.top += animationSpeed * deltaTime;
-            if (note.top >= _animationContainerHeight - note.height) {
-                if (note.name !== nextNote?.name || note.startTime !== nextNote?.startTime) {
-                    nextNote = note;
+            if (note.top >= animationContainerHeight) {
+                activeNoteIds.delete(note.id);
+                notes.splice(i, 1);
+                continue;
+            }
+            else if (note.top >= animationContainerHeight - note.height - bufferHeight && !note.wasHit) {
+                if (!activeNoteIds.has(note.id)) {
+                    activeNoteIds.set(note.id, note)
                 }
-                if (settings.mode === Mode.Pause && !note.stopped) {
-                    const keyGroup = keyGroups.find((key) => key.color !== "--primary");
-                    if (keyGroup) {
-                        keyGroup.color = "--primary";
-                    }
+            }
+            if (settings.mode === Mode.Pause) {
+                if (note.top >= animationContainerHeight - note.height && !note.wasHit) {
                     shouldStop = true;
-                    note.stopped = true;
                 }
             }
         }
     }
-    const lastNote = notes[notes.length - 1];
-    const animationFinished = time > lastNote.startTime + lastNote.duration + _windowHeight / animationSpeed;
+    const animationFinished = notes.length <= 0;
     if (animationFinished) {
-        stop();
-        goto("/sensfloor/prototype/result");
+        setTimeout(() => {
+            stop();
+            goto("/sensfloor/prototype/result");
+        }, 1000);
     } else {
         frameId = requestAnimationFrame(animationLoop);
     }
