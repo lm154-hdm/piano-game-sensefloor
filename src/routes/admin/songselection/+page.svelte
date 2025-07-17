@@ -3,11 +3,10 @@
     import { Midi, Track } from "@tonejs/midi";
     import { onDestroy, onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
-    import BackButton from "$lib/components/back-button.svelte";
-    import Title from "$lib/components/title.svelte";
     import * as Dialog from "@tauri-apps/plugin-dialog";
     import * as Path from "@tauri-apps/api/path";
     import * as Tone from "tone";
+    import piano from "$lib/PianoSampler";
 
     // This error is handled inside of the svelte config
     enum PlaybackMode {
@@ -20,7 +19,6 @@
     let name: string = $state("");
 
     let isPlaybackRunning: PlaybackMode = PlaybackMode.STOPPED;
-    const synth: Tone.PolySynth = new Tone.PolySynth(Tone.Synth).toDestination();
 
     onMount(async () => {
         if (settings.midiConfig.path) {
@@ -95,7 +93,7 @@
         for (const track of midi!.tracks) {
             for (const note of track.notes) {
                 Tone.getTransport().schedule((time) => {
-                    synth.triggerAttackRelease(note.name, note.duration, time);
+                    piano.triggerAttackRelease(note.name, note.duration, time);
                 }, note.time);
             }
         }
@@ -116,7 +114,7 @@
         const track = midi!.tracks[settings.midiConfig.trackIndex];
         for (const note of track.notes) {
             Tone.getTransport().schedule((time) => {
-                synth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
+                piano.triggerAttackRelease(note.name, note.duration, time);
             }, note.time);
         }
         Tone.getTransport().start();

@@ -41,9 +41,10 @@
     onDestroy(() => {
         window.removeEventListener("keydown", onKeyDown);
         Animation.stop();
-        Animation.reset(); // doesn't work properly
+        Animation.reset();
         Tone.getTransport().stop();
-        Tone.getTransport().cancel(); // works
+        Tone.getTransport().cancel();
+        Tone.getTransport().position = 0;
     });
 
     async function loadMidi(): Promise<Midi> {
