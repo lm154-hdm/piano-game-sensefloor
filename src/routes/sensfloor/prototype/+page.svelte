@@ -28,11 +28,12 @@
         const delay = animationContainerHeight / Animation.getAnimationSpeed();
         if (settings.mode === Mode.Playback) {
             scheduleSong(midi, delay, true);
-        } else if (settings.mode === Mode.Normal) {
+        } /*else if (settings.mode === Mode.Normal) {
             scheduleSong(midi, delay, false);
-        }
+        }*/
         Animation.start();
-        if (settings.mode === Mode.Playback || settings.mode === Mode.Normal) {
+        /*|| settings.mode === Mode.Normal*/
+        if (settings.mode === Mode.Playback) {
             Tone.getTransport().start();
         }
     });
