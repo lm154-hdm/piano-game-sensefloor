@@ -5,6 +5,6 @@
 </script>
 
 <Title text="Menü" />
-<NavigationButton text="Spielen" slug="/sensfloor/prototype" />
+<NavigationButton classNames="primary-button" text="Spielen" slug="/sensfloor/prototype"/>
 <NavigationButton text="Einstellungen" slug="/sensfloor/menu/settings" />
 <ExitButton />

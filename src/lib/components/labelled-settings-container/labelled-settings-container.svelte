@@ -9,9 +9,7 @@
 
 <div class="labelled-settings-container">
     <h2>{text}</h2>
-    <div class="labelled-settings-button-container">
-        {@render children()}
-    </div>
+    {@render children()}
 </div>
 
 <style>
@@ -23,13 +21,5 @@
         align-items: center;
         justify-content: center;
         gap: 20px;
-    }
-
-    .labelled-settings-button-container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
     }
 </style>

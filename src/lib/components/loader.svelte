@@ -35,7 +35,7 @@ SOFTWARE.
         height: 48px;
         border-radius: 50%;
         display: inline-block;
-        border-top: 3px solid #fff;
+        border-top: 3px solid var(--text);
         border-right: 3px solid transparent;
         box-sizing: border-box;
         animation: loader-rotation 1s linear infinite;

@@ -14,13 +14,6 @@
     }
 </script>
 
-<button class="menu-button primary-button" onclick={setColourScheme}>
+<button class="menu-button secondary-button" onclick={setColourScheme}>
     {text}
 </button>
-
-<style>
-    button {
-        width: var(--button-width);
-        height: var(--button-width);
-    }
-</style>
