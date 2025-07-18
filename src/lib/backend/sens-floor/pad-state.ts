@@ -5,10 +5,10 @@ const pressThreshold: number = 140;
 const releaseThreshold: number = 136;
 
 export default class PadState {
-    private nno: number = 0;
-    private ono: number = 0;
-    private oso: number = 0;
-    private sso: number = 0;
+    private nne: number = 0;
+    private ene: number = 0;
+    private ese: number = 0;
+    private sse: number = 0;
     private ssw: number = 0;
     private wsw: number = 0;
     private wnw: number = 0;
@@ -28,44 +28,50 @@ export default class PadState {
         this.stepOff = stepOff;
     }
 
-    update(nno: number, ono: number, oso: number, sso: number, ssw: number, wsw: number, wnw: number, nnw: number): void {
-        let steppedOnPad: boolean = false;
+    update(nne: number, ene: number, ese: number, sse: number, ssw: number, wsw: number, wnw: number, nnw: number): void {
+        let hasSteppedOnPad: boolean = false;
+        let steppedPad: PadPart = PadPart.NNE;
 
         // nno
-        if (this.nno < releaseThreshold && nno > pressThreshold) {
-            steppedOnPad = true;
-            this.nno = nno;
-        } else if (this.nno > pressThreshold && nno < releaseThreshold) {
-            this.nno = nno;
+        if (this.nne < releaseThreshold && nne > pressThreshold) {
+            hasSteppedOnPad = true;
+            steppedPad = PadPart.NNE;
+            this.nne = nne;
+        } else if (this.nne > pressThreshold && nne < releaseThreshold) {
+            this.nne = nne;
         }
 
         // ono
-        if (this.ono < releaseThreshold && ono > pressThreshold) {
-            steppedOnPad = true;
-            this.ono = ono;
-        } else if (this.ono > pressThreshold && ono < releaseThreshold) {
-            this.ono = ono;
+        if (this.ene < releaseThreshold && ene > pressThreshold) {
+            hasSteppedOnPad = true;
+            steppedPad = PadPart.ENE;
+            this.ene = ene;
+        } else if (this.ene > pressThreshold && ene < releaseThreshold) {
+            this.ene = ene;
         }
 
         // oso
-        if (this.oso < releaseThreshold && oso > pressThreshold) {
-            steppedOnPad = true;
-            this.oso = oso;
-        } else if (this.oso > pressThreshold && oso < releaseThreshold) {
-            this.oso = oso;
+        if (this.ese < releaseThreshold && ese > pressThreshold) {
+            hasSteppedOnPad = true;
+            steppedPad = PadPart.ESE;
+            this.ese = ese;
+        } else if (this.ese > pressThreshold && ese < releaseThreshold) {
+            this.ese = ese;
         }
 
         // sso
-        if (this.sso < releaseThreshold && sso > pressThreshold) {
-            steppedOnPad = true;
-            this.sso = sso;
-        } else if (this.sso > pressThreshold && sso < releaseThreshold) {
-            this.sso = sso;
+        if (this.sse < releaseThreshold && sse > pressThreshold) {
+            hasSteppedOnPad = true;
+            steppedPad = PadPart.SSE;
+            this.sse = sse;
+        } else if (this.sse > pressThreshold && sse < releaseThreshold) {
+            this.sse = sse;
         }
 
         // ssw
         if (this.ssw < releaseThreshold && ssw > pressThreshold) {
-            steppedOnPad = true;
+            hasSteppedOnPad = true;
+            steppedPad = PadPart.SSW;
             this.ssw = ssw;
         } else if (this.ssw > pressThreshold && ssw < releaseThreshold) {
             this.ssw = ssw;
@@ -73,7 +79,8 @@ export default class PadState {
 
         // wsw
         if (this.wsw < releaseThreshold && wsw > pressThreshold) {
-            steppedOnPad = true;
+            hasSteppedOnPad = true;
+            steppedPad = PadPart.WSW;
             this.wsw = wsw;
         } else if (this.wsw > pressThreshold && wsw < releaseThreshold) {
             this.wsw = wsw;
@@ -81,7 +88,8 @@ export default class PadState {
 
         // wnw
         if (this.wnw < releaseThreshold && wnw > pressThreshold) {
-            steppedOnPad = true;
+            hasSteppedOnPad = true;
+            steppedPad = PadPart.WNW;
             this.wnw = wnw;
         } else if (this.wnw > pressThreshold && wnw < releaseThreshold) {
             this.wnw = wnw;
@@ -89,34 +97,35 @@ export default class PadState {
 
         // nnw
         if (this.nnw < releaseThreshold && nnw > pressThreshold) {
-            steppedOnPad = true;
+            hasSteppedOnPad = true;
+            steppedPad = PadPart.NNW;
             this.nnw = nnw;
         } else if (this.nnw > pressThreshold && nnw < releaseThreshold) {
             this.nnw = nnw;
         }
 
-        // The oso part of the pad at (4|1) is broken, so we filter it out
+        // The ese part of the pad at (4|1) is broken, so we filter it out
         // (this was approved by Mr. Zimmermann)
-        let steppedOffPad: boolean = this.isPadPressed &&
-            this.nno <= releaseThreshold &&
-            this.ono <= releaseThreshold &&
-            this.sso <= releaseThreshold &&
+        let hasSteppedOffPad: boolean = this.isPadPressed &&
+            this.nne <= releaseThreshold &&
+            this.ene <= releaseThreshold &&
+            this.sse <= releaseThreshold &&
             this.ssw <= releaseThreshold &&
             this.wsw <= releaseThreshold &&
             this.wnw <= releaseThreshold &&
             this.nnw <= releaseThreshold;
 
         if (this.x !== 1 || this.y !== 4) {
-            steppedOffPad = steppedOffPad && this.oso < releaseThreshold;
+            hasSteppedOffPad = hasSteppedOffPad && this.ese < releaseThreshold;
         }
 
         // Check for step on or step off
-        if (!this.isPadPressed && steppedOnPad) {
-            this.stepOn(this.x, this.y, PadPart.NNO);
+        if (!this.isPadPressed && hasSteppedOnPad) {
+            this.stepOn(this.x, this.y, steppedPad);
             this.isPadPressed = true;
         }
-        else if (steppedOffPad) {
-            this.stepOff(this.x, this.y, PadPart.NNO);
+        else if (hasSteppedOffPad) {
+            this.stepOff(this.x, this.y, steppedPad);
             this.isPadPressed = false;
         }
     }

@@ -178,10 +178,10 @@ export async function load(): Promise<SensFloorState> {
             const x: number = data.raw[RawDataMapping.POSITION_X];
             const y: number = data.raw[RawDataMapping.POSITION_Y];
     
-            const nno: number = data.raw[RawDataMapping.PAD_NNO];
-            const ono: number = data.raw[RawDataMapping.PAD_ONO]
-            const oso: number = data.raw[RawDataMapping.PAD_OSO];
-            const sso: number = data.raw[RawDataMapping.PAD_SSO];
+            const nne: number = data.raw[RawDataMapping.PAD_NNE];
+            const ene: number = data.raw[RawDataMapping.PAD_ENE]
+            const ese: number = data.raw[RawDataMapping.PAD_ESE];
+            const sse: number = data.raw[RawDataMapping.PAD_SSE];
             const ssw: number = data.raw[RawDataMapping.PAD_SSW];
             const wsw: number = data.raw[RawDataMapping.PAD_WSW];
             const wnw: number = data.raw[RawDataMapping.PAD_WNW];
@@ -189,7 +189,7 @@ export async function load(): Promise<SensFloorState> {
 
             const padState = padStates.get(`${x}${y}`);
             if (padState) {
-                padState.update(nno, ono, oso, sso, ssw, wsw, wnw, nnw);
+                padState.update(nne, ene, ese, sse, ssw, wsw, wnw, nnw);
             }
         });
     });

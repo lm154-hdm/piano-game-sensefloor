@@ -1,8 +1,8 @@
 export enum PadPart {
-    NNO,
-    ONO,
-    OSO,
-    SSO,
+    NNE,
+    ENE,
+    ESE,
+    SSE,
     SSW,
     WSW,
     WNW,
