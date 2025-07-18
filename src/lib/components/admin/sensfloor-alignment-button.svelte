@@ -1,9 +1,9 @@
 <script lang="ts">
     interface SensFloorAlignmentButtonProps {
         text: string;
-        icon: string;
+        icon: any;
         alt: string;
-        onClick: (event: MouseEvent) => void;
+        onClick: () => void;
     }
 
     let { text, icon, alt, onClick }: SensFloorAlignmentButtonProps = $props();
@@ -33,6 +33,7 @@
         width: 65px;
         height: 65px;
         padding: 5px;
+        margin-bottom: 10px;
     }
 
     img {

@@ -6,12 +6,24 @@
     const { children } = $props();
 
     onMount(() => {
-        SensFloor.registerStepOnListeners();
+        SensFloor.registerStepOnListener(stepOnListener);
     });
 
     onDestroy(() => {
-        SensFloor.unregsiterStepOnListeners();
+        SensFloor.unregisterStepOnListener(stepOnListener);
     });
+
+    function stepOnListener(event: SensFloor.StepEventData): void {
+        const config = SensFloor.getConfig();
+        const x = event.normalisedX * values.playAreaWidth + config.cropLeft;
+        const y = event.normalisedY * values.playAreaHeight + config.cropBottom;
+
+        const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
+
+        if (element) {
+            element.click();
+        }
+    }
 </script>
 
 <main class="stretch-screen flex-center flex-row">

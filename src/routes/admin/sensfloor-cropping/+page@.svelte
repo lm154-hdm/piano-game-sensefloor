@@ -14,11 +14,11 @@
             Dafür sind die vier <strong>.env</strong>-Variablen "VITE_APPLICATION_CROP_LEFT", etc. verantwortlich.
         </p>
         <p>
-            Bewege die angezeigten Balken mit der Maus und richte sie auf die Kanten des SensFloors aus.<br />
-            Übertrage anschließend die Werte, welche neben den Balken stehen, in die entsprechenden Variablen in der <strong>.env</strong>-Datei und starte das Spiel neu.
+            Bewege die angezeigten Balken mit der Maus und richte sie so aus, dass die dünnen Striche in der Mitte der Balken auf den Kanten des SensFloors liegen.<br />
+            Übertrage anschließend die Werte, welche in den Balken stehen, in die entsprechenden Variablen in der <strong>.env</strong>-Datei und starte das Spiel neu.
         </p>
         <p>
-            Dieses Feature, so wie andere Dev-Features, sind leider nicht Barrierefrei gestaltet.
+            Dieses Feature, so wie andere Entwicklerfeatures, sind leider nicht barrierefrei gestaltet.
         </p>
     </div>
 </main>

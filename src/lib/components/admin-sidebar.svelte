@@ -5,6 +5,8 @@
             <div class="button-container">
                 <a class="secondary-button" href="/admin/songselection">Songauswahl</a>
                 {#if import.meta.env.DEV}
+                    <h2>Entwicklerfeatures</h2>
+                    <a class="secondary-button" href="/admin/sensfloor-alignment">Sensfloor<br />ausrichten</a>
                     <a class="secondary-button" href="/admin/sensfloor-cropping">Sensfloor<br />zuschneiden</a>
                 {/if}
             </div>

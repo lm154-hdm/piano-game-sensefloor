@@ -2,7 +2,6 @@ import io from "socket.io-client";
 import PadState from "./pad-state";
 import { PadPart } from "./pad-part";
 import { RawDataMapping } from "./raw-data-mapping";
-import { values } from "../values.svelte";
 import type { Vector2 } from "$lib/types";
 
 interface SensFloorConfig {
@@ -203,23 +202,43 @@ export function disconnect(): void {
     }
     socket.close();
     socket = undefined;
-}
-
-export function registerStepOnListeners(): void {
-    stepOnListeners.push((event: StepEventData): void => {
-        const x = event.normalisedX * values.playAreaWidth + config.cropLeft;
-        const y = event.normalisedY * values.playAreaHeight + config.cropBottom;
-
-        const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
-
-        if (element) {
-            element.click();
-        }
-    });
-}
-
-export function unregsiterStepOnListeners(): void {
+    padStates.clear();
     stepOnListeners.length = 0;
+    stepOffListeners.length = 0;
+}
+
+export function registerStepOnListener(listener: StepEventCallback): void {
+    if (stepOnListeners.indexOf(listener) !== -1) {
+        console.error("Failed to register listener to 'step on' because its already registered");
+        return;
+    }
+    stepOnListeners.push(listener);
+}
+
+export function unregisterStepOnListener(listener: StepEventCallback): void {
+    const index = stepOnListeners.indexOf(listener);
+    if (index === -1) {
+        console.error("Failed to unregister listener from 'step on' because its not registered");
+        return;
+    }
+    stepOnListeners.splice(index, 1);
+}
+
+export function registerStepOffListener(listener: StepEventCallback): void {
+    if (stepOffListeners.indexOf(listener) !== -1) {
+        console.error("Failed to register listener to 'step off' because its already registered");
+        return;
+    }
+    stepOffListeners.push(listener);
+}
+
+export function unregisterStepOffListener(listener: StepEventCallback): void {
+    const index = stepOffListeners.indexOf(listener);
+    if (index === -1) {
+        console.error("Failed to unregister listener from 'step off' because its not registered");
+        return;
+    }
+    stepOffListeners.splice(index, 1);
 }
 
 export function calculateNormalisedCoordinates(x: number, y: number): Vector2 {
