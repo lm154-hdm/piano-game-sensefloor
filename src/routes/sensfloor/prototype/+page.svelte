@@ -48,8 +48,18 @@
     });
 
     async function loadMidi(): Promise<Midi> {
-        const data = await invoke<Uint8Array>("read_binary_file", { path: settings.midiConfig.path });
-        const midi = new Midi(data);
+        let midi: Midi;
+
+        if (settings.midiConfig.path) {
+            const data = await invoke<Uint8Array>("read_binary_file", { path: settings.midiConfig.path });
+            midi = new Midi(data);
+        }
+        else {
+            const res = await fetch("/tetris.mid");
+            const data = await res.arrayBuffer();
+            midi = new Midi(data);
+        }
+
         const bpm = midi.header.tempos[0].bpm * (settings.speed / 100);
         midi.header.setTempo(bpm);
         return midi;
