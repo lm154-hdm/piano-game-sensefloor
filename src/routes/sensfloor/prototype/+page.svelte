@@ -27,15 +27,11 @@
         }
         const delay = animationContainerHeight / Animation.getAnimationSpeed();
         if (settings.mode === Mode.Playback) {
+            await Tone.start();
             scheduleSong(midi, delay, true);
-        } /*else if (settings.mode === Mode.Normal) {
-            scheduleSong(midi, delay, false);
-        }*/
-        Animation.start();
-        /*|| settings.mode === Mode.Normal*/
-        if (settings.mode === Mode.Playback) {
             Tone.getTransport().start();
         }
+        Animation.start();
     });
 
     onDestroy(() => {
@@ -45,6 +41,7 @@
         Tone.getTransport().stop();
         Tone.getTransport().cancel();
         Tone.getTransport().position = 0;
+        piano.releaseAll();
     });
 
     async function loadMidi(): Promise<Midi> {
@@ -73,10 +70,10 @@
                         piano.triggerAttackRelease(
                             note.name,
                             note.duration,
-                            time + delay,
-                            note.velocity - 0.3,
+                            time,
+                            note.velocity,
                         );
-                    }, note.time);
+                    }, note.time + delay);
                 }
             }
         }

@@ -1,6 +1,5 @@
 <script lang="ts">
     import * as Tone from "tone";
-
     import * as Animation from "$lib/backend/animation.svelte";
     import { Mode, settings } from "$lib/backend/settings.svelte";
     import {animationIsRunning, type NoteData} from "$lib/backend/animation.svelte";
@@ -8,7 +7,12 @@
     import piano from "$lib/PianoSampler";
     import footprintIcon from "$lib/assets/steps-icon.svg";
 
-    let { index, text, color }: { index: number; text: string; color: string } = $props();
+    interface PianoKeyProps {
+        index: number;
+        color: string;
+    }
+
+    let { index, color }: PianoKeyProps = $props();
 
     let resetCorrectColorTimeout: number | undefined = undefined;
     let resetIncorrectColourTimeout: number | undefined = undefined;
@@ -43,7 +47,7 @@
             const duration = "4n";
             const durationInSeconds = Tone.Time(duration).toSeconds();
             if (settings.mode !== Mode.Playback) {
-                piano.triggerAttackRelease("C2", duration, Tone.now(), 2);
+                piano.triggerAttackRelease("C2", duration, Tone.now(), 3);
             }
             if (resetIncorrectColourTimeout !== undefined) {
                 clearTimeout(resetIncorrectColourTimeout);
