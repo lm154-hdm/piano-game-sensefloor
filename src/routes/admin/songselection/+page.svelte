@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { settings } from "$lib/backend/settings.svelte";
+    import { save, settings } from "$lib/backend/settings.svelte";
     import { Midi, Track } from "@tonejs/midi";
     import { onDestroy, onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
@@ -24,6 +24,11 @@
         if (settings.midiConfig.path) {
             midi = await loadMidiFile();
         }
+    });
+
+    onDestroy(async () => {
+        stopPlayback();
+        await save();
     });
 
     async function selectMidiFile(): Promise<void> {
@@ -128,10 +133,6 @@
         Tone.getTransport().position = 0;
         isPlaybackRunning = PlaybackMode.STOPPED;
     }
-
-    onDestroy(() => {
-        stopPlayback();
-    });
 
     type DisplayTrack = {
         track: Track;
