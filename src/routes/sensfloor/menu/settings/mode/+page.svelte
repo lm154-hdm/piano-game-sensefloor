@@ -19,34 +19,34 @@
         {:else if settings.mode === Mode.Playback}
             <h3>Töne werden (unabhängig des Tretens) immer korrekt abgespielt.</h3>
         {/if}
-    </LabelledSettingsColumn>
-    <LabelledSettingsRow>
-        <button
-            class="menu-button secondary-button"
-            onclick={() => {
+        <LabelledSettingsRow>
+            <button
+                    class="menu-button secondary-button"
+                    onclick={() => {
                 settings.mode = Mode.Normal;
             }}
-        >
-            Normal
-        </button>
-        <button
-            class="menu-button secondary-button"
-            onclick={() => {
+            >
+                Normal
+            </button>
+            <button
+                    class="menu-button secondary-button"
+                    onclick={() => {
                 settings.mode = Mode.Pause;
             }}
-        >
-            Stop / Pause
-        </button>
-        <button
-            class="menu-button secondary-button"
-            onclick={() => {
+            >
+                Stop / Pause
+            </button>
+            <button
+                    class="menu-button secondary-button"
+                    onclick={() => {
                 settings.mode = Mode.Playback;
             }}
-        >
-            Playback
-        </button>
-        <GhostButton />
-    </LabelledSettingsRow>
+            >
+                Playback
+            </button>
+            <GhostButton />
+        </LabelledSettingsRow>
+    </LabelledSettingsColumn>
 </LabelledSettingsContainer>
 <BackButton text="Speichern und zurück" slug="/sensfloor/menu/settings" shouldSave={true} />
 
