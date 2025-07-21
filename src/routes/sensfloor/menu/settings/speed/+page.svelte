@@ -4,9 +4,12 @@
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container/labelled-settings-container.svelte";
     import LabelledSettingsRow from "$lib/components/labelled-settings-container/labelled-settings-row.svelte";
     import Title from "$lib/components/title.svelte";
+    import ResetButton from "$lib/components/reset-button.svelte";
 </script>
 
 <Title text="Einstellungen - Geschwindigkeit" />
+
+<ResetButton text="100%" onClick={() => settings.speed = 100 }/>
 
 <LabelledSettingsContainer text="Aktuelle Geschwindigkeit: {settings.speed}%">
     <LabelledSettingsRow>

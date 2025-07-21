@@ -122,6 +122,12 @@ main.admin-main {
     background-color: var(--error-active);
 }
 
+.bottom-left-corner {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
 .bottom-right-corner {
     position: absolute;
     bottom: 0;
