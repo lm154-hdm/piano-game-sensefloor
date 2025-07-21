@@ -21,9 +21,11 @@
     function play(): void {
         const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
         const activeNotes: NoteData[] = Animation.getActiveNotes(); // sorted asc. by startTime
-        let activeNoteOfKey: NoteData | undefined;
-        if (settings.mode === Mode.Pause && activeNotes[0]?.groupIndex === index && !activeNotes[0]?.wasHit ) {
-             activeNoteOfKey = activeNotes[0];
+        let activeNoteOfKey: NoteData | undefined = undefined;
+        if (settings.mode === Mode.Pause) {
+            if (activeNotes[0]?.groupIndex === index && !activeNotes[0]?.wasHit) {
+                activeNoteOfKey = activeNotes[0];
+            }
         } else {
             activeNoteOfKey = activeNotes.find(n => n.groupIndex === index && !n.wasHit);
         }
