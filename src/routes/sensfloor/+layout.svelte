@@ -5,12 +5,15 @@
 
     const { children } = $props();
 
-    onMount(() => {
+    onMount(async () => {
+        const config = SensFloor.getConfig();
+        await SensFloor.connect(config.offsetLeft, config.offsetRight, config.offsetTop, config.offsetBottom);
         SensFloor.registerStepOnListener(stepOnListener);
     });
 
     onDestroy(() => {
         SensFloor.unregisterStepOnListener(stepOnListener);
+        SensFloor.disconnect();
     });
 
     function stepOnListener(event: SensFloor.StepEventData): void {

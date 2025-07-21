@@ -10,12 +10,14 @@
     let coordinate: string = $state("");
     let config = $state(SensFloor.getConfig());
 
-    onMount(() => {
+    onMount(async () => {
+        await SensFloor.connect(0, 0, 0, 0);
         SensFloor.registerStepOnListener(stepOnListener);
     });
 
     onDestroy(() => {
         SensFloor.unregisterStepOnListener(stepOnListener);
+        SensFloor.disconnect();
     })
 
     function stepOnListener(event: SensFloor.StepEventData): void {

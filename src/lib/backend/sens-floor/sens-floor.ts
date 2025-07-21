@@ -27,6 +27,8 @@ interface SensFloorCoordinateHelper {
     actualHeight: number;
     padPartWidth: number;
     padPartHeight: number;
+    offsetLeft: number;
+    offsetBottom: number;
 }
 
 export interface StepEventData {
@@ -60,6 +62,8 @@ const dimension: SensFloorCoordinateHelper = {
     actualHeight: 0,
     padPartWidth: 0,
     padPartHeight: 0,
+    offsetLeft: 0,
+    offsetBottom: 0,
 };
 const stepOnListeners: Array<StepEventCallback> = [];
 const stepOffListeners: Array<StepEventCallback> = [];
@@ -122,11 +126,12 @@ function loadSensFloorConfig(): SensFloorConfig | undefined {
 }
 
 export async function load(): Promise<SensFloorState> {
-    if (socket?.connected) {
+    if (config) {
         console.warn("SensFloor is already loaded");
         return SensFloorState.ALREADY_CONNECTED;
     }
 
+    // Load config
     const tempConfig = loadSensFloorConfig();
     if (!tempConfig) {
         console.error(
@@ -142,18 +147,29 @@ export async function load(): Promise<SensFloorState> {
     document.documentElement.style.setProperty("--crop-top", config.cropTop + "px");
     document.documentElement.style.setProperty("--crop-bottom", config.cropBottom + "px");
 
-    // Calculate dimensions
-    dimension.actualWidth = config.width - config.offsetLeft - config.offsetRight;
-    dimension.actualHeight = config.height - config.offsetTop - config.offsetBottom;
-    dimension.padPartWidth = (1 / dimension.actualWidth) / 2;
-    dimension.padPartHeight = (1 / dimension.actualHeight) / 2;
+    return await connect(config.offsetLeft, config.offsetRight, config.offsetTop, config.offsetBottom);
+}
+
+export async function connect(offsetLeft: number, offsetRight: number, offsetTop: number, offsetBottom: number): Promise<SensFloorState> {
+    if (socket?.connected) {
+        console.warn("SensFloor is already connected");
+        return SensFloorState.ALREADY_CONNECTED;
+    }
 
     // Create pad states
-    for (let x = 1 + config.offsetLeft; x <= config.width - config.offsetRight; x++) {
-        for (let y = 1 + config.offsetBottom; y <= config.height - config.offsetTop; y++) {
+    for (let x = 1 + offsetLeft; x <= config.width - offsetRight; x++) {
+        for (let y = 1 + offsetBottom; y <= config.height - offsetTop; y++) {
             padStates.set(`${x}${y}`, new PadState(x, y, stepOn, stepOff));
         }
     }
+
+    // Calculate dimensions
+    dimension.actualWidth = config.width - offsetLeft - offsetRight;
+    dimension.actualHeight = config.height - offsetTop - offsetBottom;
+    dimension.padPartWidth = (1 / dimension.actualWidth) / 2;
+    dimension.padPartHeight = (1 / dimension.actualHeight) / 2;
+    dimension.offsetLeft = offsetLeft;
+    dimension.offsetBottom = offsetBottom;
 
     // Add socket listeners
     return new Promise((resolve, reject) => {
@@ -245,12 +261,12 @@ export function calculateNormalisedCoordinates(x: number, y: number): Vector2 {
     const result = { x: 0, y: 0 };
     
     // Calculate x coordinate
-    x -= config.offsetLeft;
+    x -= dimension.offsetLeft;
     result.x = mapRangeToRange(x, 1, dimension.actualWidth + 1, 0, 1);
     result.x += dimension.padPartWidth; // Move x coordinate to middle of pad
 
     // Calculate y coordinate
-    y -= config.offsetBottom;
+    y -= dimension.offsetBottom;
     result.y = mapRangeToRange(y, 1, dimension.actualHeight + 1, 0, 1);
     result.y += dimension.padPartHeight; // Move y coordinate to middle of pad
 
