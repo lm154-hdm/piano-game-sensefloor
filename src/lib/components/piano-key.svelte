@@ -7,7 +7,7 @@
     import { score } from "$lib/backend/score.svelte";
     import piano from "$lib/PianoSampler";
 
-    let { index, text, color }: { index: number; text: string; color: string } = $props();
+    let { index, color }: { index: number; text: string; color: string } = $props();
 
     let resetCorrectColorTimeout: number | undefined = undefined;
     let resetIncorrectColourTimeout: number | undefined = undefined;
@@ -42,7 +42,7 @@
             const duration = "4n";
             const durationInSeconds = Tone.Time(duration).toSeconds();
             if (settings.mode !== Mode.Playback) {
-                piano.triggerAttackRelease("C2", duration, Tone.now(), 2);
+                piano.triggerAttackRelease("C2", duration, Tone.now(), 3);
             }
             if (resetIncorrectColourTimeout !== undefined) {
                 clearTimeout(resetIncorrectColourTimeout);

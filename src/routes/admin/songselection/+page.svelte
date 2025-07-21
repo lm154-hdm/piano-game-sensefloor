@@ -86,7 +86,7 @@
             return;
         }
 
-        stop();
+        stopPlayback();
 
         await Tone.start();
 
@@ -107,7 +107,7 @@
             return;
         }
 
-        stop();
+        stopPlayback();
 
         await Tone.start();
 
