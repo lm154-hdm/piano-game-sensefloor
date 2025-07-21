@@ -4,6 +4,7 @@
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container/labelled-settings-container.svelte";
     import LabelledSettingsRow from "$lib/components/labelled-settings-container/labelled-settings-row.svelte";
     import Title from "$lib/components/title.svelte";
+    import ResetButton from "$lib/components/reset-button.svelte";
 </script>
 
 <Title text="Einstellungen - Geschwindigkeit" />
@@ -29,4 +30,5 @@
     </LabelledSettingsRow>
 </LabelledSettingsContainer>
 
+<ResetButton text="100%" onClick={() => settings.speed = 100 }  />
 <BackButton text="Speichern und zurück" slug="/sensfloor/menu/settings" shouldSave={true} />

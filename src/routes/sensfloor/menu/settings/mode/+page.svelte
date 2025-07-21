@@ -34,7 +34,7 @@
                 settings.mode = Mode.Pause;
             }}
             >
-                Stop / Pause
+                Pause
             </button>
             <button
                     class="menu-button secondary-button"

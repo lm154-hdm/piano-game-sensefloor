@@ -3,9 +3,9 @@
     import BackButton from "$lib/components/back-button.svelte";
     import ColorSchemeButton from "$lib/components/color-scheme-button.svelte";
     import ColorSchemePreview from "$lib/components/color-scheme-preview.svelte";
-  import LabelledSettingsColumn from "$lib/components/labelled-settings-container/labelled-settings-column.svelte";
+    import LabelledSettingsColumn from "$lib/components/labelled-settings-container/labelled-settings-column.svelte";
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container/labelled-settings-container.svelte";
-  import LabelledSettingsRow from "$lib/components/labelled-settings-container/labelled-settings-row.svelte";
+    import LabelledSettingsRow from "$lib/components/labelled-settings-container/labelled-settings-row.svelte";
     import Title from "$lib/components/title.svelte";
 
     function getCurrentColorSchemeName(): string | undefined {
