@@ -6,6 +6,7 @@
     import rotateRightIcon from "$lib/assets/rotate-right.svg";
     import SensfloorAlignmentButton from "$lib/components/admin/sensfloor-alignment-button.svelte";
     import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
+    import BrowserLink from "$lib/components/browser-link.svelte";
 
     let coordinate: string = $state("");
     let config = $state(SensFloor.getConfig());
@@ -58,20 +59,12 @@
 
 <div>
     <p>
-        Manipuliere die unten angezeigten Koordinaten mit Hilfe der darunter angezeigten Buttons so, dass:
-    </p>
-    <ul>
-        <li>Die <strong>linke obere</strong> Ecke des SensFloors <strong>(0|0)</strong> ist</li>
-        <li>Die <strong>rechte obere</strong> Ecke des SensFloors <strong>(1|0)</strong> ist</li>
-        <li>Die <strong>rechte untere</strong> Ecke des SensFloors <strong>(1|1)</strong> ist</li>
-        <li>Die <strong>linke untere</strong> Ecke des SensFloors <strong>(0|1)</strong> ist</li>
-    </ul>
-    <p>
-        und kopiere die Werte in die entsprechenden Variablen in der <strong>.env</strong>-Datei.<br/>
-        Starte anschließend das Spiel neu.
-    </p>
-    <p>
-        Dieses Feature, so wie andere Entwicklerfeatures, sind leider nicht barrierefrei gestaltet.
+        Die Anleitung zur Nutzung dieses Tools kann in der
+        <BrowserLink
+            url="https://gitlab.mi.hdm-stuttgart.de/klavier/klavierspiel-mit-sensorteppich/-/wikis/Abgabe/Installationsanleitung#34-sensfloor-ausrichten"
+            text="Installationsanleitung"
+        />
+        nachgelesen werden.
     </p>
 </div>
 

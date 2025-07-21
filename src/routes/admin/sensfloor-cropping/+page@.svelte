@@ -1,5 +1,6 @@
 <script lang="ts">
     import AdminSidebar from "$lib/components/admin-sidebar.svelte";
+    import BrowserLink from "$lib/components/browser-link.svelte";
     import SensfloorCroppingHandle, { Direction } from "$lib/components/sensfloor-cropping-handle.svelte";
 </script>
 
@@ -10,15 +11,12 @@
 
     <div>
         <p>
-            Sollte der Beamer über den SensFloor hinaus strahlen, muss die Applikation zugeschnitten werden.
-            Dafür sind die vier <strong>.env</strong>-Variablen "VITE_APPLICATION_CROP_LEFT", etc. verantwortlich.
-        </p>
-        <p>
-            Bewege die angezeigten Balken mit der Maus und richte sie so aus, dass die dünnen Striche in der Mitte der Balken auf den Kanten des SensFloors liegen.<br />
-            Übertrage anschließend die Werte, welche in den Balken stehen, in die entsprechenden Variablen in der <strong>.env</strong>-Datei und starte das Spiel neu.
-        </p>
-        <p>
-            Dieses Feature, so wie andere Entwicklerfeatures, sind leider nicht barrierefrei gestaltet.
+            Die Anleitung zur Nutzung dieses Tools kann in der
+            <BrowserLink
+                url="https://gitlab.mi.hdm-stuttgart.de/klavier/klavierspiel-mit-sensorteppich/-/wikis/Abgabe/Installationsanleitung#35-applikation-zuschneiden"
+                text="Installationsanleitung"
+            />
+            nachgelesen werden.
         </p>
     </div>
 </main>
