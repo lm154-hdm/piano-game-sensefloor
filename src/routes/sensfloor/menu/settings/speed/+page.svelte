@@ -9,8 +9,6 @@
 
 <Title text="Einstellungen - Geschwindigkeit" />
 
-<ResetButton text="100%" onClick={() => settings.speed = 100 }/>
-
 <LabelledSettingsContainer text="Aktuelle Geschwindigkeit: {settings.speed}%">
     <LabelledSettingsRow>
         <button
@@ -32,4 +30,5 @@
     </LabelledSettingsRow>
 </LabelledSettingsContainer>
 
+<ResetButton text="100%" onClick={() => settings.speed = 100 }  />
 <BackButton text="Speichern und zurück" slug="/sensfloor/menu/settings" shouldSave={true} />

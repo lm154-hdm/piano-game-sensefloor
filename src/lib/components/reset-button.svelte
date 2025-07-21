@@ -1,9 +1,16 @@
 <script lang="ts">
-    let { text, onClick } = $props();
+
+    interface ResetButtonProps {
+        text: string | undefined;
+        onClick: () => void;
+    }
+
+    let { text, onClick }: ResetButtonProps = $props();
 </script>
 
 <button
         class="menu-button secondary-button bottom-left-corner"
-        onclick={onClick}>
+        onclick={onClick}
+>
     Zurücksetzen<br/>{text}
 </button>/

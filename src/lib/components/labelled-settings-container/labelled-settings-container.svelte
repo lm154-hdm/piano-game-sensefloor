@@ -14,6 +14,7 @@
 
 <style>
     .labelled-settings-container {
+        position: absolute;
         color: var(--text);
         width: 100vw;
         display: flex;
