@@ -1,13 +1,18 @@
 <script lang="ts">
     import * as Tone from "tone";
-
     import * as Animation from "$lib/backend/animation.svelte";
     import { Mode, settings } from "$lib/backend/settings.svelte";
     import {animationIsRunning, type NoteData} from "$lib/backend/animation.svelte";
     import { score } from "$lib/backend/score.svelte";
     import piano from "$lib/PianoSampler";
+    import footprintIcon from "$lib/assets/steps-icon.svg";
 
-    let { index, text, color }: { index: number; text: string; color: string } = $props();
+    interface PianoKeyProps {
+        index: number;
+        color: string;
+    }
+
+    let { index, color }: PianoKeyProps = $props();
 
     let resetCorrectColorTimeout: number | undefined = undefined;
     let resetIncorrectColourTimeout: number | undefined = undefined;
@@ -42,7 +47,7 @@
             const duration = "4n";
             const durationInSeconds = Tone.Time(duration).toSeconds();
             if (settings.mode !== Mode.Playback) {
-                piano.triggerAttackRelease("C2", duration, Tone.now(), 2);
+                piano.triggerAttackRelease("C2", duration, Tone.now(), 3);
             }
             if (resetIncorrectColourTimeout !== undefined) {
                 clearTimeout(resetIncorrectColourTimeout);
@@ -55,6 +60,7 @@
 </script>
 
 <button class="menu-button piano-key" style="--color: var({color})" onclick={play} aria-label="Key">
+    <img src={footprintIcon} alt="Footprint Icon">
 </button>
 
 <style>
@@ -63,5 +69,9 @@
         height: var(--button-width);
         background-color: var(--color);
         color: var(--text-dark);
+    }
+
+    img {
+        width: 30%;
     }
 </style>
