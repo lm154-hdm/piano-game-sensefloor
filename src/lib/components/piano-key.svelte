@@ -1,13 +1,17 @@
 <script lang="ts">
     import * as Tone from "tone";
-
     import * as Animation from "$lib/backend/animation.svelte";
     import { Mode, settings } from "$lib/backend/settings.svelte";
     import {animationIsRunning, type NoteData} from "$lib/backend/animation.svelte";
     import { score } from "$lib/backend/score.svelte";
     import piano from "$lib/PianoSampler";
 
-    let { index, color }: { index: number; text: string; color: string } = $props();
+    interface PianoKeyProps {
+        index: number;
+        color: string;
+    }
+
+    let { index, color }: PianoKeyProps = $props();
 
     let resetCorrectColorTimeout: number | undefined = undefined;
     let resetIncorrectColourTimeout: number | undefined = undefined;
