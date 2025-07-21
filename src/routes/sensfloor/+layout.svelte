@@ -5,13 +5,28 @@
 
     const { children } = $props();
 
-    onMount(() => {
-        SensFloor.registerStepOnListeners();
+    onMount(async () => {
+        const config = SensFloor.getConfig();
+        await SensFloor.connect(config.offsetLeft, config.offsetRight, config.offsetTop, config.offsetBottom);
+        SensFloor.registerStepOnListener(stepOnListener);
     });
 
     onDestroy(() => {
-        SensFloor.unregsiterStepOnListeners();
+        SensFloor.unregisterStepOnListener(stepOnListener);
+        SensFloor.disconnect();
     });
+
+    function stepOnListener(event: SensFloor.StepEventData): void {
+        const config = SensFloor.getConfig();
+        const x = event.normalisedX * values.playAreaWidth + config.cropLeft;
+        const y = event.normalisedY * values.playAreaHeight + config.cropBottom;
+
+        const element: HTMLButtonElement = document.elementFromPoint(x, y) as HTMLButtonElement;
+
+        if (element) {
+            element.click();
+        }
+    }
 </script>
 
 <main class="stretch-screen flex-center flex-row">

@@ -13,6 +13,7 @@
     "core:window:allow-set-fullscreen",
     "core:window:allow-show",
     "opener:default",
+    "opener:allow-open-url",
     "process:allow-exit",
     "dialog:default"
   ]
