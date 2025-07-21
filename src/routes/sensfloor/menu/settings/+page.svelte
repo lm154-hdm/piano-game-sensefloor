@@ -1,6 +1,6 @@
 <script lang="ts">
-    import BackButton from "$lib/components/back-button.svelte";
-    import NavigationButton from "$lib/components/navigation-button.svelte";
+    import BackButton from "$lib/components/buttons/back-button.svelte";
+    import NavigationButton from "$lib/components/buttons/navigation-button.svelte";
     import Title from "$lib/components/title.svelte";
 </script>
 

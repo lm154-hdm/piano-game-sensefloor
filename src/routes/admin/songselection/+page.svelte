@@ -6,7 +6,7 @@
     import * as Dialog from "@tauri-apps/plugin-dialog";
     import * as Path from "@tauri-apps/api/path";
     import * as Tone from "tone";
-    import piano from "$lib/PianoSampler";
+    import piano from "$lib/backend/piano-sampler";
 
     // This error is handled inside of the svelte config
     enum PlaybackMode {

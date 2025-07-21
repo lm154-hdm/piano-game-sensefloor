@@ -1,10 +1,10 @@
 <script lang="ts">
     import { settings } from "$lib/backend/settings.svelte";
-    import BackButton from "$lib/components/back-button.svelte";
+    import BackButton from "$lib/components/buttons/back-button.svelte";
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container/labelled-settings-container.svelte";
     import LabelledSettingsRow from "$lib/components/labelled-settings-container/labelled-settings-row.svelte";
     import Title from "$lib/components/title.svelte";
-    import ResetButton from "$lib/components/reset-button.svelte";
+    import ResetButton from "$lib/components/buttons/reset-button.svelte";
 </script>
 
 <Title text="Einstellungen - Geschwindigkeit" />

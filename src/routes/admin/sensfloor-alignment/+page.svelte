@@ -6,7 +6,7 @@
     import rotateRightIcon from "$lib/assets/rotate-right.svg";
     import SensfloorAlignmentButton from "$lib/components/admin/sensfloor-alignment-button.svelte";
     import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
-    import BrowserLink from "$lib/components/browser-link.svelte";
+    import BrowserLink from "$lib/components/admin/browser-link.svelte";
 
     let coordinate: string = $state("");
     let config = $state(SensFloor.getConfig());

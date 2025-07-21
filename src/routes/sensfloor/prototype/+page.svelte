@@ -2,11 +2,11 @@
     import {onDestroy, onMount} from "svelte";
     import * as Tone from "tone";
     import * as Animation from "$lib/backend/animation.svelte";
-    import AnimatedKey from "$lib/components/animated-key.svelte";
-    import PianoKey from "$lib/components/piano-key.svelte";
+    import AnimatedKey from "$lib/components/prototype/animated-key.svelte";
+    import PianoKey from "$lib/components/prototype/piano-key.svelte";
     import {Mode, settings} from "$lib/backend/settings.svelte";
     import {Midi} from "@tonejs/midi";
-    import piano from "$lib/PianoSampler";
+    import piano from "$lib/backend/piano-sampler";
     import {invoke} from "@tauri-apps/api/core";
     import {score} from "$lib/backend/score.svelte";
     import {values} from "$lib/backend/values.svelte";
@@ -95,7 +95,7 @@
     </div>
     <div class="piano-container">
         {#each Animation.keyGroups as keyGroup, i}
-            <PianoKey index={i} text={keyGroup.displayName} color={keyGroup.color} />
+            <PianoKey index={i} color={keyGroup.color} />
         {/each}
     </div>
 </div>

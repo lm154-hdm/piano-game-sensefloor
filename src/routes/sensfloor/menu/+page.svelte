@@ -1,6 +1,6 @@
 <script lang="ts">
-    import ExitButton from "$lib/components/exit-button.svelte";
-    import NavigationButton from "$lib/components/navigation-button.svelte";
+    import ExitButton from "$lib/components/buttons/exit-button.svelte";
+    import NavigationButton from "$lib/components/buttons/navigation-button.svelte";
     import Title from "$lib/components/title.svelte";
 </script>
 

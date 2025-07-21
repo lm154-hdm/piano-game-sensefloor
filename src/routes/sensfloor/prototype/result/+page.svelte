@@ -1,6 +1,6 @@
 <script lang="ts">
     import { score } from "$lib/backend/score.svelte";
-    import NavigationButton from "$lib/components/navigation-button.svelte";
+    import NavigationButton from "$lib/components/buttons/navigation-button.svelte";
     import Title from "$lib/components/title.svelte";
     import { onDestroy } from "svelte";
 

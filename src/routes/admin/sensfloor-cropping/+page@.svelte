@@ -1,7 +1,7 @@
 <script lang="ts">
-    import AdminSidebar from "$lib/components/admin-sidebar.svelte";
-    import BrowserLink from "$lib/components/browser-link.svelte";
-    import SensfloorCroppingHandle, { Direction } from "$lib/components/sensfloor-cropping-handle.svelte";
+    import AdminSidebar from "$lib/components/admin/admin-sidebar.svelte";
+    import BrowserLink from "$lib/components/admin/browser-link.svelte";
+    import SensfloorCroppingHandle, { Direction } from "$lib/components/admin/sensfloor-cropping-handle.svelte";
 </script>
 
 <AdminSidebar />

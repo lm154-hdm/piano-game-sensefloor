@@ -1,5 +1,5 @@
 <script lang="ts">
-    import AdminSidebar from "$lib/components/admin-sidebar.svelte";
+    import AdminSidebar from "$lib/components/admin/admin-sidebar.svelte";
 
     let { children } = $props();
 </script>

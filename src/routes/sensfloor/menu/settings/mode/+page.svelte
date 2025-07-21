@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Mode, settings } from "$lib/backend/settings.svelte";
-    import BackButton from "$lib/components/back-button.svelte";
-    import GhostButton from "$lib/components/ghost-button.svelte";
+    import BackButton from "$lib/components/buttons/back-button.svelte";
+    import GhostButton from "$lib/components/buttons/ghost-button.svelte";
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container/labelled-settings-container.svelte";
     import LabelledSettingsRow from "$lib/components/labelled-settings-container/labelled-settings-row.svelte";
     import Title from "$lib/components/title.svelte";

@@ -4,7 +4,7 @@
     import { Mode, settings } from "$lib/backend/settings.svelte";
     import {animationIsRunning, type NoteData} from "$lib/backend/animation.svelte";
     import { score } from "$lib/backend/score.svelte";
-    import piano from "$lib/PianoSampler";
+    import piano from "$lib/backend/piano-sampler";
     import footprintIcon from "$lib/assets/steps-icon.svg";
 
     interface PianoKeyProps {
