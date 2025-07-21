@@ -6,6 +6,7 @@
     import {animationIsRunning, type NoteData} from "$lib/backend/animation.svelte";
     import { score } from "$lib/backend/score.svelte";
     import piano from "$lib/PianoSampler";
+    import footprintIcon from "$lib/assets/steps-icon.svg";
 
     let { index, text, color }: { index: number; text: string; color: string } = $props();
 
@@ -55,6 +56,7 @@
 </script>
 
 <button class="menu-button piano-key" style="--color: var({color})" onclick={play} aria-label="Key">
+    <img src={footprintIcon} alt="Footprint Icon">
 </button>
 
 <style>
@@ -63,5 +65,9 @@
         height: var(--button-width);
         background-color: var(--color);
         color: var(--text-dark);
+    }
+
+    img {
+        width: 30%;
     }
 </style>
