@@ -4,12 +4,12 @@
     import flipVerticalIcon from "$lib/assets/flip-vertical.svg";
     import rotateLeftIcon from "$lib/assets/rotate-left.svg";
     import rotateRightIcon from "$lib/assets/rotate-right.svg";
+    import BrowserLink from "$lib/components/admin/browser-link.svelte";
     import SensfloorAlignmentButton from "$lib/components/admin/sensfloor-alignment-button.svelte";
     import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
-    import BrowserLink from "$lib/components/admin/browser-link.svelte";
 
     let coordinate: string = $state("");
-    let config = $state(SensFloor.getConfig());
+    let config = $state({ ...SensFloor.getConfig() });
 
     onMount(async () => {
         await SensFloor.connect(0, 0, 0, 0);
