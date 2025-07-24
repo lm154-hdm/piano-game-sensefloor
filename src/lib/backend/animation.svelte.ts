@@ -127,12 +127,6 @@ export function stop(): void {
     animationIsRunning = false;
 }
 
-export function resume(): void {
-    previousTime = performance.now();
-    frameId = requestAnimationFrame(animationLoop);
-    animationIsRunning = true;
-}
-
 export function reset(): void {
     stop();
     time = 0;
