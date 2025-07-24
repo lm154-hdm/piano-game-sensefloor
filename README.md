@@ -1,24 +1,9 @@
 # Klavierspiel mit Sensorteppich
 
-## Installation
+Alle Informationen sind in der [Dokumentation im GitLab-Wiki](https://gitlab.mi.hdm-stuttgart.de/klavier/klavierspiel-mit-sensorteppich/-/wikis/home) zu finden.
 
-1. Installiere [Node.js](https://nodejs.org/en/download) Version 23 (oder höher)
-2. Installiere [Rust](https://www.rust-lang.org/tools/install) Version 1.86 (oder höher)
-3. Klone dieses Repository
-4. Navigiere in das Repository
-5. Installiere die Npm-Abhängigkeiten
-```bash
-npm install
-```
+Die wichtigsten Links für Entwickler sind:
 
-## Projekt lokal ausführen
-
-```bash
-npm run tauri dev
-```
-
-## Projekt bauen
-
-```bash
-npm run tauri build
-```
+- [Installationsanleitung](https://gitlab.mi.hdm-stuttgart.de/klavier/klavierspiel-mit-sensorteppich/-/wikis/Abgabe/Installationsanleitung)
+- [Bedienungsanleitung](https://gitlab.mi.hdm-stuttgart.de/klavier/klavierspiel-mit-sensorteppich/-/wikis/Abgabe/Bedienungsanleitung)
+- [Bekannte Probleme](https://gitlab.mi.hdm-stuttgart.de/klavier/klavierspiel-mit-sensorteppich/-/wikis/Abgabe/Bekannte-Probleme)
