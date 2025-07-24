@@ -51,9 +51,6 @@ body {
     user-select: none;
     color: var(--light-color);
     hyphens: auto;
-
-    /* Needed for linux */
-    -webkit-user-select: none;
 }
 
 a, button {

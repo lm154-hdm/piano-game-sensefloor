@@ -1,5 +1,4 @@
 <script lang="ts">
-    import ErrorCard from "$lib/components/error-card.svelte";
     import Loader from "$lib/components/loader.svelte";
     import { SensFloorState } from "$lib/backend/sens-floor/sens-floor";
     import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -45,7 +44,7 @@
         <Loader />
         <p>Verbindung mit SensFloor wird hergestellt</p>
     {:else if sensFloorState === SensFloorState.MISSING_CONFIGURATION}
-        <ErrorCard>
+        <div class="flex-center flex-column">
             <p><strong>Die Konfigurationdatei für den SensFloor ist unvollständig</strong></p>
             <p>Bitte überprüfen Sie, ob in der ".env"-Datei des Projektes die folgenden Variablen definiert sind:</p>
             <ul>
@@ -65,9 +64,9 @@
                 <li>VITE_SENSFLOOR_OFFSET_TOP</li>
                 <li>VITE_SENSFLOOR_OFFSET_BOTTOM</li>
             </ul>
-        </ErrorCard>
+        </div>
     {:else if sensFloorState === SensFloorState.CONNECTION_FAILED}
-        <ErrorCard>
+        <div class="flex-center flex-column">
             <p>
                 <strong>Die Verbindung ist aufgrund eines Timeouts fehlgeschlagen.</strong><br />Bitte überprüfen Sie,
                 ob:
@@ -78,9 +77,9 @@
                 <li>die korrekte IP-Adresse sowie der korrekte Port in der .env-Datei des Projektes angegeben sind</li>
             </ul>
             <button class="primary-button" onclick={connect}>Erneut versuchen</button>
-        </ErrorCard>
+        </div>
     {:else if sensFloorState === SensFloorState.CONNECTION_TIMEOUT}
-        <ErrorCard>
+        <div class="flex-center flex-column">
             <p><strong>Die Verbindung ist fehlgeschlagen.</strong><br />Bitte überprüfen Sie, ob:</p>
             <ul>
                 <li>das Gerät und der SensFloor im selben Netzwerk sind</li>
@@ -88,6 +87,6 @@
                 <li>die korrekte IP-Adresse sowie der korrekte Port in der .env-Datei des Projektes angegeben sind</li>
             </ul>
             <button class="primary-button" onclick={connect}>Erneut versuchen</button>
-        </ErrorCard>
+        </div>
     {/if}
 </main>
