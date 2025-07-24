@@ -96,17 +96,16 @@ export async function initialise(windowHeightParam: number, animationContainerHe
     }
 
     // Create data for rendering the animated keys
-    const trackDelay = track.notes[0].time;
     for (let i = 0; i < track.notes.length; i++) {
         const note = track.notes[i];
         const height = note.duration * animationSpeed;
         const groupIndex = keyGroups.findIndex((group) => group.keyNames.includes(note.name));
         notes.push({
             id: crypto.randomUUID(),
-            height: height - 5, // treshold to avoid overlapping / sticking out
+            height: height - 5, // threshold to avoid overlapping / sticking out
             top: -height,
             left: groupIndex,
-            startTime: note.time - trackDelay, // Subtract start time of first note to make it start immediately
+            startTime: note.time,
             duration: note.duration,
             name: note.name,
             groupIndex: groupIndex,

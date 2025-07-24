@@ -57,6 +57,7 @@ export async function load(): Promise<void> {
         if (json.settingsVersion == __APP_VERSION__) {
             settings.speed = json.speed;
             settings.colorSchemeId = json.colorSchemeId;
+            settings.buffer = json.buffer;
             settings.mode = json.mode;
             settings.midiConfig = json.midiConfig;
         } else {
@@ -83,7 +84,7 @@ export async function save(): Promise<void> {
 export const settings: Settings = $state({
     settingsVersion: __APP_VERSION__,
     speed: 100,
-    buffer: 0.2,
+    buffer: 0.1,
     mode: Mode.Pause,
     colorSchemeId: "default",
     midiConfig: {
