@@ -273,7 +273,7 @@ export function calculateNormalisedCoordinates(x: number, y: number): Vector2 {
     return applyMappingToCoordinates(result.x, result.y);
 }
 
-function applyMappingToCoordinates(x: number, y: number): { x: number; y: number } {
+function applyMappingToCoordinates(x: number, y: number): Vector2 {
     if (config.flipX) {
         x = 1.0 - x;
     }
@@ -302,7 +302,11 @@ export function getConfig(): SensFloorConfig {
     return { ...config };
 }
 
-export function getDimension(): { x: number; y: number } {
+export function setConfig(newConfig: SensFloorConfig): void {
+    config = newConfig;
+}
+
+export function getDimension(): Vector2 {
     return { x: config.width, y: config.height };
 }
 
