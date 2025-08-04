@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as Tone from "tone";
+    import menuSoundPlayer from "$lib/backend/menu-sound-player";
 
     interface SettingsButtonProps {
         label?: string,
@@ -11,17 +11,12 @@
     let { label, details, onClick, reset = false }: SettingsButtonProps = $props();
     let buttonElement: HTMLButtonElement;
 
-    const player = new Tone.Player({
-        url: "/MenuButtonSoundEffect.mp3",
-        autostart: false,
-    }).toDestination();
-
     function clickMenuButton() {
         buttonElement.classList.add("active");
         setTimeout(() => {
             buttonElement.classList.remove("active");
         }, 250)
-        player.start();
+        menuSoundPlayer.start();
         if (onClick) {
             onClick();
         }
