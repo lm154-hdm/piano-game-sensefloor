@@ -1,11 +1,11 @@
 <script lang="ts">
     import Loader from "$lib/components/loader.svelte";
-    import { SensFloorState } from "$lib/backend/sens-floor/sens-floor";
-    import { getCurrentWindow } from "@tauri-apps/api/window";
-    import { goto } from "$app/navigation";
-    import { onMount } from "svelte";
-    import * as Tone from "tone";
     import * as SensFloor from "$lib/backend/sens-floor/sens-floor";
+    import {SensFloorState} from "$lib/backend/sens-floor/sens-floor";
+    import {getCurrentWindow} from "@tauri-apps/api/window";
+    import {goto} from "$app/navigation";
+    import {onMount} from "svelte";
+    import * as Tone from "tone";
     import * as Settings from "$lib/backend/settings.svelte";
 
     let sensFloorState: SensFloorState = $state(SensFloorState.NONE);
