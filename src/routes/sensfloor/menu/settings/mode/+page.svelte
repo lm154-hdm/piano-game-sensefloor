@@ -6,6 +6,7 @@
     import LabelledSettingsRow from "$lib/components/labelled-settings-container/labelled-settings-row.svelte";
     import Title from "$lib/components/title.svelte";
     import LabelledSettingsColumn from "$lib/components/labelled-settings-container/labelled-settings-column.svelte";
+    import SettingsButton from "$lib/components/buttons/settings-button.svelte";
 </script>
 
 <Title text="Einstellungen - Modus" />
@@ -20,30 +21,18 @@
             <h3>Töne werden (unabhängig des Tretens) immer korrekt abgespielt.</h3>
         {/if}
         <LabelledSettingsRow>
-            <button
-                    class="menu-button secondary-button"
-                    onclick={() => {
-                settings.mode = Mode.Normal;
-            }}
-            >
-                Normal
-            </button>
-            <button
-                    class="menu-button secondary-button"
-                    onclick={() => {
-                settings.mode = Mode.Pause;
-            }}
-            >
-                Pause
-            </button>
-            <button
-                    class="menu-button secondary-button"
-                    onclick={() => {
-                settings.mode = Mode.Playback;
-            }}
-            >
-                Playback
-            </button>
+            <SettingsButton
+                label="Normal"
+                onClick={() => settings.mode = Mode.Normal }
+            />
+            <SettingsButton
+                    label="Pause"
+                    onClick={() => settings.mode = Mode.Pause }
+            />
+            <SettingsButton
+                    label="Playback"
+                    onClick={() => settings.mode = Mode.Playback }
+            />
             <GhostButton />
         </LabelledSettingsRow>
     </LabelledSettingsColumn>

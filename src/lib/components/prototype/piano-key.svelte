@@ -65,7 +65,7 @@
     }
 </script>
 
-<button class="menu-button piano-key" style="--color: var({color})" onclick={play} aria-label="Key">
+<button class="menu-button" style="--color: var({color})" onclick={play} aria-label="Key">
     <img src={footprintIcon} alt="Footprint Icon">
 </button>
 

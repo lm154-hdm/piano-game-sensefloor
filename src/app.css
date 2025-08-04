@@ -109,6 +109,10 @@ main.admin-main {
     background-color: var(--secondary-active);
 }
 
+.secondary-button.active {
+    background-color: var(--secondary-active);
+}
+
 .error-button {
     background-color: var(--error);
     color: var(--on-error);
