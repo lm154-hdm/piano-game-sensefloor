@@ -303,7 +303,7 @@ export function getConfig(): SensFloorConfig {
 }
 
 export function setConfig(newConfig: SensFloorConfig): void {
-    config = newConfig;
+    config = { ...newConfig };
 }
 
 export function getDimension(): Vector2 {
