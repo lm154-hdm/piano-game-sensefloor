@@ -22,7 +22,7 @@
         const keyGroup = Animation.keyGroups.find((_, i) => i === index)!;
         const activeNotes: NoteData[] = Animation.getActiveNotes(); // sorted asc. by startTime
         let activeNoteOfKey: NoteData | undefined = undefined;
-        if (settings.mode === Mode.Pause) {
+        if (settings.mode === Mode.Wait) {
             if (activeNotes[0]?.groupIndex === index && !activeNotes[0]?.wasHit) {
                 activeNoteOfKey = activeNotes[0];
             }
@@ -38,7 +38,7 @@
             if (settings.mode !== Mode.Playback) {
                 piano.triggerAttackRelease(activeNoteOfKey.name, duration);
             }
-            if (settings.mode === Mode.Pause && !animationIsRunning) {
+            if (settings.mode === Mode.Wait && !animationIsRunning) {
                 Animation.start();
             }
             if (resetCorrectColorTimeout !== undefined) {
