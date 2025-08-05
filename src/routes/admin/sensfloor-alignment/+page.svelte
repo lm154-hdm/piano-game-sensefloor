@@ -28,11 +28,13 @@
     function flipHorizontal(): void {
         config.flipX = !config.flipX;
         config = config;
+        SensFloor.setConfig(config);
     }
 
     function flipVertical(): void {
         config.flipY = !config.flipY;
         config = config;
+        SensFloor.setConfig(config);
     }
 
     function rotateLeft(): void {
@@ -42,6 +44,7 @@
             config.rotateBy += Math.PI / 2;
         }
         config = config;
+        SensFloor.setConfig(config);
     }
 
     function rotateRight(): void {
@@ -51,6 +54,7 @@
             config.rotateBy -= Math.PI / 2;
         }
         config = config;
+        SensFloor.setConfig(config);
     }
 
 </script>
