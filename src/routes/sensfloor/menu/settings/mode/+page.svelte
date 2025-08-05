@@ -7,16 +7,23 @@
     import Title from "$lib/components/title.svelte";
     import LabelledSettingsColumn from "$lib/components/labelled-settings-container/labelled-settings-column.svelte";
     import SettingsButton from "$lib/components/buttons/settings-button.svelte";
+
+    const ModeDisplayText: Record<Mode, string> = {
+        [Mode.Normal]: "Normal",
+        [Mode.Wait]: "Warten", // Übersetzung
+        [Mode.Playback]: "Playback",
+    };
+
 </script>
 
 <Title text="Einstellungen - Modus" />
 
-<LabelledSettingsContainer text="Aktueller Modus: {Mode[settings.mode]}">
+<LabelledSettingsContainer text="Aktueller Modus: {ModeDisplayText[settings.mode]}">
     <LabelledSettingsColumn>
         {#if settings.mode === Mode.Normal}
             <h3>Normaler Song-Durchlauf.<br/>Taste muss zum richtigen Zeitpunkt getreten werden, um korrekten Ton abzuspielen.</h3>
-        {:else if settings.mode === Mode.Pause}
-            <h3>Anfänger-Modus. <br> Song pausiert vor jeder Note.</h3>
+        {:else if settings.mode === Mode.Wait}
+            <h3>Anfänger-Modus. <br> Song pausiert vor jeder Note, und wartet auf den korrekten Tritt des Spielers.</h3>
         {:else if settings.mode === Mode.Playback}
             <h3>Töne werden (unabhängig des Tretens) immer korrekt abgespielt.</h3>
         {/if}
@@ -26,8 +33,8 @@
                 onClick={() => settings.mode = Mode.Normal }
             />
             <SettingsButton
-                    label="Pause"
-                    onClick={() => settings.mode = Mode.Pause }
+                    label="Warten"
+                    onClick={() => settings.mode = Mode.Wait }
             />
             <SettingsButton
                     label="Playback"

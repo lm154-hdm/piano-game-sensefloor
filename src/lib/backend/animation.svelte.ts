@@ -43,7 +43,7 @@ export function hitNote(id: string) {
     if (!note) return;
     note.color = "--correct-note";
     note.wasHit = true;
-    if (settings.mode === Mode.Pause) {
+    if (settings.mode === Mode.Wait) {
         activeNoteIds.delete(note.id);
     }
 }
@@ -156,7 +156,7 @@ function animationLoop(currentTime: number): void {
                     activeNoteIds.set(note.id, note)
                 }
             }
-            if (settings.mode === Mode.Pause) {
+            if (settings.mode === Mode.Wait) {
                 if (note.top >= animationContainerHeight - note.height && !note.wasHit) {
                     shouldStop = true;
                 }
