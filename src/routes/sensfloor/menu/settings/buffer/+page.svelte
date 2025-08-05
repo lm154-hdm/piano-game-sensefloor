@@ -5,7 +5,7 @@
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container/labelled-settings-container.svelte";
     import LabelledSettingsRow from "$lib/components/labelled-settings-container/labelled-settings-row.svelte";
     import Title from "$lib/components/title.svelte";
-    import ResetButton from "$lib/components/buttons/reset-button.svelte";
+    import SettingsButton from "$lib/components/buttons/settings-button.svelte";
 </script>
 
 <Title text="Einstellungen - Puffer" />
@@ -14,27 +14,25 @@
     <LabelledSettingsColumn>
         <h3>Wie viele Sekunden im Voraus soll es möglich sein, auf eine Taste zu treten?</h3>
         <LabelledSettingsRow>
-            <button
-                    class="menu-button secondary-button"
-                    onclick={() => {
-                settings.buffer = Math.max(settings.buffer - 0.05, 0);
-            }}
-            >
-                Kleiner<br/>-0.05s
-            </button>
-            <button
-                    class="menu-button secondary-button"
-                    onclick={() => {
-                settings.buffer = Math.min(settings.buffer + 0.05, 3)
-            }}
-            >
-                Größer<br/>+0.05s
-            </button>
+            <SettingsButton
+                label="Kleiner"
+                details="-0.05s"
+                onClick={() => settings.buffer = Math.max(settings.buffer - 0.05, 0) }
+            />
+            <SettingsButton
+                    label="Größer"
+                    details="+0.05s"
+                    onClick={() => settings.buffer = Math.min(settings.buffer + 0.05, 3) }
+            />
         </LabelledSettingsRow>
     </LabelledSettingsColumn>
 </LabelledSettingsContainer>
 
-<ResetButton text="0.1s" onClick={() => settings.buffer = 0.1 }  />
+<SettingsButton
+        details="0.1s"
+        onClick={() => settings.buffer = 0.1 }
+        reset={true}
+/>
 <BackButton text="Speichern und zurück" slug="/sensfloor/menu/settings" shouldSave={true} />
 
 <style>

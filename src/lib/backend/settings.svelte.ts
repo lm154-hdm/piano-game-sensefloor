@@ -24,7 +24,7 @@ interface MidiConfig {
 
 export enum Mode {
     Normal = 0,
-    Pause = 1,
+    Wait = 1,
     Playback = 2,
 }
 
@@ -85,7 +85,7 @@ export const settings: Settings = $state({
     settingsVersion: __APP_VERSION__,
     speed: 100,
     buffer: 0.1,
-    mode: Mode.Pause,
+    mode: Mode.Wait,
     colorSchemeId: "default",
     midiConfig: {
         path: "",

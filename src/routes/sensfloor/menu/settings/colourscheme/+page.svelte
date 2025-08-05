@@ -1,7 +1,7 @@
 <script lang="ts">
     import { colorSchemes, settings } from "$lib/backend/settings.svelte";
     import BackButton from "$lib/components/buttons/back-button.svelte";
-    import ColorSchemeButton from "$lib/components/buttons/color-scheme-button.svelte";
+    import SettingsButton from "$lib/components/buttons/settings-button.svelte";
     import ColorSchemePreview from "$lib/components/color-scheme-preview.svelte";
     import LabelledSettingsColumn from "$lib/components/labelled-settings-container/labelled-settings-column.svelte";
     import LabelledSettingsContainer from "$lib/components/labelled-settings-container/labelled-settings-container.svelte";
@@ -20,7 +20,13 @@
         <ColorSchemePreview />
         <LabelledSettingsRow>
             {#each colorSchemes as { id, displayText }}
-                <ColorSchemeButton {id} text={displayText} />
+                <SettingsButton
+                    label={displayText}
+                    onClick={() => {
+                        settings.colorSchemeId = id;
+                        document.documentElement.setAttribute("data-colorscheme", id);
+                    }}
+                />
             {/each}
         </LabelledSettingsRow>
     </LabelledSettingsColumn>
