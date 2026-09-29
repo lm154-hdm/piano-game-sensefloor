@@ -57,9 +57,6 @@ Nachdem ein Song bis zum Ende durchgespielt wurde, erscheint ein Ergebnisbildsch
 
 Die gesamte Bedienung des Spiels erfolgt über den SensFloor. Aufgrund der begrenzten Anzahl von maximal sechs gleichzeitig darstellbaren Buttons wurde eine tief verschachtelte Navigationsstruktur gewählt. 
 
-![Bildschirmfoto_2025-07-22_um_10.45.00](uploads/ccd977586db15d05c5c026272b2cd87c/Bildschirmfoto_2025-07-22_um_10.45.00.png) 
-Abbildung 1: Navigationsstruktur der Anwendung
-
 Vom Hauptmenü aus können die Spieler zwischen den Optionen Spielen, Einstellungen und Beenden wählen. Der Einstellungen-Bereich verzweigt sich weiter in Untermenüs zur Anpassung von Geschwindigkeit (schneller, langsamer), Farbschema (Berry, Beach), Puffer (kleiner, größer) und Modus (normal, pause, playback). Parallel dazu existiert ein Admin-Panel, das per Tastendruck ("1") erreichbar ist und mit der Maus bedient wird. Es dient zur Songauswahl sowie der Ausrichtung des SensFloors und der Anwendung.
 
 ## 4.3 Spielmodi und Anpassungsmöglichkeiten
